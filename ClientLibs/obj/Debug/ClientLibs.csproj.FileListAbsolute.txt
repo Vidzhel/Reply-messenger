@@ -1,0 +1,6 @@
+C:\Users\Oleg\source\repos\Messenger\ClientLibs\bin\Debug\ClientLibs.dll
+C:\Users\Oleg\source\repos\Messenger\ClientLibs\bin\Debug\ClientLibs.pdb
+C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.csprojAssemblyReference.cache
+C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.csproj.CoreCompileInputs.cache
+C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.dll
+C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.pdb

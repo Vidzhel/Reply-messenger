@@ -1,0 +1,237 @@
+﻿<Window x:Class="WpfApp2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        
+        xmlns:local="clr-namespace:WpfApp2"
+        xmlns:converters="clr-namespace:WpfApp2.Resources.Converters"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1024" WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent" WindowStartupLocation="CenterScreen">
+    <!--<WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="600"/>
+    </WindowChrome.WindowChrome>-->
+    <Window.Resources>
+        <SolidColorBrush Color="#9FA4C0" x:Key="UnfocusedControls"/>
+        <SolidColorBrush Color="#2B2E42" x:Key="GrayBG"/>
+        <SolidColorBrush Color="#212130" x:Key="DarkBg"/>
+        <SolidColorBrush Color="#9FA4C0" x:Key="LightGrayBg"/>
+        <SolidColorBrush Color="#525EFF" x:Key="LightBlue"/>
+
+        <converters:FieldPlaceholder x:Key="PlaceholderControl"/>
+
+        <Style TargetType="Label" x:Key="Sumbol">
+            <Setter Property="FontFamily" Value="Font Awesome 5 Pro"/>
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="{StaticResource LightGrayBg}"/>
+        </Style>
+        
+        <Style TargetType="Label" x:Key="RegularText">
+            <Setter Property="FontFamily" Value="OpenSans"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="11"/>
+           
+        </Style>
+        
+        <Style BasedOn="{StaticResource RegularText}" TargetType="Label" x:Key="Links">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#FFA244"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#FFA244"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="TextBox" x:Key="DataField">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="30 0 0 0"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="250"/>
+            <Setter Property="CaretBrush" Value="{StaticResource LightBlue}"/>
+            <Setter Property="FontFamily" Value="Open Sans"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource LightGrayBg}" BorderThickness="3" Background="Transparent">
+                            <Grid>
+                                <TextBox Panel.ZIndex="2" TabIndex="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}, Path=TabIndex}" CaretBrush="{TemplateBinding CaretBrush}" FontFamily="{TemplateBinding FontFamily}"
+                                         FontSize="{TemplateBinding FontSize}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                         BorderBrush="Transparent" BorderThickness="0" Background="Transparent" x:Name="Content"
+                                         Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"/>
+                                <Label Width="73" Height="15" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                    AncestorType={x:Type TextBox}}, Path=Text}">
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Setter Property="Foreground" Value="{StaticResource LightGrayBg}"/>
+                                            <Setter Property="Background" Value="{StaticResource DarkBg}"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="FontSize" Value="12"/>
+                                            <Setter Property="Padding" Value="5 0 5 0"/>
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <TransformGroup>
+                                                        <TranslateTransform x:Name="Move" X="-60" Y="0"/>
+                                                    </TransformGroup>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Value="True">
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter="{StaticResource PlaceholderControl}">
+                                                            <Binding ElementName="Content" Path="IsFocused"/>
+                                                            <Binding ElementName="Content" Path="Text.IsEmpty"/>
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Duration="0:0:0.100" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)" To="-70"/>
+                                                                <DoubleAnimation Duration="0:0:0.100" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)" To="-18"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                    <DataTrigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Duration="0:0:0.1"  Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)" To="-60"/>
+                                                                <DoubleAnimation Duration="0:0:0.1"  Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)" To="0"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.ExitActions>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+                                </Label>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource LightBlue}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource LightBlue}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style TargetType="Button" x:Key="RegularButton">
+            <Setter Property="Background" Value="{StaticResource LightBlue}"/>
+            <Setter Property="FontFamily" Value="OpenSans"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Width" Value="250"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Name="ButtonBackground" CornerRadius="3" Background="#525EFF">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition  Property="IsMouseOver" Value="True"/>
+                                    <Condition  Property="IsKeyboardFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Background" TargetName="ButtonBackground" Value="#5F6AFF"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect ShadowDepth="4" Direction="270" Color="Black" Opacity="0.3" BlurRadius="6"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition  Property="IsPressed" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Background" TargetName="ButtonBackground" Value="#3D49E3"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style BasedOn="{StaticResource Links}" TargetType="Label" x:Key="TransitionAnim">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Label.MouseDown">
+                    <EventTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetName="{Binding ElementName= SignInForm}"  Storyboard.TargetProperty="Opacity" To="0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.EnterActions>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+       
+    </Window.Resources>
+
+
+    <Border BorderThickness="4" BorderBrush="{StaticResource DarkBg}" CornerRadius="10" Background="{StaticResource GrayBG}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Name="SignInForm" Grid.Column="0"  Background="{StaticResource DarkBg}">
+                <Label Style="{StaticResource RegularText}" Margin="40 80 0 50" Content="Sign In" FontSize="30"/>
+                <Label Style="{StaticResource Sumbol}" Content="" RenderTransformOrigin="0.5,0.5">
+                    <Label.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform X="51" Y="31"/>
+                        </TransformGroup>
+                    </Label.RenderTransform>
+                </Label>
+                
+                <TextBox Style="{StaticResource DataField}" Text="User Name" Name="SignInUserName" Margin="40 0 40 0"/>
+                <Label Style="{StaticResource Sumbol}" Content="" RenderTransformOrigin="0.5,0.5">
+                    <Label.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform X="51" Y="31"/>
+                        </TransformGroup>
+                    </Label.RenderTransform>
+                </Label>
+                <TextBox Style="{StaticResource DataField}" Text="Password" Name="SignInPassword" Margin="40 0 40 0"/>
+                <Label Style="{StaticResource Links}" Width="90" Margin="-170 10 0 20" Content="Forgot Password?"/>
+                <Button Name="SignInButton" Style="{StaticResource RegularButton}" Content="SIGN IN" Click="SignInButton_Click"  />
+                <Label Name="SignUpLabel"  Style="{StaticResource Links}" Width="48" Margin="-210 10 0 20"  Content="Sign Up" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

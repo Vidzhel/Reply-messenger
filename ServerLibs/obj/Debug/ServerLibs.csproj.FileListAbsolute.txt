@@ -1,0 +1,6 @@
+C:\Users\Oleg\source\repos\Messenger\ServerLibs\bin\Debug\ServerLibs.dll
+C:\Users\Oleg\source\repos\Messenger\ServerLibs\bin\Debug\ServerLibs.pdb
+C:\Users\Oleg\source\repos\Messenger\ServerLibs\obj\Debug\ServerLibs.csprojAssemblyReference.cache
+C:\Users\Oleg\source\repos\Messenger\ServerLibs\obj\Debug\ServerLibs.csproj.CoreCompileInputs.cache
+C:\Users\Oleg\source\repos\Messenger\ServerLibs\obj\Debug\ServerLibs.dll
+C:\Users\Oleg\source\repos\Messenger\ServerLibs\obj\Debug\ServerLibs.pdb
