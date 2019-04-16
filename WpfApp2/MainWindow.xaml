@@ -9,47 +9,53 @@
         xmlns:local="clr-namespace:WpfApp2"
         xmlns:converters="clr-namespace:WpfApp2.Resources.Converters"
         mc:Ignorable="d"
+        
+        Name="Window"
+        Margin="{Binding BorderResizeThickness, FallbackValue=10}"
+        
         Title="MainWindow" Height="600" Width="1024" WindowStyle="None" AllowsTransparency="True"
         Background="Transparent" WindowStartupLocation="CenterScreen">
-    <!--<WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="600"/>
-    </WindowChrome.WindowChrome>-->
+    <WindowChrome.WindowChrome>
+        <WindowChrome  ResizeBorderThickness="{Binding ResizzeBorderThickness, FallbackValue= 10}"
+                       CornerRadius="{Binding CornerRadious, FallbackValue= 10}"
+                       CaptionHeight="0"
+                       />
+    </WindowChrome.WindowChrome>
     <Window.Resources>
-        <SolidColorBrush Color="#9FA4C0" x:Key="UnfocusedControls"/>
-        <SolidColorBrush Color="#2B2E42" x:Key="GrayBG"/>
-        <SolidColorBrush Color="#212130" x:Key="DarkBg"/>
-        <SolidColorBrush Color="#9FA4C0" x:Key="LightGrayBg"/>
-        <SolidColorBrush Color="#525EFF" x:Key="LightBlue"/>
 
         <converters:FieldPlaceholder x:Key="PlaceholderControl"/>
 
+
+        <!--Style for Font Awesome-->
         <Style TargetType="Label" x:Key="Sumbol">
             <Setter Property="FontFamily" Value="Font Awesome 5 Pro"/>
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="FontSize" Value="15"/>
-            <Setter Property="Foreground" Value="{StaticResource LightGrayBg}"/>
+            <Setter Property="Foreground" Value="{StaticResource LightGrayBgBrush}"/>
         </Style>
-        
+
+
+        <!--Style for Regular Text-->
         <Style TargetType="Label" x:Key="RegularText">
             <Setter Property="FontFamily" Value="OpenSans"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="11"/>
            
         </Style>
-        
+
+
+        <!--Style for links-->
         <Style BasedOn="{StaticResource RegularText}" TargetType="Label" x:Key="Links">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="#FFA244"/>
-                    <Setter Property="Cursor" Value="Hand"/>
-                </Trigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="#FFA244"/>
+                    <Setter Property="Foreground" Value="{StaticResource OrangeBrush}"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
+
+        <!--Style for Data Fields-->
         <Style TargetType="TextBox" x:Key="DataField">
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -58,15 +64,15 @@
             <Setter Property="Padding" Value="30 0 0 0"/>
             <Setter Property="Height" Value="35"/>
             <Setter Property="Width" Value="250"/>
-            <Setter Property="CaretBrush" Value="{StaticResource LightBlue}"/>
+            <Setter Property="CaretBrush" Value="{StaticResource LightBlueBrush}"/>
             <Setter Property="FontFamily" Value="Open Sans"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource LightGrayBg}" BorderThickness="3" Background="Transparent">
+                        <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource LightGrayBgBrush}" BorderThickness="3" Background="Transparent">
                             <Grid>
-                                <TextBox Panel.ZIndex="2" TabIndex="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}, Path=TabIndex}" CaretBrush="{TemplateBinding CaretBrush}" FontFamily="{TemplateBinding FontFamily}"
+                                <TextBox Panel.ZIndex="2" TabIndex="0" CaretBrush="{TemplateBinding CaretBrush}" FontFamily="{TemplateBinding FontFamily}"
                                          FontSize="{TemplateBinding FontSize}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                          BorderBrush="Transparent" BorderThickness="0" Background="Transparent" x:Name="Content"
                                          Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"/>
@@ -74,8 +80,8 @@
                                     AncestorType={x:Type TextBox}}, Path=Text}">
                                     <Label.Style>
                                         <Style TargetType="Label">
-                                            <Setter Property="Foreground" Value="{StaticResource LightGrayBg}"/>
-                                            <Setter Property="Background" Value="{StaticResource DarkBg}"/>
+                                            <Setter Property="Foreground" Value="{StaticResource LightGrayBgBrush}"/>
+                                            <Setter Property="Background" Value="{StaticResource DarkBgBrush}"/>
                                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                                             <Setter Property="FontSize" Value="12"/>
@@ -131,8 +137,10 @@
             </Setter>
         </Style>
         
+        
+        <!--Style For Sign Button-->
         <Style TargetType="Button" x:Key="RegularButton">
-            <Setter Property="Background" Value="{StaticResource LightBlue}"/>
+            <Setter Property="Background" Value="{StaticResource LightBlueBrush}"/>
             <Setter Property="FontFamily" Value="OpenSans"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -180,6 +188,8 @@
             </Setter>
         </Style>
         
+        
+        <!--Style for form-->
         <Style BasedOn="{StaticResource Links}" TargetType="Label" x:Key="TransitionAnim">
             <Style.Triggers>
                 <EventTrigger RoutedEvent="Label.MouseDown">
@@ -197,13 +207,15 @@
     </Window.Resources>
 
 
-    <Border BorderThickness="4" BorderBrush="{StaticResource DarkBg}" CornerRadius="10" Background="{StaticResource GrayBG}">
+    <Border BorderThickness="4" BorderBrush="{StaticResource DarkBgBrush}" CornerRadius="10" Background="{StaticResource GrayBGBrush}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Name="SignInForm" Grid.Column="0"  Background="{StaticResource DarkBg}">
+            
+            
+            <StackPanel Name="SignInForm" Grid.Column="0"  Background="{StaticResource DarkBgBrush}">
                 <Label Style="{StaticResource RegularText}" Margin="40 80 0 50" Content="Sign In" FontSize="30"/>
                 <Label Style="{StaticResource Sumbol}" Content="" RenderTransformOrigin="0.5,0.5">
                     <Label.RenderTransform>
@@ -216,7 +228,7 @@
                     </Label.RenderTransform>
                 </Label>
                 
-                <TextBox Style="{StaticResource DataField}" Text="User Name" Name="SignInUserName" Margin="40 0 40 0"/>
+                <TextBox Style="{StaticResource DataField}" Text="User Name" Name="SignInUserName" Margin="40 0 40 0" GotFocus="SignInUserName_GotFocus"/>
                 <Label Style="{StaticResource Sumbol}" Content="" RenderTransformOrigin="0.5,0.5">
                     <Label.RenderTransform>
                         <TransformGroup>

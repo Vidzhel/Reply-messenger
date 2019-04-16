@@ -30,3 +30,6 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.Generate
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.CoreCompileInputs.cache
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.exe
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.pdb
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.Fody.CopyLocal.cache
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\App.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Colors.baml

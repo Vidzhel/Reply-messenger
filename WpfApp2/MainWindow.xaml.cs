@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UI.UIPresenter.ViewModels;
 
 namespace WpfApp2
 {
@@ -25,22 +26,24 @@ namespace WpfApp2
         {
             InitializeComponent();
 
-            //Create an UIControl service and make request
-            var service = ServiceFactory.Create(ServiceType.UIControl);
-            var isConnected = service.MakeRequest(Target.Remote, Request.Connect);
-            if (!(bool)isConnected)
-                return;
-            //TODO add code
+            Window.DataContext = new WindowsViewModel(this);
 
-            //Meke ruquest to local data to get user info
-            var user = service.MakeRequest(Target.Local, Request.GetUserData);
+            ////Create an UIControl service and make request
+            //var service = ServiceFactory.Create(ServiceType.UIControl);
+            //var isConnected = service.MakeRequest(Target.Remote, Request.Connect);
+            //if (!(bool)isConnected)
+            //    return;
+            ////TODO add code
 
-            //Trying to aytorizate user
-            if (user)
-                var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
+            ////Meke ruquest to local data to get user info
+            //var user = service.MakeRequest(Target.Local, Request.GetUserData);
 
-            if ((bool)isAutorizated) ;
-                //TODO Open Chat Window
+            ////Trying to aytorizate user
+            //if (user)
+            //    var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
+
+            //if ((bool)isAutorizated) ;
+            //    //TODO Open Chat Window
         }
 
         /// <summary>
@@ -48,18 +51,23 @@ namespace WpfApp2
         /// </summary>
         private void SignInButton_Click(object sender, RoutedEventArgs e)
         {
-            var user = UserFactory.Create();
-            var service = ServiceFactory.Create(ServiceType.UIControl);
+            //var user = UserFactory.Create();
+            //var service = ServiceFactory.Create(ServiceType.UIControl);
 
-            user.UserName = SignInUserName.Text;
-            user.Password = SignInPassword.Text;
+            //user.UserName = SignInUserName.Text;
+            //user.Password = SignInPassword.Text;
 
-            var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
+            //var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
 
-            if ((bool)isAutorizated) ;
-            //TODO Open Chat Window
-            else;
-                //TODO popup window(wrong data)
+            //if ((bool)isAutorizated) ;
+            ////TODO Open Chat Window
+            //else
+            //    //TODO popup window
+        }
+
+        private void SignInUserName_GotFocus(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
