@@ -33,3 +33,13 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.pdb
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.Fody.CopyLocal.cache
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\App.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Colors.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\SqLiteLocalDB.db
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\System.Data.SQLite.dll
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\System.Data.SQLite.xml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\System.Data.SQLite.dll.config
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI_Content.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.CopyComplete
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Buttons.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Fonts.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Text.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\TextBoxes.baml

@@ -50,7 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connections\Repositories\DataChangedArgs.cs" />
+    <Compile Include="Connections\Repositories\INotifyDataChanged.cs" />
+    <Compile Include="Connections\Repositories\IRemoteRepository.cs" />
     <Compile Include="Connections\Repositories\IRepository.cs" />
+    <Compile Include="Connections\Repositories\Repository.cs" />
     <Compile Include="Core\Factory\AbstractFactory.cs" />
     <Compile Include="Core\Factory\ServiceFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

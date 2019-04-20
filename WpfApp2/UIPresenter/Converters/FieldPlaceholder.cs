@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 
-namespace WpfApp2.Resources.Converters
+namespace WpfApp2.UIPresenter.Converters
 {
 
     public class FieldPlaceholder : IMultiValueConverter

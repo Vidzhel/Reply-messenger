@@ -25,9 +25,8 @@ namespace WpfApp2
         public MainWindow()
         {
             InitializeComponent();
-
-            Window.DataContext = new WindowsViewModel(this);
-
+            this.DataContext = new WindowViewModel(this);
+            
             ////Create an UIControl service and make request
             //var service = ServiceFactory.Create(ServiceType.UIControl);
             //var isConnected = service.MakeRequest(Target.Remote, Request.Connect);
