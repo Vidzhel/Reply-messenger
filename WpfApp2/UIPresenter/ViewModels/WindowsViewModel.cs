@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Input;
+using PropertyChanged;
+using UI.Pages;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -20,14 +22,20 @@ namespace UI.UIPresenter.ViewModels
 
         private int borderResize = 5;
 
-        //Commands
-        ICommand closeWindow;
-        ICommand colapseWindow;
-        ICommand maximazeWindow;
 
         #endregion
 
         #region Public Members
+
+
+        //Commands for system buttons
+        [DoNotNotify]
+        public ICommand CloseWindow { get; set; }
+        [DoNotNotify]
+        public ICommand ColapseWindow { get; set; }
+        [DoNotNotify]
+        public ICommand MaximazeWindow { get; set; }
+
         /// <summary>
         /// Set Outher margin for the window
         /// </summary>
@@ -82,6 +90,11 @@ namespace UI.UIPresenter.ViewModels
         public int CaptionHeight { get; set; } = 15;
         public GridLength CaptionHeightGridLeight { get { return new GridLength(CaptionHeight + BorderResize); } }
 
+        /// <summary>
+        /// A curent open page in the main window
+        /// </summary>
+        public ApplicationPage ApplicationCurrentPage { get; set; } = ApplicationPage.SignUpPage;
+
         #endregion
 
         #region Constructor
@@ -97,13 +110,15 @@ namespace UI.UIPresenter.ViewModels
             };
 
             //commands for buttons
-            closeWindow = new RelayCommand(() => {
+            CloseWindow = new RelayCommand(() => {
                 window.Close();
             });
-            colapseWindow = new RelayCommand(() => {
+            ColapseWindow = new RelayCommand(() =>
+            {
                 window.WindowState = WindowState.Minimized;
             });
-            maximazeWindow = new RelayCommand(() => {
+            MaximazeWindow = new RelayCommand(() =>
+            {
                 window.WindowState ^= WindowState.Maximized;
             });
         }

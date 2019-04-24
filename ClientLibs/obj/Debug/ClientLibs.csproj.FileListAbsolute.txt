@@ -6,5 +6,3 @@ C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.dll
 C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.pdb
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.csprojAssemblyReference.cache
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.csproj.CoreCompileInputs.cache
-C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.dll
-C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.pdb

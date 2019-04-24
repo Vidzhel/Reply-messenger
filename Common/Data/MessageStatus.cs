@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Common.Data
 {
-    enum MessageStatus
+    public enum MessageStatus
     {
         IsRead,
-        IsSend,
-        InProgress
+        Sended,
+        SendingInProgress
     }
 }

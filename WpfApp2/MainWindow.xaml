@@ -7,15 +7,15 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         
         xmlns:local="clr-namespace:WpfApp2"
-        xmlns:converters="clr-namespace:WpfApp2.UIPresenter.Converters"
+        xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
         mc:Ignorable="d"
         
         x:Name="Window"
         
         Title="MainWindow" Height="600" Width="1024" WindowStyle="None" AllowsTransparency="True"
         Background="Transparent" WindowStartupLocation="CenterScreen">
-    
-    
+
+
     <WindowChrome.WindowChrome>
         <WindowChrome x:Name="WindowChrome"
                       ResizeBorderThickness="{Binding BorderResizeThickness}"
@@ -24,8 +24,7 @@
                       GlassFrameThickness="0"
                        />
     </WindowChrome.WindowChrome>
-    
-    
+
     <Window.Resources>
 
         <Style TargetType="{x:Type local:MainWindow}">
@@ -66,6 +65,13 @@
                                         <!--TODO Add Messenger Logo-->
 
                                         <TextBlock VerticalAlignment="Center" Margin="0 0 0 2" HorizontalAlignment="Center" Grid.Column="1" Foreground="AliceBlue" Text="Messenger" />
+                                        
+                                        <!--Window sstem buttons-->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0 0 7 0">
+                                            <Button Command="{Binding ColapseWindow}" Style="{StaticResource WindowSystemButtons}"/>
+                                            <Button Command="{Binding MaximazeWindow}" Style="{StaticResource MaximizeWindowButton}"/>
+                                            <Button Command="{Binding CloseWindow}" Style="{StaticResource CloseWindowButton}"/>
+                                        </StackPanel>
                                     </Grid>
                                        
                                     <ContentPresenter Grid.Row="2"/>
@@ -76,53 +82,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        
     </Window.Resources>
 
     
     <!--Main Content-->
-    <Grid Background="{StaticResource DarkBgBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
-
-        <!--Sign In Form-->
-        <StackPanel Name="SignInForm" Grid.Column="0"  Background="{StaticResource DarkBgBrush}">
-            <Label Style="{StaticResource RegularText}" Margin="40 80 0 50" Content="Sign In" FontSize="30"/>
-            <Label Style="{StaticResource Sumbol}" Content="" RenderTransformOrigin="0.5,0.5">
-                <Label.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform X="51" Y="31"/>
-                    </TransformGroup>
-                </Label.RenderTransform>
-            </Label>
-
-            <TextBox Style="{StaticResource DataField}" Text="User Name" Name="SignInUserName" Margin="40 0 40 0" GotFocus="SignInUserName_GotFocus"/>
-            <Label Style="{StaticResource Sumbol}"  Content="" RenderTransformOrigin="0.5,0.5">
-                <Label.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform X="51" Y="31"/>
-                    </TransformGroup>
-                </Label.RenderTransform>
-            </Label>
-            <TextBox Style="{StaticResource DataField}" Text="Password" Name="SignInPassword" Margin="40 0 40 0"/>
-            <Label Style="{StaticResource Links}" Width="90" Margin="-170 10 0 20" Content="Forgot Password?"/>
-            <Button Name="SignInButton" Style="{StaticResource RegularButton}" Content="SIGN IN" Click="SignInButton_Click"  />
-            <Label Name="SignUpLabel"  Style="{StaticResource Links}" Width="48" Margin="-210 10 0 20"  Content="Sign Up" />
-        </StackPanel>
-        
-        <!--Image space-->
-        <Border Grid.Column="1" Background="{StaticResource GrayBGBrush}" CornerRadius="10">
-            <Grid>
-
-            </Grid>
-        </Border>
-    </Grid>
+    <Frame Name="WindowPage" Content="{Binding ApplicationCurrentPage, Converter={converters:ToAppPageConverter}}"/>
+    
 </Window>

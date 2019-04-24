@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\App.xaml
-6252148542
+91839512273
 1984027045
-8-588809667
+17199994631
 15-1392730143
-MainWindow.xaml;Styles\Buttons.xaml;Styles\Colors.xaml;Styles\Fonts.xaml;Styles\Text.xaml;Styles\TextBoxes.xaml;
+MainWindow.xaml;Pages\MessengerPage.xaml;Pages\SignInPage.xaml;Pages\SignUpPage.xaml;Styles\Buttons.xaml;Styles\Colors.xaml;Styles\Fonts.xaml;Styles\Text.xaml;Styles\TextBoxes.xaml;
 
 False
 

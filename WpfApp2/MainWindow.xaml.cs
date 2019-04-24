@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UI.UIPresenter.ViewModels;
+using System.Windows.Media.Animation;
 
 namespace WpfApp2
 {
@@ -45,28 +46,5 @@ namespace WpfApp2
             //    //TODO Open Chat Window
         }
 
-        /// <summary>
-        /// Make ruquest to server
-        /// </summary>
-        private void SignInButton_Click(object sender, RoutedEventArgs e)
-        {
-            //var user = UserFactory.Create();
-            //var service = ServiceFactory.Create(ServiceType.UIControl);
-
-            //user.UserName = SignInUserName.Text;
-            //user.Password = SignInPassword.Text;
-
-            //var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
-
-            //if ((bool)isAutorizated) ;
-            ////TODO Open Chat Window
-            //else
-            //    //TODO popup window
-        }
-
-        private void SignInUserName_GotFocus(object sender, RoutedEventArgs e)
-        {
-            
-        }
     }
 }

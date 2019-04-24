@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Data
 {
-    enum DataType
+    public enum DataType
     {
         File,
         Image,

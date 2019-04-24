@@ -1,9 +1,11 @@
 ﻿
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\App.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\MainWindow.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\SignInPage.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Buttons.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Colors.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Fonts.xaml;;
-FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Text.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\TextBoxes.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\MessengerPage.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\SignUpPage.xaml;;
 

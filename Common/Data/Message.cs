@@ -6,29 +6,35 @@ using System.Threading.Tasks;
 
 namespace Common.Data
 {
-    class Message : IData
+    /// <summary>
+    /// Store information about message
+    /// </summary>
+    public class Message
     {
 
         #region public Members
 
-        public readonly long SenderId;
+        public ulong Id { get; private set; }
 
-        public readonly long RecieverId;
+        public long SenderId { get; private set; }
 
-        public readonly DataType DataType;
+        public long RecieverId { get; private set; }
 
-        public readonly DateTime Date;
+        public  DataType DataType { get; private set; }
 
-        public string Data;
+        public DateTime Date { get; private set; }
 
-        public MessageStatus Status;
+        public string Data { get; private set; }
+
+        public MessageStatus Status { get; private set; }
 
         #endregion
 
         #region Constructor
 
-        public Message(long senderId, long recieverId, DataType dataType, DateTime date, MessageStatus status, string data)
+        public Message(long senderId, long recieverId, DataType dataType, DateTime date, string data, MessageStatus status = MessageStatus.SendingInProgress, ulong id = 0)
         {
+            Id = id;
             SenderId = senderId;
             RecieverId = recieverId;
             DataType = dataType;

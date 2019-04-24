@@ -53,4 +53,64 @@
         </Setter>
     </Style>
 
+    <!--Window chrome Buttons--> 
+    <Style TargetType="Button" x:Key="WindowSystemButtons">
+        <Setter Property="Height" Value="10"/>
+        <Setter Property="Margin" Value="5 0 0 2"/>
+        <Setter Property="Background" Value="{StaticResource OrangeBrush}"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    
+                    <Grid>
+                        <Border Name="Overlay" Panel.ZIndex="2" Background="White" CornerRadius="7" Opacity="0"/>
+                        <Border Name="DarkOverlay" Panel.ZIndex="2" Background="{StaticResource DarkBlueBrush}" CornerRadius="7" Opacity="0"/>
+                        <Border Background="{TemplateBinding Background}" CornerRadius="7">
+                            <Ellipse  Height="{TemplateBinding Height}" Width="{TemplateBinding Height}"/>
+                        </Border>
+                    </Grid>
+
+
+                    <ControlTemplate.Triggers>
+                        <!--Hover animation-->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetName="Overlay" Storyboard.TargetProperty="(UIElement.Opacity)" To="0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetName="Overlay" Storyboard.TargetProperty="(UIElement.Opacity)" To="0"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+
+
+                        <!--Click Events-->
+                        <Trigger Property="Button.IsPressed" Value="True">
+                            <Setter TargetName="DarkOverlay" Property="Opacity" Value="0.2"/>
+                        </Trigger>
+                        
+                    </ControlTemplate.Triggers>
+                    
+                    
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        
+    </Style>
+    <Style TargetType="Button" BasedOn="{StaticResource WindowSystemButtons}" x:Key="CloseWindowButton">
+        <Setter Property="Background" Value="{StaticResource LightRedBrush}"/>
+    </Style>
+    <Style TargetType="Button" BasedOn="{StaticResource WindowSystemButtons}" x:Key="MaximizeWindowButton">
+        <Setter Property="Background" Value="{StaticResource LightGreenBrush}"/>
+    </Style>
+
 </ResourceDictionary>

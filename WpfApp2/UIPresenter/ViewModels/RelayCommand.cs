@@ -8,7 +8,7 @@ namespace UI.UIPresenter.ViewModels
 
         private Action action;
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged = (sender, e) => { };
 
         #region Constructor
 

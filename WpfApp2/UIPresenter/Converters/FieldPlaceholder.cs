@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 
-namespace WpfApp2.UIPresenter.Converters
+namespace UI.UIPresenter.Converters
 {
 
-    public class FieldPlaceholder : IMultiValueConverter
+    public class FieldPlaceholder : BaseMultiValueConverter<FieldPlaceholder>, IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             var IsFocused = (bool)values[0];
             var IsTextEmpty = (bool)values[1];
@@ -21,7 +21,7 @@ namespace WpfApp2.UIPresenter.Converters
             return false;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public override object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

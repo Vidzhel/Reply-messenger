@@ -1,0 +1,57 @@
+﻿<Page x:Class="UI.Pages.SignUpPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:UI.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="1024"
+      Title="SignUpPage">
+
+    <Grid Background="{StaticResource DarkBgBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--Sign In Form-->
+        <StackPanel Name="SignInPanel" VerticalAlignment="Center" Grid.Column="0"  Background="{StaticResource DarkBgBrush}">
+
+            <Label Style="{StaticResource RegularText}" Margin="40 0 0 40" Content="Sign Up" FontSize="30"/>
+
+            <!--Fields-->
+            <TextBox Tag="User name" TabIndex="0" Style="{StaticResource DataField}" Name="SignUpUserName" Margin="40 0 40 20"/>
+            <TextBox Tag="E-mail" TabIndex="0" Style="{StaticResource DataField}" Name="SignUpEmail" Margin="40 0 40 20"/>
+            <TextBox Tag="Password" TabIndex="1" Style="{StaticResource DataField}" Name="SignInPassword" Margin="40 0 40 20"/>
+            <TextBox Tag="Repeat Password" TabIndex="1" Style="{StaticResource DataField}" Name="SignUpRepeatPassword" Margin="40 0 40 0"/>
+
+            <Button InputMethod.IsInputMethodEnabled="True" Name="SignUpButton" Margin="0 50 0 0" TabIndex="3" Style="{StaticResource RegularButton}" Content="SIGN UP" Click="SignUpButton_Click"  />
+
+            <Label TabIndex="4" Name="SignUpLabel" MouseDown="SignInLabel_MouseDown" Style="{StaticResource Links}"  Width="48" Margin="-210 10 0 20"  Content="Sign In">
+                <Label.Triggers>
+                    <EventTrigger RoutedEvent="Label.MouseDown">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.2" Storyboard.TargetName="SignInPanel"  Storyboard.TargetProperty="(UIElement.Opacity)" To="0"/>
+                                    <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="SignInPanel"  Storyboard.TargetProperty="Margin" BeginTime="0">
+                                        <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0, 0,0,0" />
+                                        <SplineThicknessKeyFrame KeyTime="00:00:00.2" Value="0, 20,0,0" />
+                                    </ThicknessAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+                </Label.Triggers>
+            </Label>
+
+        </StackPanel>
+
+        <!--Image space-->
+        <Border Grid.Column="1" Background="{StaticResource GrayBGBrush}" CornerRadius="10">
+            <Grid>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
