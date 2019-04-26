@@ -1,26 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
-namespace ClientLibs.Connections.Repositories
+using CommonLibs.Connections.Repositories.Tables;
+
+namespace CommonLibs.Connections.Repositories
 {
-    class DataChangedArgs
+    public class DataChangedArgs<T> where T: class
     {
-        public Data Data { get; private set; }
+        public T Data { get; private set; }
+
+        public BaseTable Table { get; private set; }
 
         public string Action { get; private set; }
+
+        #region Constructor
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="data">The data thet changed</param>
         /// <param name="dataAction">Data Action</param>
-        public DataChanged(Data data, string dataAction)
+        public DataChangedArgs(T data, BaseTable table, string dataAction)
         {
+            Table = table;
             Data = data;
             Action = dataAction;
         }
+
+        #endregion
     }
 }

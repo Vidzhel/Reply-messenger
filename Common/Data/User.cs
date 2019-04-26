@@ -1,10 +1,7 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Common.Data
+namespace CommonLibs.Data
 {
     /// <summary>
     /// Store user info
@@ -13,7 +10,7 @@ namespace Common.Data
     {
         #region public Members
 
-        public ulong Id { get; private set; }
+        public ulong UserId { get; private set; }
 
         public string UserName { get; private set; }
 
@@ -27,22 +24,25 @@ namespace Common.Data
 
         public string TimePreferences { get; private set; }
 
-        public string Image { get; private set; }
+        public string ProfilePhoto { get; private set; }
+
+        public string Online { get; private set; }
 
         #endregion
 
         #region Constructor
 
-        public User(string userName, string password, string email, string bio, string timePreferences, string image, List<ulong> chatsId = null, ulong id = 0)
+        public User(string userName, string password, string email, string bio, string timePreferences, string profilePhoto, string online = "false", List<ulong> chatsId = null, ulong id = 0)
         {
-            Id = id;
+            UserId = id;
             UserName = userName;
             Password = password;
             Email = email;
             Bio = bio;
             TimePreferences = timePreferences;
             ChatsId = chatsId;
-            Image = image;
+            ProfilePhoto = profilePhoto;
+            Online = online;
         }
 
         #endregion

@@ -1,10 +1,7 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Common.Data
+namespace CommonLibs.Data
 {
     /// <summary>
     /// Store chat info
@@ -29,7 +26,7 @@ namespace Common.Data
 
         #region Constructor
 
-        public Chat(bool isPrivate, bool isChannel, string image, ulong id = 0, List<ulong> adminsId = null, List<ulong> members)
+        public Chat(bool isPrivate, bool isChannel, string image, ulong id = 0, List<ulong> adminsId = null, List<ulong> members = null)
         {
             Id = id;
             AdminsId = adminsId;
@@ -48,7 +45,7 @@ namespace Common.Data
         /// <param name="user">new member </param>
         public void AddNewMember(User user)
         {
-            MembersId.Add(user.Id);
+            MembersId.Add(user.UserId);
         }
 
         /// <summary>
@@ -57,7 +54,7 @@ namespace Common.Data
         /// <param name="user"></param>
         public void AddNewAdmin(User user)
         {
-            AdminsId.Add(user.Id);
+            AdminsId.Add(user.UserId);
         }
 
         /// <summary>
@@ -66,7 +63,7 @@ namespace Common.Data
         /// <param name="user"></param>
         public void RemoveMember(User user)
         {
-            MembersId.Remove(user.Id);
+            MembersId.Remove(user.UserId);
         }
 
         /// <summary>
@@ -75,7 +72,7 @@ namespace Common.Data
         /// <param name="user"></param>
         public void RemoveAdmin(User user)
         {
-            AdminsId.Remove(user.Id);
+            AdminsId.Remove(user.UserId);
         }
 
         #endregion

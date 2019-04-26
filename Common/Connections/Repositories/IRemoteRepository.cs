@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using CommonLibs.Connections.Repositories;
 
-namespace ClientLibs.Connections.Repositories
+namespace CommonLibs.Connections.Repositories
 {
-    interface IRemoteRepository<T> : IRepository<T> where T : class
+    public interface IRemoteRepository<T> : IRepository<T> where T : class
     {
         //Additional methods for server repository
         bool Connect();

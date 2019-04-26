@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ClientLibs.Connections.Repositories
+namespace CommonLibs.Connections.Repositories
 {
-    interface INotifyDataChanged
+    interface INotifyDataChanged<T> where T: class
     {
-        event EventHandler<DataChangedArgs> DataChanged;
+        event EventHandler<DataChangedArgs<IEnumerable<T>>> DataChanged;
     }
 }
