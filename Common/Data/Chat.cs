@@ -10,11 +10,11 @@ namespace CommonLibs.Data
     {
         #region Public Members
 
-        public ulong Id { get; private set; }
+        public int Id { get; private set; }
 
-        public List<ulong> AdminsId { get; private set; }
+        public List<int> AdminsId { get; private set; }
 
-        public List<ulong> MembersId { get; private set; }
+        public List<int> MembersId { get; private set; }
 
         public bool IsPrivate { get; private set; }
 
@@ -26,7 +26,7 @@ namespace CommonLibs.Data
 
         #region Constructor
 
-        public Chat(bool isPrivate, bool isChannel, string image, ulong id = 0, List<ulong> adminsId = null, List<ulong> members = null)
+        public Chat(bool isPrivate, bool isChannel, string image, int id = 0, List<int> adminsId = null, List<int> members = null)
         {
             Id = id;
             AdminsId = adminsId;
@@ -45,7 +45,7 @@ namespace CommonLibs.Data
         /// <param name="user">new member </param>
         public void AddNewMember(User user)
         {
-            MembersId.Add(user.UserId);
+            MembersId.Add(user.Id);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace CommonLibs.Data
         /// <param name="user"></param>
         public void AddNewAdmin(User user)
         {
-            AdminsId.Add(user.UserId);
+            AdminsId.Add(user.Id);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace CommonLibs.Data
         /// <param name="user"></param>
         public void RemoveMember(User user)
         {
-            MembersId.Remove(user.UserId);
+            MembersId.Remove(user.Id);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace CommonLibs.Data
         /// <param name="user"></param>
         public void RemoveAdmin(User user)
         {
-            AdminsId.Remove(user.UserId);
+            AdminsId.Remove(user.Id);
         }
 
         #endregion

@@ -15,25 +15,31 @@
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Padding" Value="30 0 0 0"/>
         <Setter Property="Height" Value="35"/>
-        <Setter Property="Width" Value="250"/>
+        <Setter Property="MinWidth" Value="250"/>
         <Setter Property="CaretBrush" Value="{StaticResource LightBlueBrush}"/>
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="2"/>
-        <Setter Property="BorderBrush" Value="{StaticResource LightGrayBgBrush}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
 
                     <Grid>
-
-                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="2" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        
+                        <!--Binding Border brush to control state at View Model-->
+                        <Border x:Name="border"  CornerRadius="2" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <Border.BorderBrush>
+                                <MultiBinding Converter="{converters:ControlStateToColorBrush}" FallbackValue="{StaticResource LightGrayBgBrush}">
+                                    <Binding Path="FieldState"/>
+                                    <Binding Path="Tag" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=TextBox}"/>
+                                </MultiBinding>
+                            </Border.BorderBrush>
                             <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                         </Border>
 
                         <!--Field icon-->
-                        <Label VerticalContentAlignment="Center" Style="{StaticResource Sumbol}" Content="{TemplateBinding Tag, Converter={converters:TextToIcon}}" RenderTransformOrigin="0.5,0.5">
+                        <Label VerticalContentAlignment="Center" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource Sumbol}" Content="{TemplateBinding Tag, Converter={converters:TextToIcon}}" RenderTransformOrigin="0.5,0.5">
                             <Label.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform/>
@@ -45,7 +51,7 @@
                         </Label>
 
                         <!--Placeholder-->
-                        <Label IsHitTestVisible="False" Width="Auto" Height="15" HorizontalAlignment="Left" Content="{TemplateBinding Tag}">
+                        <Label IsHitTestVisible="False" Foreground="{Binding ElementName=border, Path=BorderBrush}" Width="Auto" Height="15" HorizontalAlignment="Left" Content="{TemplateBinding Tag}">
                             <Label.Style>
                                 <Style TargetType="Label">
                                     <Setter Property="Foreground" Value="{StaticResource LightGrayBgBrush}"/>
@@ -88,29 +94,6 @@
                                                 </BeginStoryboard>
                                             </DataTrigger.ExitActions>
                                         </DataTrigger>
-
-
-                                        <!--<DataTrigger Binding="{Binding Path=IsFocused, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True">
-                                            <DataTrigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Duration="0:0:0.100" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)" To="15"/>
-                                                        <DoubleAnimation Duration="0:0:0.100" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)" To="-18"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.EnterActions>
-                                            <DataTrigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Duration="0:0:0.1"  Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)" To="35"/>
-                                                        <DoubleAnimation Duration="0:0:0.1"  Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)" To="0"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.ExitActions>
-                                        </DataTrigger>-->
-
-                                        <!--<Binding Path="IsFocused" RelativeSource="{TemplateBinding}"/>-->
-                                        <!--<Binding Path="Text.IsEmpty" RelativeSource="{TemplateBinding}"/>-->
                                     </Style.Triggers>
                                 </Style>
                             </Label.Style>
@@ -136,6 +119,76 @@
                     <Condition Property="IsSelectionActive" Value="false"/>
                 </MultiTrigger.Conditions>
                 <Setter Property="SelectionBrush" Value="{StaticResource LightBlueBrush}"/>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--SearchBox-->
+    <Style TargetType="TextBox" x:Key="SearchBox">
+        <Setter Property="Background" Value="{StaticResource GrayBGBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource LightGrayBgBrush}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource LightBlueBrush}"/>
+        <Setter Property="Padding" Value="40 0 0 0"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="BorderThickness" Value="0"/>
+
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="AllowDrop" Value="true"/>
+        <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+
+                    <Grid>
+
+                    <Border CornerRadius="5" x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
+
+                    <!--Search icon-->
+                    <Label Margin="5 0 0 0" FontSize="15" Foreground="{StaticResource  MiddleGrayBgBrush}" Style="{StaticResource Sumbol}" Content="" VerticalAlignment="Center"/>
+                        
+                    <!--Placeholder-->
+                        <Label Name="Placeholder" Margin="35 0 0 0" FontSize="14" Foreground="{StaticResource MiddleGrayBgBrush}" Style="{StaticResource RegularText}" Content="Search..." VerticalAlignment="Center"/>
+
+                    </Grid>
+                    
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Cursor" Value="IBeam"/>
+                        </Trigger>
+
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{converters:FieldPlaceholder}">
+                                    <Binding Path="IsFocused" RelativeSource="{RelativeSource Mode=Self}"/>
+                                    <Binding Path="Text.IsEmpty" RelativeSource="{RelativeSource  Mode=Self}"/>
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter Property="Visibility" TargetName="Placeholder" Value="Collapsed"/>
+                        </DataTrigger>
+                        
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                    <Condition Property="IsSelectionActive" Value="false"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
             </MultiTrigger>
         </Style.Triggers>
     </Style>

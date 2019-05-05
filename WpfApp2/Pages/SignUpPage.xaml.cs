@@ -12,43 +12,35 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UI.Animations;
+using UI.UIPresenter.ViewModels;
 
 namespace UI.Pages
 {
     /// <summary>
     /// Interaction logic for SignUpPage.xaml
     /// </summary>
-    public partial class SignUpPage : Page
+    public partial class SignUpPage : BasePage<SignUpPageViewModel>
     {
         public SignUpPage()
         {
             InitializeComponent();
+
+            //Starts all page animations
+            startAnimationsAsync();
         }
 
-        /// <summary>
-        /// Make ruquest to server
-        /// </summary>
-        private void SignUpButton_Click(object sender, RoutedEventArgs e)
+        #region Animation Helpers
+
+        private async Task startAnimationsAsync()
         {
-            //var user = UserFactory.Create();
-            //var service = ServiceFactory.Create(ServiceType.UIControl);
+            //Wait for Page animation done
+            await Task.Delay(TimeSpan.FromMilliseconds((int)SlideDurationSec * 1000));
 
-            //user.UserName = SignInUserName.Text;
-            //user.Password = SignInPassword.Text;
-
-            //var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
-
-            //if ((bool)isAutorizated) ;
-            ////TODO Open Chat Window
-            //else
-            //    //TODO popup window
+            //Element Animations
+            AnimationPresets.SlideAndFadeFromUp(SignUpPanel, 1, 150);
         }
 
-
-        private async void SignInLabel_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            await Task.Delay(200);
-            SignInPanel.Visibility = Visibility.Collapsed;
-        }
+        #endregion
     }
 }

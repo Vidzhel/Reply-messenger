@@ -10,7 +10,7 @@ namespace CommonLibs.Data
     {
         #region public Members
 
-        public ulong UserId { get; private set; }
+        public int Id { get; private set; }
 
         public string UserName { get; private set; }
 
@@ -20,11 +20,11 @@ namespace CommonLibs.Data
 
         public string Bio { get; private set; }
 
-        public List<ulong> ChatsId { get; private set; }
+        public List<int> ChatsId { get; private set; }
 
         public string TimePreferences { get; private set; }
 
-        public string ProfilePhoto { get; private set; }
+        public byte[] ProfilePhoto { get; private set; }
 
         public string Online { get; private set; }
 
@@ -32,9 +32,9 @@ namespace CommonLibs.Data
 
         #region Constructor
 
-        public User(string userName, string password, string email, string bio, string timePreferences, string profilePhoto, string online = "false", List<ulong> chatsId = null, ulong id = 0)
+        public User(string userName, string password, string email, string bio, string timePreferences, byte[] profilePhoto = null, string online = "false", List<int> chatsId = null, int id = 0)
         {
-            UserId = id;
+            Id = id;
             UserName = userName;
             Password = password;
             Email = email;
@@ -45,6 +45,12 @@ namespace CommonLibs.Data
             Online = online;
         }
 
+        /// <summary>
+        /// Constructor for dapper
+        /// </summary>
+        private User()
+        {
+        }
         #endregion
 
         #region Public Methods

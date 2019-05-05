@@ -1,0 +1,2 @@
+C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Release\CommonLibs.csprojAssemblyReference.cache
+C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Release\CommonLibs.csproj.CoreCompileInputs.cache

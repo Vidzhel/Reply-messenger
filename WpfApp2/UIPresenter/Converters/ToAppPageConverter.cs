@@ -18,8 +18,8 @@ namespace UI.UIPresenter.Converters
                 case ApplicationPage.SignUpPage:
                     return new SignUpPage();
 
-                case ApplicationPage.MessengerPage:
-                    return new MessengerPage();
+                case ApplicationPage.ChatPage:
+                    return new ChatPage();
 
                 default:
                     Debugger.Break();

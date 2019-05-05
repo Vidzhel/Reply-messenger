@@ -1,54 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using UI.Animations;
+using UI.UIPresenter.ViewModels;
 
 namespace UI.Pages
 {
     /// <summary>
     /// Interaction logic for SignInPage.xaml
     /// </summary>
-    public partial class SignInPage : Page
+    public partial class SignInPage : BasePage<SignInPageViewModel>
     {
         public SignInPage()
         {
             InitializeComponent();
+
+            //Starts all page animations
+            startAnimationsAsync();
         }
 
-        /// <summary>
-        /// Make ruquest to server
-        /// </summary>
-        private void SignInButton_Click(object sender, RoutedEventArgs e)
+        #region Animation Helpers
+
+        private async Task startAnimationsAsync()
         {
-            //var user = UserFactory.Create();
-            //var service = ServiceFactory.Create(ServiceType.UIControl);
+            //Wait for Page animation done
+            await Task.Delay(TimeSpan.FromMilliseconds((int)SlideDurationSec * 1000));
 
-            //user.UserName = SignInUserName.Text;
-            //user.Password = SignInPassword.Text;
-
-            //var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
-
-            //if ((bool)isAutorizated) ;
-            ////TODO Open Chat Window
-            //else
-            //    //TODO popup window
+            //Element Animations
+            AnimationPresets.SlideAndFadeFromUp(SignInPanel, 1, 150);
         }
 
+        #endregion
 
-        private async void SignUpLabel_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            await Task.Delay(200);
-            SignInPanel.Visibility = Visibility.Collapsed;
-        }
     }
 }

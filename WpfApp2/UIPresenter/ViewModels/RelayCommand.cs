@@ -21,6 +21,7 @@ namespace UI.UIPresenter.ViewModels
 
         #region Functions
 
+        //Always can execute
         public bool CanExecute(object parameter)
         {
             return true;

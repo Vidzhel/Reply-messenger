@@ -23,7 +23,6 @@ namespace CommonLibs.Connections.Repositories
         /// </summary>
         public event EventHandler<DataChangedArgs<IEnumerable<T>>> DataChanged;
 
-
         #endregion
 
         #region Private Members
@@ -69,9 +68,9 @@ namespace CommonLibs.Connections.Repositories
                 using (var cnn = new SQLiteConnection(LoadConnectionString()))
                 {
                     cnn.Open();
+
                     string request = "INSERT INTO " + table.ToString() + " ( " + table.GetFields() + " ) VALUES ( " + table.GetFieldsForQuery() + " )";
                     cnn.Execute(request, data);
-                    //cnn.Execute(@"INSERT INTO Contacts ( UserName, UserId, Email, Bio, Online ) VALUES ( @UserName, @UserId,  @Email, @Bio, @Online )", data);
                 }
             }
             catch (Exception e)
@@ -97,13 +96,14 @@ namespace CommonLibs.Connections.Repositories
         {
             try
             {
-                using (var cnn = new SQLiteConnection(LoadConnectionString()))
+                using (var con = new SQLiteConnection(LoadConnectionString()))
                 {
-                    cnn.Open();
+                    con.Open();
+
                     string request = "INSERT INTO " + table.ToString() + " ( " + table.GetFields() + " ) VALUES ( " + table.GetFieldsForQuery() + " )";
                     foreach (var data in dataRange)
                     {
-                        cnn.Execute(request, data);
+                        con.Execute(request, data);
                     }
                 }
             }
@@ -119,6 +119,38 @@ namespace CommonLibs.Connections.Repositories
             return true;
         }
 
+        /// <summary>
+        /// Update data 
+        /// </summary>
+        /// <param name="column">Column to search and replace data</param>
+        /// <param name="value">Value to serarch</param>
+        /// <param name="data">New data</param>
+        /// <returns></returns>
+        public bool Update(string column, string value, T data)
+        {
+            var dp = new DynamicParameters();
+
+            dp.Add(column, value);
+
+            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            {
+                con.Open();
+
+                var request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
+                var query = con.Execute(request, dp);
+
+                request = "INSERT INTO " + table.ToString() + " ( " + table.GetFields() + " ) VALUES ( " + table.GetFieldsForQuery() + " )";
+                con.Execute(request, data);
+            }
+
+            var ls = new List<T>();
+            ls.Add(data);
+
+            //Fires INotifyDataChanged event
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, "Update"));
+            return true;
+        }
+
 
         /// <summary>
         /// Finding all the matches in table
@@ -126,12 +158,18 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="column">Columnt to search</param>
         /// <param name="value">Search parameter</param>
         /// <returns></returns>
-        public IEnumerable<T> Find(Enum column, string value)
+        public IEnumerable<T> Find(string column, string value)
         {
+            var dp = new DynamicParameters();
+
+            dp.Add(column, value);
+
             using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
             {
-                string request = "select * from " + table.ToString() + "WHERE " + column + " = " + value;
-                var query = con.Query<T>(request, new DynamicParameters());
+                con.Open();
+
+                string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
+                var query = con.Query<T>(request, dp);
 
                 return query.ToList<T>();
             }
@@ -143,12 +181,18 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="column">Columnt to search</param>
         /// <param name="value">Search parameter</param>
         /// <returns></returns>
-        public T FindFirst(Enum column, string value)
+        public T FindFirst(string column, string value)
         {
+            var dp = new DynamicParameters();
+
+            dp.Add(column, value);
+
             using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
             {
-                string request = "select * from " + table.ToString() + "WHERE " + column + " = " + value;
-                var query = con.Query<T>(request, new DynamicParameters()).First<T>();
+                con.Open();
+
+                string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
+                var query = con.Query<T>(request, dp).First<T>();
 
                 return query;
             }
@@ -160,11 +204,13 @@ namespace CommonLibs.Connections.Repositories
         /// </summary>
         /// <param name="id">an id of row</param>
         /// <returns></returns>
-        public T Get(long id)
+        public T Get(int id)
         {
             using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
             {
-                var query = con.Query<T>("select * from " + table.ToString() + "WHERE Id = " + id, new DynamicParameters()).First<T>();
+                con.Open();
+
+                var query = con.Query<T>("select * from " + table.ToString() + " WHERE Id = " + id, new DynamicParameters()).First<T>();
 
                 return query;
             }
@@ -178,8 +224,10 @@ namespace CommonLibs.Connections.Repositories
         {
             using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
             {
+                con.Open();
+
                 string request = "select * from " + table.ToString();
-                var query = con.Query<T>(request, new DynamicParameters());
+                var query = con.Query<T>(request);
 
                 return query.ToList();
             }
@@ -187,48 +235,68 @@ namespace CommonLibs.Connections.Repositories
 
 
         /// <summary>
-        /// Remove data from DB
+        /// Remove row from db
         /// </summary>
-        /// <param name="data"></param>
-        public bool Remove(Enum column, T data)
+        /// <param name="column">Column to search and replace data</param>
+        /// <param name="value">Value to search</param>
+        /// <returns></returns>
+        public bool Remove(string column, string value)
         {
+            IEnumerable<T> data;
+            var dp = new DynamicParameters();
+
+            dp.Add(column, value);
+
             using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
             {
-                string request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
-                var query = con.Execute(request, new DynamicParameters());
+                con.Open();
+                string request = $"SELECT * FROM {table.ToString()} WHERE {column}=@{column}";
+                data = con.Query<T>(request, dp);
+
+                request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
+                var query = con.Execute(request, dp);
             }
 
-
-            var ls = new List<T>();
-            ls.Add(data);
-
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, "Remove"));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(data, table, "Remove"));
             return true;
         }
-
 
         /// <summary>
-        /// Remove data range from DB
+        /// Remove row from db
         /// </summary>
-        /// <param name="data"></param>
-        public bool RemoveRange(Enum column, IEnumerable<T> dataRenge)
+        /// <param name="column">Column to search and replace data</param>
+        /// <param name="values">Values to search</param>
+        /// <returns></returns>
+        public bool RemoveRange(string column, IEnumerable<string> values)
         {
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
-            {
-                string request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
 
-                foreach (var data in dataRenge)
-                {
-                    var query = con.Execute(request, data);
-                }
+            foreach (var value in values)
+            {
+                Remove(column, value);
             }
 
-            //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(dataRenge, table, "Remove"));
             return true;
         }
 
+        /// <summary>
+        /// Check db, return true if data exists
+        /// </summary>
+        /// <param name="column">column to search where</param>
+        /// <param name="value">value to search</param>
+        /// <returns></returns>
+        public bool IsExists(string column, string value)
+        {
+            var dp = new DynamicParameters();
+
+            dp.Add(column, value);
+
+            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            {
+                con.Open();
+                return con.ExecuteScalar<bool>($"select count(1) from {table.ToString()} where {column}=@{column}", dp);
+            }
+        }
 
         #endregion
 

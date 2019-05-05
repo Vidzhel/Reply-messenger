@@ -1,0 +1,36 @@
+﻿<Window x:Class="Server.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Server"
+        mc:Ignorable="d"
+        
+        Title="Server" Height="600" Width="1024">
+    <Grid Background="{StaticResource DarkBgBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!--Server logs-->
+        <TextBox Name="LogScreen" Text=""  BorderThickness="3" BorderBrush="{StaticResource LightGrayBgBrush}" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{StaticResource GrayBGBrush}" Foreground="White" IsReadOnly="True" Cursor="Arrow" Focusable="False" Margin="20"/>
+        
+        <!--Controll panel-->
+        <StackPanel Margin="20 0 20 0" Grid.Row="1" Orientation="Horizontal">
+            
+            <!--Starts Server Button-->
+            <Button Name="StartServer" Content="Start Server" Padding="10 5 10 5" Height="30" Click="StartServer_Click"/>
+            
+            <!--Stops Server-->
+            <Button Content="Stop Server" Margin="20 0 20 0" Padding="10 5 10 5" Height="30" Click="Button_Click"/>
+
+            <!--Info-->
+            
+            <!--Online-->
+            <Label Margin="20 0 0 0" Style="{StaticResource RegularText}" VerticalContentAlignment="Center" Content="Online:"/>
+            <Label Name="txtOnline" Style="{StaticResource RegularText}" VerticalContentAlignment="Center" Content=""/>
+
+        </StackPanel>
+    </Grid>
+</Window>

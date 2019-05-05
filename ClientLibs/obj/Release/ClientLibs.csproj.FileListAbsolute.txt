@@ -1,2 +1,12 @@
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.csprojAssemblyReference.cache
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.csproj.CoreCompileInputs.cache
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\ClientLibs.dll
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\ClientLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\Dapper.dll
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\System.Data.SQLite.dll
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\Dapper.xml
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\System.Data.SQLite.xml
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\System.Data.SQLite.dll.config
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.csproj.CopyComplete
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.dll
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.pdb

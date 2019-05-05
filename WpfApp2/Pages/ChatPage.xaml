@@ -1,0 +1,49 @@
+﻿<local:BasePage x:TypeArguments="viewModels:ChatPageViewModel" x:Class="UI.Pages.ChatPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                     
+      xmlns:local="clr-namespace:UI.Pages"
+      xmlns:viewModels="clr-namespace:UI.UIPresenter.ViewModels"
+      xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+      xmlns:userControls="clr-namespace:UI.UserControls"
+              
+       
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="1024"
+      Title="ChatPage">
+
+    <Grid Background="{StaticResource GrayBGBrush}">
+        <Grid.ColumnDefinitions>
+            
+            <!--Chats list-->
+            <ColumnDefinition Width="250"/>
+            
+            <!--Chat-->
+            <ColumnDefinition Width="*"/>
+
+        </Grid.ColumnDefinitions>
+
+        <!--Chats list-->
+        <Grid Name="LeftPannel" Background="{StaticResource DarkBgBrush}">
+            <Grid.RowDefinitions>
+                
+                <!--Search Field-->
+                <RowDefinition Height="Auto"/>
+
+                <!--List-->
+                <RowDefinition Height="*"/>
+
+            </Grid.RowDefinitions>
+
+            <!--Search-->
+            <TextBox Margin="10 5 10 10" Style="{StaticResource SearchBox}" />
+
+            <!--Chat list-->
+            <userControls:ChatList Grid.Row="1"/>
+
+        </Grid>
+        
+    </Grid>
+</local:BasePage>

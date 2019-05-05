@@ -18,6 +18,7 @@ using System.Windows.Media.Animation;
 
 namespace WpfApp2
 {
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

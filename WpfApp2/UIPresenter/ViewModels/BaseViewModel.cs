@@ -10,17 +10,17 @@ using System.Windows.Data;
 namespace UI.UIPresenter.ViewModels
 {
     [AddINotifyPropertyChangedInterface]
-    class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Call this to fire a PropertyChanged event
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">name of property</param>
         public void OnPropertyChanged(string name)
         {
-            PropertyChanged(this, new PropertyChangedEventArgs(name));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

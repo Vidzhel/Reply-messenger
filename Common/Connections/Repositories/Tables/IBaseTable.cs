@@ -14,10 +14,16 @@ namespace CommonLibs.Connections.Repositories.Tables
         public string Table { get; protected set; }
 
         /// <summary>
-        /// Rerutns names of all fields
+        /// Returns names of all fields
         /// </summary>
         /// <returns></returns>
         public abstract string GetFields();
+        
+        /// <summary>
+        /// Forms and retutns names to update
+        /// </summary>
+        /// <returns></returns>
+        public abstract string GetFieldsToUpdate();
 
         /// <summary>
         /// Returns names of all fields with @ before them

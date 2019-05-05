@@ -1,5 +1,3 @@
-C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Debug\CommonLibs.csprojAssemblyReference.cache
-C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Debug\CommonLibs.csproj.CoreCompileInputs.cache
 C:\work\Visual studio\C#\OOP\Messenger\Common\bin\Debug\Common.dll
 C:\work\Visual studio\C#\OOP\Messenger\Common\bin\Debug\Common.pdb
 C:\work\Visual studio\C#\OOP\Messenger\Common\bin\Debug\Dapper.dll
@@ -7,6 +5,8 @@ C:\work\Visual studio\C#\OOP\Messenger\Common\bin\Debug\System.Data.SQLite.dll
 C:\work\Visual studio\C#\OOP\Messenger\Common\bin\Debug\Dapper.xml
 C:\work\Visual studio\C#\OOP\Messenger\Common\bin\Debug\System.Data.SQLite.xml
 C:\work\Visual studio\C#\OOP\Messenger\Common\bin\Debug\System.Data.SQLite.dll.config
+C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Debug\CommonLibs.csprojAssemblyReference.cache
+C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Debug\CommonLibs.csproj.CoreCompileInputs.cache
 C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Debug\CommonLibs.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Debug\Common.dll
 C:\work\Visual studio\C#\OOP\Messenger\Common\obj\Debug\Common.pdb

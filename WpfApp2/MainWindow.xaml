@@ -8,6 +8,7 @@
         
         xmlns:local="clr-namespace:WpfApp2"
         xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+        xmlns:ioc="clr-namespace:UI.InversionOfControl"
         mc:Ignorable="d"
         
         x:Name="Window"
@@ -87,6 +88,6 @@
 
     
     <!--Main Content-->
-    <Frame Name="WindowPage" Content="{Binding ApplicationCurrentPage, Converter={converters:ToAppPageConverter}}"/>
+    <Frame Name="WindowPage" Content="{Binding ApplicationViewModel.ApplicationCurrentPage , Converter={converters:ToAppPageConverter}}"/>
     
 </Window>

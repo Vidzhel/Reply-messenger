@@ -1,5 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:UI.UserControls"
+                    xmlns:sys ="clr-namespace:System;assembly=mscorlib" 
+                    >
 
 
 
@@ -15,7 +18,7 @@
     <Style TargetType="Label" x:Key="RegularText">
         <Setter Property="FontFamily" Value="OpenSans"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontSize" Value="12"/>
 
     </Style>
 
@@ -30,5 +33,10 @@
     </Style>
 
    
+    <!--Icons-->
+
+    <sys:String x:Key="check"></sys:String>
+    <sys:String x:Key="doubleCheck"></sys:String>
+    <sys:String x:Key="clock"></sys:String>
 
 </ResourceDictionary>
