@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Common.Connections.Repositories.Tables
+﻿namespace CommonLibs.Connections.Repositories.Tables
 {
-    enum UsersTableFields
+    public enum UsersTableFields
     {
         Id,
         UserName,

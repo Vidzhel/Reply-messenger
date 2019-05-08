@@ -23,7 +23,7 @@
             <Button Name="StartServer" Content="Start Server" Padding="10 5 10 5" Height="30" Click="StartServer_Click"/>
             
             <!--Stops Server-->
-            <Button Content="Stop Server" Margin="20 0 20 0" Padding="10 5 10 5" Height="30" Click="Button_Click"/>
+            <Button Name="StopServer" Content="Stop Server" Margin="20 0 20 0" Padding="10 5 10 5" Height="30" Click="StopServer_Click"/>
 
             <!--Info-->
             

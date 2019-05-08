@@ -14,11 +14,13 @@ namespace Server
         public MainWindow()
         {
             InitializeComponent();
-            
+            StopServer.IsEnabled = false;
         }
 
         private void StartServer_Click(object sender, RoutedEventArgs e)
         {
+            StartServer.IsEnabled = false;
+            StopServer.IsEnabled = true;
             AsynchronousClientListener.DisplayMessageOnScreenContext = displayMessageOnScreen;
             Task.Run(() => AsynchronousClientListener.SrtartListening());
         }
@@ -29,11 +31,14 @@ namespace Server
         /// <param name="message"></param>
         private void displayMessageOnScreen(string message)
         {
-            LogScreen.Text += message + Environment.NewLine;
+            // Allow us change text from another thread
+            LogScreen.Dispatcher.BeginInvoke((Action)(() => LogScreen.Text += message + Environment.NewLine));
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void StopServer_Click(object sender, RoutedEventArgs e)
         {
+            StopServer.IsEnabled = false;
+            StartServer.IsEnabled = true;
             AsynchronousClientListener.Disconect(true);
         }
     }

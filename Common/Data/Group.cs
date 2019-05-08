@@ -6,7 +6,7 @@ namespace CommonLibs.Data
     /// <summary>
     /// Store chat info
     /// </summary>
-    public class Chat
+    public class Group
     {
         #region Public Members
 
@@ -26,7 +26,7 @@ namespace CommonLibs.Data
 
         #region Constructor
 
-        public Chat(bool isPrivate, bool isChannel, string image, int id = 0, List<int> adminsId = null, List<int> members = null)
+        public Group(bool isPrivate, bool isChannel, string image, int id = 0, List<int> adminsId = null, List<int> members = null)
         {
             Id = id;
             AdminsId = adminsId;

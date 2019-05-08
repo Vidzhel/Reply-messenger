@@ -5,6 +5,7 @@ namespace CommonLibs.Data
     /// <summary>
     /// Store information about message
     /// </summary>
+    [Serializable]
     public class Message
     {
 

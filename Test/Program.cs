@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Connections.UnitsOfWork;
+using ServerLibs.ConnectionToClient;
+using ClientLibs.Core.ConnectionToServer;
+using System.Threading;
 
 namespace Test
 {
@@ -35,20 +38,13 @@ namespace Test
             //wu.ContactsTableRepo.RemoveRange(ContactTableFields.Email.ToString(), ls );
             //var user = wu.ContactsTableRepo.Find(ContactTableFields.Email.ToString(), "someEmail131");
 
-            var date = DateTime.Now;
 
-            Console.WriteLine(date);
-            Console.WriteLine(date);
-            Console.WriteLine(date.Day);
-            Console.WriteLine(date.DayOfWeek);
-            Console.WriteLine(date.DayOfYear);
-            Console.WriteLine(date.TimeOfDay);
-            Console.WriteLine(date.ToLocalTime());
-            Console.WriteLine(date.ToUniversalTime().ToLocalTime());
-            Console.WriteLine(date.Date);
-            Console.WriteLine(date.GetDateTimeFormats());
-            Console.WriteLine(date.ToShortDateString());
-            Console.WriteLine(date.ToShortTimeString());
+            Thread thread = new Thread( new ThreadStart(AsynchronousServerConnection.ConnecToServer) );
+            thread.Start();
+            var response = AsynchronousServerConnection.SendData(new Command(CommandType.Messsage,
+               new Message(1, 2, DataType.Text, DateTime.Now, "This is my message") , new User("Oleg", "OlegsPass", "myEmail@sdsa", "sadsao", "+2")));
+
+            Console.WriteLine((string)response);
 
             Console.ReadKey();
         }

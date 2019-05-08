@@ -50,12 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connections\ClientServer\Client.cs" />
-    <Compile Include="Connections\ClientServer\IConnectionProvider.cs" />
+    <Compile Include="Connections\Repositories\BaseRepository.cs" />
     <Compile Include="Connections\Repositories\DataChangedArgs.cs" />
     <Compile Include="Connections\Repositories\INotifyDataChanged.cs" />
     <Compile Include="Connections\Repositories\IRemoteRepository.cs" />
-    <Compile Include="Connections\Repositories\IRepository.cs" />
     <Compile Include="Connections\Repositories\RemoteRepository.cs" />
     <Compile Include="Connections\Repositories\Repository.cs" />
     <Compile Include="Connections\Repositories\Tables\GroupsTableFields.cs" />
@@ -65,12 +63,14 @@
     <Compile Include="Connections\Repositories\Tables\ContactTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\UsersTableFields.cs" />
     <Compile Include="Connections\UnitsOfWork\LocalUnitOfWork.cs" />
-    <Compile Include="Data\Chat.cs" />
+    <Compile Include="Data\BaseCommandChain.cs" />
     <Compile Include="Data\Command.cs" />
     <Compile Include="Data\CommandType.cs" />
     <Compile Include="Data\Contact.cs" />
+    <Compile Include="Data\DataConverter.cs" />
     <Compile Include="Data\DataType.cs" />
     <Compile Include="Data\DaysOfWeek.cs" />
+    <Compile Include="Data\Group.cs" />
     <Compile Include="Data\Message.cs" />
     <Compile Include="Data\MessageStatus.cs" />
     <Compile Include="Data\MonthsOfYear.cs" />
@@ -80,7 +80,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Connections\ClientServer\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

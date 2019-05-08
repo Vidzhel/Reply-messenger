@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CommonLibs.Data
 {
     /// <summary>
-    /// Class for exchange data between server and client
+    /// Class for command server what to do
     /// </summary>
     [Serializable]
     public class Command
@@ -15,14 +15,17 @@ namespace CommonLibs.Data
         //command type
         public CommandType CommandType { get; private set; }
 
-        public object Data { get; private set; }
+        //command data
+        public object RequestData { get; private set; }
 
+        //user data
         public User UserData { get; private set; }
+
 
         public Command(CommandType command, object data, User userData)
         {
             CommandType = command;
-            Data = data;
+            RequestData = data;
             UserData = userData;
         }
     }

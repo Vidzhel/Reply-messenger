@@ -14,14 +14,15 @@ namespace CommonLibs.Connections.Repositories
     /// Basic Repository commands
     /// </summary>
     /// <typeparam name="T">type of return values, user, person eth.</typeparam>
-    public class Repository<T> : IRepository<T>, INotifyDataChanged<T> where T : class
-    {  
+    public class Repository<T> : BaseRepository<T> where T: class
+    {
+
         #region Public Members
 
         /// <summary>
         /// Notify data changed haandler
         /// </summary>
-        public event EventHandler<DataChangedArgs<IEnumerable<T>>> DataChanged;
+        public override event EventHandler<DataChangedArgs<IEnumerable<T>>> DataChanged;
 
         #endregion
 
@@ -58,10 +59,19 @@ namespace CommonLibs.Connections.Repositories
         #region Main Funct
 
         /// <summary>
+        /// Adds new handler
+        /// </summary>
+        /// <param name="handler"></param>
+        public override void AddDataChangedHandler(EventHandler<DataChangedArgs<IEnumerable<T>>> handler)
+        {
+            DataChanged += handler;
+        }
+
+        /// <summary>
         /// Add data to the table
         /// </summary>
         /// <param name="data">Info to add</param>
-        public bool Add(T data)
+        public override bool Add(T data)
         {
             try
             {
@@ -92,7 +102,7 @@ namespace CommonLibs.Connections.Repositories
         /// Add data to the table
         /// </summary>
         /// <param name="data">Info to add</param>
-        public bool AddRange(IEnumerable<T> dataRange)
+        public override bool AddRange(IEnumerable<T> dataRange)
         {
             try
             {
@@ -126,7 +136,7 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="value">Value to serarch</param>
         /// <param name="data">New data</param>
         /// <returns></returns>
-        public bool Update(string column, string value, T data)
+        public override bool Update(string column, string value, T data)
         {
             var dp = new DynamicParameters();
 
@@ -158,7 +168,7 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="column">Columnt to search</param>
         /// <param name="value">Search parameter</param>
         /// <returns></returns>
-        public IEnumerable<T> Find(string column, string value)
+        public override IEnumerable<T> Find(string column, string value)
         {
             var dp = new DynamicParameters();
 
@@ -181,7 +191,7 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="column">Columnt to search</param>
         /// <param name="value">Search parameter</param>
         /// <returns></returns>
-        public T FindFirst(string column, string value)
+        public override T FindFirst(string column, string value)
         {
             var dp = new DynamicParameters();
 
@@ -204,7 +214,7 @@ namespace CommonLibs.Connections.Repositories
         /// </summary>
         /// <param name="id">an id of row</param>
         /// <returns></returns>
-        public T Get(int id)
+        public override T Get(int id)
         {
             using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
             {
@@ -220,7 +230,7 @@ namespace CommonLibs.Connections.Repositories
         /// Gets all notes from table
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<T> GetAll()
+        public override IEnumerable<T> GetAll()
         {
             using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
             {
@@ -240,7 +250,7 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="column">Column to search and replace data</param>
         /// <param name="value">Value to search</param>
         /// <returns></returns>
-        public bool Remove(string column, string value)
+        public override bool Remove(string column, string value)
         {
             IEnumerable<T> data;
             var dp = new DynamicParameters();
@@ -268,7 +278,7 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="column">Column to search and replace data</param>
         /// <param name="values">Values to search</param>
         /// <returns></returns>
-        public bool RemoveRange(string column, IEnumerable<string> values)
+        public override bool RemoveRange(string column, IEnumerable<string> values)
         {
 
             foreach (var value in values)
@@ -285,7 +295,7 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="column">column to search where</param>
         /// <param name="value">value to search</param>
         /// <returns></returns>
-        public bool IsExists(string column, string value)
+        public override bool IsExists(string column, string value)
         {
             var dp = new DynamicParameters();
 

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace CommonLibs.Data
@@ -6,6 +7,7 @@ namespace CommonLibs.Data
     /// <summary>
     /// Store user info
     /// </summary>
+    [Serializable]
     public class User
     {
         #region public Members
@@ -55,11 +57,12 @@ namespace CommonLibs.Data
 
         #region Public Methods
 
-        public void AddNewChat(Chat chat)
+        public void AddNewChat(Group chat)
         {
             ChatsId.Add(chat.Id);
         }
-        public void RemoveChat(Chat chat)
+
+        public void RemoveChat(Group chat)
         {
             ChatsId.Remove(chat.Id);
         }

@@ -3,7 +3,7 @@ using CommonLibs.Connections.Repositories;
 
 namespace CommonLibs.Connections.Repositories
 {
-    public interface IRemoteRepository<T> : IRepository<T> where T : class
+    public interface IRemoteRepository<T> : BaseRepository<T> where T : class
     {
         //Additional methods for server repository
 

@@ -1,5 +1,7 @@
 ﻿using Common.Connections.ClientServer;
+using CommonLibs.Data;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -24,15 +26,15 @@ namespace ServerLibs.ConnectionToClient
         /// </summary>
         public static DisplayMessage DisplayMessageOnScreenContext { get; set; }
 
-        // Thread signal 
-        public static ManualResetEvent allDone = new ManualResetEvent(false);
-
         #endregion
 
         #region Private Members
 
         //main socket
         static Socket socket;
+
+        // Thread signal 
+        static ManualResetEvent allDone = new ManualResetEvent(false);
 
         #endregion
 
@@ -100,7 +102,8 @@ namespace ServerLibs.ConnectionToClient
         /// <param name="reuseSocket">reuse socket in the future</param>
         public static void Disconect(bool reuseSocket)
         {
-            socket.Disconnect(reuseSocket);
+            //socket?.Shutdown(SocketShutdown.Both);
+            //socket?.Close();
         }
 
         /// <summary>
@@ -123,7 +126,7 @@ namespace ServerLibs.ConnectionToClient
             Socket listener = (Socket)ar.AsyncState;
             Socket handler = listener.EndAccept(ar);
 
-            // Create client object that will provide Send Recieve data methods
+            // Create client object that will provide command handler
             Client client = new Client(handler);
 
             // Begin recieve data
@@ -138,8 +141,19 @@ namespace ServerLibs.ConnectionToClient
             Client client = (Client)ar.AsyncState;
             Socket handler = client.HandledSocket;
 
-            //Read data from the client socket
-            int bytesRead = handler.EndReceive(ar);
+            int bytesRead;
+
+            // If user disconects than we will catch that
+            try
+            {
+                //Read data from the client socket
+                bytesRead = handler.EndReceive(ar);
+            }
+            catch (Exception)
+            {
+                DisplayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
+                return;
+            }
 
             if(bytesRead > 0)
             {
@@ -151,19 +165,12 @@ namespace ServerLibs.ConnectionToClient
                 if(content.IndexOf("<EOF>") > -1)
                 {
 
-                    //Deserialize received data
-                    client.DeserializeData();
-
                     //All the data has benn read from the client. Display it on the console
-                    DisplayMessageOnScreen($"Read {content.Length} bytes from socket. \n Data : {content}");
-
-                    // Echo the data back to the client
-                    //Send(handler, content);
+                    DisplayMessageOnScreen($"Read {content.Length} bytes from socket {client?.UserInfo?.UserName}");
 
                     //Send response command
-                    var response = client.CommandHandler();
-                    if (response != null)
-                        Send(client, response);
+                    var response = client.HandleCommand();
+                    SendResponse(client, response);
 
                     // Begin recieve data
                     handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
@@ -177,10 +184,20 @@ namespace ServerLibs.ConnectionToClient
             }
         }
 
-        private static void Send(Client client, byte[] dataToSend)
+        private static void SendResponse(Client client, byte[] dataToSend)
         {
+            //Convert EOF label to byte array
+            var eofLabel = Encoding.Default.GetBytes("<EOF>");
+
+            //Merge two arrays
+            var temp = new List<byte>();
+            temp.AddRange(dataToSend);
+            temp.AddRange(eofLabel);
+
+            var data = temp.ToArray();
+
             //Begin sending file
-            client.HandledSocket.BeginSend(dataToSend, 0, dataToSend.Length, 0, new AsyncCallback(SendCallback), client);
+            client.HandledSocket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), client);
         }
 
         private static void SendCallback(IAsyncResult ar)

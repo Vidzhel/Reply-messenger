@@ -1,18 +1,17 @@
 ﻿using CommonLibs.Data;
 using CommonLibs.Connections.Repositories;
 using CommonLibs.Connections.Repositories.Tables;
-using System;
 
 namespace Common.Connections.UnitsOfWork
 {
     /// <summary>
-    /// Gives ability to with local repositories
+    /// Provide acces to client loacal data repositories
     /// </summary>
     public class LocalUnitOfWork
     {
 
-        public IRepository<Message> MessagesTableRepo { get; private set; }
-        public IRepository<Contact> ContactsTableRepo { get; private set; }
+        public BaseRepository<Message> MessagesTableRepo { get; private set; }
+        public BaseRepository<Contact> ContactsTableRepo { get; private set; }
 
         #region Constructor
         public LocalUnitOfWork()
