@@ -50,9 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionToClient\AsynchronousClientListener.cs" />
+    <Compile Include="ConnectionToClient\BaseCommandChain.cs" />
     <Compile Include="ConnectionToClient\Client.cs" />
-    <Compile Include="ConnectionToClient\CommandChainHandler.cs" />
-    <Compile Include="DataAcces\UnitOfWork.cs" />
+    <Compile Include="ConnectionToClient\ClientCommand.cs" />
+    <Compile Include="DataAccess\ServerCommandChain.cs" />
+    <Compile Include="DataAccess\UnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

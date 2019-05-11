@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ServerLibs.ConnectionToClient;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace CommonLibs.Data
@@ -15,8 +16,8 @@ namespace CommonLibs.Data
 
         protected static ManualResetEvent newCommand = new ManualResetEvent(false);
 
-        public abstract void AddCommand(T command);
-        public abstract void SendResponseCommand(T command);
+        public abstract void AddCommand(ClientCommand command);
+        public abstract void SendResponseCommand(ClientCommand command);
 
         protected abstract void incomingCommandsHanddler();
 

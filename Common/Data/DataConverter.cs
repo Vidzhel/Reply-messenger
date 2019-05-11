@@ -40,9 +40,13 @@ namespace CommonLibs.Data
             try
             {
 
-                using (MemoryStream ms = new MemoryStream(data))
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    return formatter.Deserialize(ms);
+                    //return formatter.Deserialize(ms);
+                    ms.Write(data, 0, data.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var obj = formatter.Deserialize(ms);
+                    return obj;
                 }
 
             }

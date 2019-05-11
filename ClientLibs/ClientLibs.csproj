@@ -51,7 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ConnectionToServer\AsynchronousServerConnection.cs" />
-    <Compile Include="Core\ConnectionToServer\ToSendCommandChain.cs" />
+    <Compile Include="Core\ConnectionToServer\ClientCommandChain.cs" />
+    <Compile Include="Core\DataAccess\UnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

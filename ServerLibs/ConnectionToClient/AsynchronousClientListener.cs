@@ -1,5 +1,4 @@
-﻿using Common.Connections.ClientServer;
-using CommonLibs.Data;
+﻿using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -16,15 +15,27 @@ namespace ServerLibs.ConnectionToClient
 
 
         /// <summary>
-        /// delegate that set context of <see cref="DisplayMessageOnScreen"/>
+        /// delegate that set context of <see cref="displayMessageOnScreen"/>
         /// </summary>
         /// <param name="message">message to display</param>
         public delegate void DisplayMessage(string message);
 
         /// <summary>
-        /// Set context of <see cref="DisplayMessageOnScreen"/>
+        /// Set context of <see cref="displayMessageOnScreen"/>
         /// </summary>
-        public static DisplayMessage DisplayMessageOnScreenContext { get; set; }
+        static public DisplayMessage DisplayMessageOnScreenContext { get; set; }
+
+        /// <summary>
+        /// Specifies ip address or server name to connect with
+        /// </summary>
+        static public string ServerName { get; set; } = "localhost";
+
+        /// <summary>
+        /// Specifies server port
+        /// </summary>
+        static public int Port { get; set; } = 11000;
+
+        static public List<Client> ConnectedClients { get; set; } = new List<Client>();
 
         #endregion
 
@@ -45,19 +56,17 @@ namespace ServerLibs.ConnectionToClient
         /// </summary>
         /// <param name="port">port to listen</param>
         /// <param name="server">server info(ip address or name)</param>
-        public static void SrtartListening(int port = 11000, string server = "localhost")
+        static public void Start()
         {
 
             //Get local ip addresses
-            //TODO change local IP addresses on server IP
-            IPHostEntry ipHost = Dns.GetHostEntry(server);
+            IPHostEntry ipHost = Dns.GetHostEntry(ServerName);
 
             //Get first server ip address from list
             IPAddress ipAddress = ipHost.AddressList[0];
 
             //Specify end local point 
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
-
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, Port);
 
             //Create new socket
             Socket listener  = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -80,7 +89,7 @@ namespace ServerLibs.ConnectionToClient
                     allDone.Reset();
 
                     //Start an asynchronous socket to listen for connections
-                    DisplayMessageOnScreen("Waiting for a connection...");
+                    displayMessageOnScreen("Waiting for a connection...");
                     listener.BeginAccept(new AsyncCallback(AcceptCallBack), listener);
 
                     //Wait until AsyncCallback function sends signal to continue
@@ -89,51 +98,97 @@ namespace ServerLibs.ConnectionToClient
             }
             catch (Exception e)
             {
-                DisplayMessageOnScreen("Error on starting listening " +e.ToString());
+                displayMessageOnScreen("Error on starting listening " +e.ToString());
             }
 
-            DisplayMessageOnScreen("End listening");
+            displayMessageOnScreen("End listening");
         }
-
 
         /// <summary>
         /// Disconects socket
         /// </summary>
         /// <param name="reuseSocket">reuse socket in the future</param>
-        public static void Disconect(bool reuseSocket)
+        static public void Disconect(bool reuseSocket)
         {
             //socket?.Shutdown(SocketShutdown.Both);
             //socket?.Close();
         }
+        
+        static public void SendData(Client client, object dataToSend)
+        {
+            //Convert EOF label to byte array
+            var eofLabel = Encoding.Default.GetBytes("<EOF>");
+
+            //Serialize and add label to the end
+            var data = DataConverter.MergeByteArrays( DataConverter.SerializeData(dataToSend), eofLabel);
+
+            try
+            {
+                //Begin sending file
+                client.HandledSocket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), client);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Display message, uses <see cref="DisplayMessage"/> delegate as context
         /// </summary>
         /// <param name="message">message to display</param>
-        private static void DisplayMessageOnScreen(string message)
+        static void displayMessageOnScreen(string message)
         {
             DisplayMessageOnScreenContext?.Invoke(message);
         }
 
-        private static void AcceptCallBack(IAsyncResult ar)
+        static private void SendCallback(IAsyncResult ar)
+        {
+            Client client = (Client)ar.AsyncState;
+
+            try
+            {
+                // Get socket
+                Socket handler = client.HandledSocket;
+
+                //Complate sending data
+                int bytesSent = handler.EndSend(ar);
+
+                displayMessageOnScreen($"Complate sending data to {client.UserInfo.Email}");
+            }
+            catch (Exception e)
+            {
+                displayMessageOnScreen($"Error on sending data to {client.UserInfo.Email}" + e.ToString());
+            }
+        }
+
+        static private void AcceptCallBack(IAsyncResult ar)
         {
             // Signal the main thread to continue
             allDone.Set();
 
-            DisplayMessageOnScreen("New connection");
+            displayMessageOnScreen("New connection");
 
             // Get socket that handles current client request
-            Socket listener = (Socket)ar.AsyncState;
-            Socket handler = listener.EndAccept(ar);
+            Socket handler = socket.EndAccept(ar);
 
             // Create client object that will provide command handler
             Client client = new Client(handler);
+
+            //Add new client to list of connected clients
+            ConnectedClients.Add(client);
 
             // Begin recieve data
             handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
         }
 
-        private static void ReadCallback(IAsyncResult ar)
+        static private void ReadCallback(IAsyncResult ar)
         {
             string content = String.Empty;
 
@@ -151,32 +206,45 @@ namespace ServerLibs.ConnectionToClient
             }
             catch (Exception)
             {
-                DisplayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
+                displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
                 return;
             }
 
-            if(bytesRead > 0)
+            if (bytesRead > 0)
             {
-                //Copy buffer to bin recieved data
-                client.BinReceivedData.AddRange(client.Buffer);
 
-                //Check the end of file
+                //Convert to text to find <EOF> label
                 content = Encoding.Default.GetString(client.Buffer);
-                if(content.IndexOf("<EOF>") > -1)
+
+
+                //Find Start of <EOF> label
+                var EOFIndex = content.IndexOf("<EOF>");
+                if (EOFIndex > -1)
                 {
 
+                    //Create new temp buffer with size of EOFIndex
+                    byte[] temp = new byte[EOFIndex];
+
+                    //Delete part after <EOF> label, with label
+                    Array.Copy(client.Buffer, temp, temp.Length);
+
+                    //Copy buffer to bin recieved data
+                    client.BinReceivedData.AddRange(temp);
+
                     //All the data has benn read from the client. Display it on the console
-                    DisplayMessageOnScreen($"Read {content.Length} bytes from socket {client?.UserInfo?.UserName}");
+                    displayMessageOnScreen($"Read {content.Length} bytes from socket {client?.UserInfo?.UserName}");
 
                     //Send response command
                     var response = client.HandleCommand();
-                    SendResponse(client, response);
+                    SendData(client, response);
 
                     // Begin recieve data
                     handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
                 }
                 else
                 {
+                    //Copy buffer to bin recieved data
+                    client.BinReceivedData.AddRange(client.Buffer);
 
                     //Continue reading data
                     handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
@@ -184,43 +252,7 @@ namespace ServerLibs.ConnectionToClient
             }
         }
 
-        private static void SendResponse(Client client, byte[] dataToSend)
-        {
-            //Convert EOF label to byte array
-            var eofLabel = Encoding.Default.GetBytes("<EOF>");
-
-            //Merge two arrays
-            var temp = new List<byte>();
-            temp.AddRange(dataToSend);
-            temp.AddRange(eofLabel);
-
-            var data = temp.ToArray();
-
-            //Begin sending file
-            client.HandledSocket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), client);
-        }
-
-        private static void SendCallback(IAsyncResult ar)
-        {
-            Client client = (Client)ar.AsyncState;
-
-            try
-            {
-                // Get socket
-                Socket handler = client.HandledSocket;
-
-                //Complate sending data
-                int bytesSent = handler.EndSend(ar);
-
-                DisplayMessageOnScreen($"Complate sending data to {client.UserInfo.Email}");
-            }
-            catch (Exception e)
-            {
-                DisplayMessageOnScreen($"Error on sending data to {client.UserInfo.Email}" + e.ToString());
-            }
-        }
-
-
         #endregion
+
     }
 }

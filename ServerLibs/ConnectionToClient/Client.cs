@@ -1,11 +1,9 @@
-﻿using CommonLibs.Core.ConnectionToServer;
-using CommonLibs.Data;
+﻿using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
 
 namespace ServerLibs.ConnectionToClient
 {
@@ -16,18 +14,9 @@ namespace ServerLibs.ConnectionToClient
     public class Client
     {
 
-        #region Private Members
-
-        /// <summary>
-        /// Signales <see cref="HandleCommand"/> about response data is ready
-        /// </summary>
-        ManualResetEvent responseDataIsReady = new ManualResetEvent(false);
-
-        object responseData = new object();
-
-        #endregion
-
         #region Public Members
+
+        static event EventHandler<Command> incomingCommand;
 
         // Client Socket
         public Socket HandledSocket { get; set; }
@@ -42,20 +31,6 @@ namespace ServerLibs.ConnectionToClient
         /// Recieved from client Serealized data
         /// </summary>
         public List<byte> BinReceivedData { get; set; } = new List<byte>();
-
-        /// <summary>
-        /// Data for cient
-        /// </summary>
-        public object ResponseData {
-            get { return responseData}
-            set
-            {
-                responseData = value;
-
-                //Signal CommandHandler to continue
-                responseDataIsReady.Set();
-            }
-        }
 
         //Recieve buffer
         public byte[] Buffer = new byte[BufferSize];
@@ -73,27 +48,29 @@ namespace ServerLibs.ConnectionToClient
 
         #region Public Methods
 
-        public byte[] HandleCommand()
+        /// <summary>
+        /// Adds new handler to handle incomming from client commands
+        /// </summary>
+        /// <param name="handler"></param>
+        public void OnIncomingCommand(EventHandler<Command> handler)
         {
-            //Reset signal to use again
-            responseDataIsReady.Reset();
+            incomingCommand += handler;
+        }
 
+        public Command HandleCommand()
+        {
             //Deserealize data and get command
             var command = (Command) deserializeData();
 
-            //Set extra data to this object
-            command.AnswerData = this;
+            //copy user data
+            if (UserInfo == null)
+                UserInfo = command.UserData;
+            else
+                ;
 
-            //Pull command to the queue
-            CommandChainHandler.AddCommand(command);
+            OnIncomingCommand
 
-            //copy user data5
-            UserInfo = command.UserData;
-
-            //Wait for response data ready signal from another thread
-            responseDataIsReady.WaitOne();
-
-            return serializeData(ResponseData);
+            return new Command(CommandType.Answer, true, UserInfo);
         }
 
         #endregion

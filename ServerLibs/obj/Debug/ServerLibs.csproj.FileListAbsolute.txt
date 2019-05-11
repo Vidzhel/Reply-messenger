@@ -18,3 +18,5 @@ C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Debug\ServerLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Debug\ServerLibs.pdb
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Common.dll
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Common.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ClientLibs.dll
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ClientLibs.pdb

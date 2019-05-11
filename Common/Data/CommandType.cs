@@ -9,32 +9,35 @@ namespace CommonLibs.Data
     /// <summary>
     /// Represenst all commans which server can send to client and vice versa
     /// </summary>
+    [Serializable]
     public enum CommandType
     {
         SignUp,
-        AnswerSignUp,
+        //AnswerSignUp,
         SignIn,
-        AnswerSignIn,
+        //AnswerSignIn,
 
         CreateGroup,
-        AnswerCreateGroup,
+        //AnswerCreateGroup,
         ConnectToGroup,
-        AnswerConnectToGroup,
+        //AnswerConnectToGroup,
         DisconectFromGroup,
-        AnswerDisconectFromGroup,
+        //AnswerDisconectFromGroup,
 
         UpdateGroup,
-        AnswerUpdateGroup,
+        //AnswerUpdateGroup,
         UpdateMessage,
-        AnswerUpdateMessage,
+        //AnswerUpdateMessage,
         UpdateUserInfo,
-        AnswerUpdateUserInfo,
+        //AnswerUpdateUserInfo,
         SendMesssage,
-        AnswerSendMesssage,
+        //AnswerSendMesssage,
         ReceiveMesssage,
-        AnswerReceiveMesssage,
+        //AnswerReceiveMesssage,
 
         DeleteUser,
-        AnswerDeleteUser
+        //AnswerDeleteUser
+
+        Answer
     }
 }

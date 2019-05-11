@@ -1,7 +1,6 @@
 ﻿using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -13,11 +12,12 @@ namespace ClientLibs.Core.ConnectionToServer
     /// <summary>
     /// Provide methods for send and receive data
     /// </summary>
-    public class AsynchronousServerConnection
+    public static class AsynchronousServerConnection
     {
         #region Private Members
 
         //Receive buffer size
+
         static int bufferSize = 1024;
 
         static byte[] buffer = new byte[bufferSize];
@@ -41,18 +41,18 @@ namespace ClientLibs.Core.ConnectionToServer
         /// <summary>
         /// Specifies time to wait before reconnect
         /// </summary>
-        public static int ReconectionTimeSeconds { get; set; } = 5;
+        static public int ReconectionTimeSeconds { get; set; } = 5;
 
         /// <summary>
         /// Specifies ip address or server name to connect with
         /// </summary>
-        public static string ServerName { get; set; } = "localhost";
+        static public string ServerName { get; set; } = "localhost";
 
         /// <summary>
         /// Specifies server port
         /// </summary>
-        public static int Port { get; set; } = 11000;
-        
+        static public int Port { get; set; } = 11000;
+
         #endregion
 
         #region Public Methods
@@ -61,7 +61,7 @@ namespace ClientLibs.Core.ConnectionToServer
         /// Adds new handler on answer data ready to use
         /// </summary>
         /// <param name="handler"></param>
-        public static void OnAnswerDataReady(EventHandler<byte[]> handler)
+        static public void OnAnswerDataReady(EventHandler<byte[]> handler)
         {
             answerDataReady += handler;
         }
@@ -71,7 +71,7 @@ namespace ClientLibs.Core.ConnectionToServer
         /// </summary>
         /// <param name="Port">port to listen</param>
         /// <param name="ServerName">server info(ip address or name)</param>
-        public static void ConnecToServer()
+        static public void Start()
         {
 
             //Get local ip addresses
@@ -99,8 +99,15 @@ namespace ClientLibs.Core.ConnectionToServer
 
                     ServerConnected = true;
 
-                    //Start listening socket
-                    //StartListening
+                    //Start receiving data
+                    Thread resieveData = new Thread(new ThreadStart(ReceiveData));
+                    resieveData.Name = "Receiver From Server";
+                    resieveData.Start();
+                    
+                    //Start checking connection
+                    Thread checkingConnection = new Thread(new ThreadStart(checkConnection));
+                    checkingConnection.Name = "Check Connection";
+                    checkingConnection.Start();
                 }
                 catch (Exception e)
                 {
@@ -122,7 +129,7 @@ namespace ClientLibs.Core.ConnectionToServer
         /// </summary>
         /// <param name="obj">object to send</param>
         /// <returns>Response of server</returns>
-        public static bool SendData(object obj)
+        static public bool SendData(object obj)
         {
             while (!ServerConnected)
             {
@@ -149,26 +156,7 @@ namespace ClientLibs.Core.ConnectionToServer
             return true;
         }
 
-
-
-        /// <summary>
-        /// Disconects socket
-        /// </summary>
-        public static void Disconect()
-        {
-            Socket.Shutdown(SocketShutdown.Both);
-            Socket.Close();
-
-            DisplayMessageOnScreen("Disconected from the server");
-        }
-
-
-        #endregion
-
-        #region Private Methods
-
-
-        static void receiveData()
+        static public void ReceiveData()
         {
 
             string content = String.Empty;
@@ -188,29 +176,80 @@ namespace ClientLibs.Core.ConnectionToServer
 
             if (bytesRead > 0)
             {
-                //Copy buffer to bin recieved data
-                binReceivedData.AddRange(buffer);
 
                 //Check the end of file, if there isn't <EOF> label, then continue reading
                 content = Encoding.Default.GetString(buffer);
-                if (content.IndexOf("<EOF>") > -1)
+
+                //Start of <EOF> label
+                var EOFIndex = content.IndexOf("<EOF>");
+                if (EOFIndex > -1)
                 {
+                    //Create new temp buffer with size of EOFIndex
+                    byte[] temp = new byte[EOFIndex];
+
+                    //Delete part after <EOF> label
+                    Array.Copy(buffer, temp, temp.Length);
+
+                    //Copy buffer to bin recieved data
+                    binReceivedData.AddRange(temp);
+
                     //Notify listeners about recieved data is ready to handle
-                    answerDataReady.Invoke(AsynchronousServerConnection.binReceivedData, binReceivedData.ToArray());
+                    answerDataReady.Invoke(binReceivedData, binReceivedData.ToArray());
 
                     //All the data has benn read from the client. Display it on the console
                     DisplayMessageOnScreen($"Read {content.Length} bytes from server");
 
                     //Clear binReceivedData to fill it with new data
                     binReceivedData = new List<byte>();
+
+                    //Start again
+                    ReceiveData();
                 }
                 else
                 {
+
+                    //Copy buffer to bin recieved data
+                    binReceivedData.AddRange(buffer);
+
                     //Continue reading data
-                    receiveData();
+                    ReceiveData();
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Disconects socket
+        /// </summary>
+        static public void Disconect()
+        {
+            Socket.Shutdown(SocketShutdown.Both);
+            Socket.Close();
+
+            DisplayMessageOnScreen("Disconected from the server");
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        static void checkConnection()
+        {
+            do
+            {
+                //Check every ReconectionTimeSeconds seconds
+                Thread.Sleep(ReconectionTimeSeconds * 1000);
+
+                //If socket not connected
+                if ((Socket.Poll(1, SelectMode.SelectRead) && Socket.Available == 0) || Socket == null)
+                {
+                    ServerConnected = false;
+                    
+                    //Reconnect
+                    Start();
+                }
+                
+            } while (true);
         }
 
         static void DisplayMessageOnScreen(string message)

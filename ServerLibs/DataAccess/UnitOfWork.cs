@@ -1,9 +1,10 @@
 ﻿using CommonLibs.Connections.Repositories;
 using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
+using ServerLibs.ConnectionToClient;
 using System.Collections.Generic;
 
-namespace ServerLibs.DataAcces
+namespace ServerLibs.DataAccess
 {
 
     /// <summary>
@@ -16,6 +17,8 @@ namespace ServerLibs.DataAcces
         public static BaseRepository<User> UsersTableRepo = new Repository<User>(new Table(new UsersTableFields(), "Users"), "LocalDB");
         public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new GroupsTableFields(), "Users"), "LocalDB");
 
+        static ServerCommandChain commandChain = new ServerCommandChain();
+
         #region Constructor
 
         static UnitOfWork()
@@ -24,11 +27,24 @@ namespace ServerLibs.DataAcces
             MessagesTableRepo.AddDataChangedHandler( (sender, args) => OnMessagesTableChanged(sender, args));
             UsersTableRepo.AddDataChangedHandler( (sender, args) => OnUsersTableChanged(sender, args));
             GroupsTableRepo.AddDataChangedHandler( (sender, args) => OnGroupsTableChanged(sender, args));
+
+            //Add handler on new server command received e.g. new message
+            commandChain.OnNewClientCommand((sender, args) => OnClientCommand(sender, args));
         }
 
         #endregion
 
         #region Event Hendlers
+
+        /// <summary>
+        /// Hande commands from server e.g. new message
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="com">command to handle</param>
+        static void OnClientCommand(object sender, ClientCommand com)
+        {
+
+        }
 
         /// <summary>
         /// Do some stuff on message table data changed
@@ -41,7 +57,7 @@ namespace ServerLibs.DataAcces
         }
 
         /// <summary>
-        /// Do some stuff on message table data changed
+        /// Do some stuff on users table data changed
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
@@ -51,7 +67,7 @@ namespace ServerLibs.DataAcces
         }
 
         /// <summary>
-        /// Do some stuff on message table data changed
+        /// Do some stuff on groups table data changed
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace CommonLibs.Data
@@ -6,6 +7,7 @@ namespace CommonLibs.Data
     /// <summary>
     /// Store chat info
     /// </summary>
+    [Serializable]
     public class Group
     {
         #region Public Members

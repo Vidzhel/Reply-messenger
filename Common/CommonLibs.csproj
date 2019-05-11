@@ -53,8 +53,6 @@
     <Compile Include="Connections\Repositories\BaseRepository.cs" />
     <Compile Include="Connections\Repositories\DataChangedArgs.cs" />
     <Compile Include="Connections\Repositories\INotifyDataChanged.cs" />
-    <Compile Include="Connections\Repositories\IRemoteRepository.cs" />
-    <Compile Include="Connections\Repositories\RemoteRepository.cs" />
     <Compile Include="Connections\Repositories\Repository.cs" />
     <Compile Include="Connections\Repositories\Tables\GroupsTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\MessagesTableFields.cs" />
@@ -62,8 +60,8 @@
     <Compile Include="Connections\Repositories\Tables\IBaseTable.cs" />
     <Compile Include="Connections\Repositories\Tables\ContactTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\UsersTableFields.cs" />
-    <Compile Include="Connections\UnitsOfWork\LocalUnitOfWork.cs" />
     <Compile Include="Data\BaseCommandChain.cs" />
+    <Compile Include="Data\BaseDoubleCommandChain.cs" />
     <Compile Include="Data\Command.cs" />
     <Compile Include="Data\CommandType.cs" />
     <Compile Include="Data\Contact.cs" />
@@ -71,6 +69,7 @@
     <Compile Include="Data\DataType.cs" />
     <Compile Include="Data\DaysOfWeek.cs" />
     <Compile Include="Data\Group.cs" />
+    <Compile Include="Data\ICommunicateable.cs" />
     <Compile Include="Data\Message.cs" />
     <Compile Include="Data\MessageStatus.cs" />
     <Compile Include="Data\MonthsOfYear.cs" />
