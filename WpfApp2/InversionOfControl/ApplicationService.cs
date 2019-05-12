@@ -19,14 +19,14 @@ namespace UI.InversionOfControl
         /// <summary>
         /// Do Not Notify Changes, Get current page
         /// </summary>
-        public static ApplicationPage GetCurrentPage => IoCController.Kernel.Get<ApplicationViewModel>().ApplicationCurrentPage;
+        public static ApplicationPages GetCurrentPage => IoCController.Kernel.Get<ApplicationViewModel>().ApplicationCurrentPage;
 
 
         /// <summary>
         /// Set new application page
         /// </summary>
         /// <param name="nextPage">new page</param>
-        public static void ChangeCurrentApplicationPage(ApplicationPage nextPage)
+        public static void ChangeCurrentApplicationPage(ApplicationPages nextPage)
         {
             GetApplicationViewModel.ApplicationCurrentPage = nextPage;
         }

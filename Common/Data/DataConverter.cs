@@ -13,6 +13,42 @@ namespace CommonLibs.Data
     {
 
         /// <summary>
+        /// Get string representation of list
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static string ListToString(List<int> list)
+        {
+            string result = String.Empty;
+
+            foreach (var item in list)
+            {
+                result += " " + item;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get list of int values from string(space separated)
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static List<int> StringToList(string value)
+        {
+            var strArray = value.Split(new char[] { ' ' });
+            var intArray = new int[strArray.Length];
+
+            for (int i = 0; i < strArray.Length; i++)
+                intArray[i] = Convert.ToInt32(strArray[i]);
+
+            var list = new List<int>();
+
+            list.AddRange(intArray);
+            return list;
+        }
+
+        /// <summary>
         /// Merge two byte arrays
         /// </summary>
         /// <param name="arr"></param>

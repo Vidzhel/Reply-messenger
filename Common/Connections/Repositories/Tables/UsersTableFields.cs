@@ -8,7 +8,6 @@
         Email,
         Bio,
         Online,
-        TimePreferences,
         ChatsId,
         ProfilePhoto
     }

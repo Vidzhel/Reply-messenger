@@ -88,6 +88,6 @@
 
     
     <!--Main Content-->
-    <Frame Name="WindowPage" Content="{Binding ApplicationViewModel.ApplicationCurrentPage , Converter={converters:ToAppPageConverter}}"/>
+    <Frame Name="WindowPage" NavigationUIVisibility="Hidden" Content="{Binding ApplicationViewModel.ApplicationCurrentPage , Converter={converters:ToAppPageConverter}}"/>
     
 </Window>

@@ -64,7 +64,7 @@ namespace UI.UIPresenter.ViewModels
 
         void changePage(object parametr)
         {
-            ApplicationService.ChangeCurrentApplicationPage((ApplicationPage)Enum.Parse(typeof(ApplicationPage), (string)parametr, true));
+            ApplicationService.ChangeCurrentApplicationPage((ApplicationPages)Enum.Parse(typeof(ApplicationPages), (string)parametr, true));
         }
 
         /// <summary>

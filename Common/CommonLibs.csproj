@@ -56,24 +56,25 @@
     <Compile Include="Connections\Repositories\Repository.cs" />
     <Compile Include="Connections\Repositories\Tables\GroupsTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\MessagesTableFields.cs" />
+    <Compile Include="Connections\Repositories\Tables\RemoteGroupsTableFields.cs" />
+    <Compile Include="Connections\Repositories\Tables\RemoteMessagesTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\Table.cs" />
     <Compile Include="Connections\Repositories\Tables\IBaseTable.cs" />
     <Compile Include="Connections\Repositories\Tables\ContactTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\UsersTableFields.cs" />
     <Compile Include="Data\BaseCommandChain.cs" />
     <Compile Include="Data\BaseDoubleCommandChain.cs" />
-    <Compile Include="Data\Command.cs" />
-    <Compile Include="Data\CommandType.cs" />
-    <Compile Include="Data\Contact.cs" />
+    <Compile Include="Data\Main\Command.cs" />
+    <Compile Include="Data\Enums\CommandType.cs" />
+    <Compile Include="Data\Main\Contact.cs" />
     <Compile Include="Data\DataConverter.cs" />
-    <Compile Include="Data\DataType.cs" />
-    <Compile Include="Data\DaysOfWeek.cs" />
-    <Compile Include="Data\Group.cs" />
-    <Compile Include="Data\ICommunicateable.cs" />
-    <Compile Include="Data\Message.cs" />
-    <Compile Include="Data\MessageStatus.cs" />
-    <Compile Include="Data\MonthsOfYear.cs" />
-    <Compile Include="Data\User.cs" />
+    <Compile Include="Data\Enums\DataType.cs" />
+    <Compile Include="Data\Enums\DaysOfWeek.cs" />
+    <Compile Include="Data\Main\Group.cs" />
+    <Compile Include="Data\Main\Message.cs" />
+    <Compile Include="Data\Enums\MessageStatus.cs" />
+    <Compile Include="Data\Enums\MonthsOfYear.cs" />
+    <Compile Include="Data\Main\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -88,7 +88,40 @@
         </Setter>
     </Style>
 
-    <!--Window chrome Buttons--> 
+    <!--Icon Button-->
+    <Style x:Key="IconicButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="White"/>
+        <Setter Property="Foreground" Value="{StaticResource MiddleGrayBgBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontFamily" Value="Font Awesome 5 Pro"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Foreground" Value="{StaticResource LightGrayBgBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Foreground" Value="{StaticResource LightBlueBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    
+    
+    <!--Window chrome Buttons-->
     <Style TargetType="Button" x:Key="WindowSystemButtons">
         <Setter Property="Height" Value="10"/>
         <Setter Property="Margin" Value="5 0 0 2"/>
@@ -97,7 +130,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    
+
                     <Grid>
                         <Border Name="Overlay" Panel.ZIndex="2" Background="White" CornerRadius="7" Opacity="0"/>
                         <Border Name="DarkOverlay" Panel.ZIndex="2" Background="{StaticResource DarkBlueBrush}" CornerRadius="7" Opacity="0"/>
@@ -131,15 +164,15 @@
                         <Trigger Property="Button.IsPressed" Value="True">
                             <Setter TargetName="DarkOverlay" Property="Opacity" Value="0.2"/>
                         </Trigger>
-                        
+
                     </ControlTemplate.Triggers>
-                    
-                    
+
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
 
-        
+
     </Style>
     <Style TargetType="Button" BasedOn="{StaticResource WindowSystemButtons}" x:Key="CloseWindowButton">
         <Setter Property="Background" Value="{StaticResource LightRedBrush}"/>

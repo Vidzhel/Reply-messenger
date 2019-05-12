@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
+using System.Threading;
 
 namespace CommonLibs.Connections.Repositories
 {
@@ -28,6 +29,8 @@ namespace CommonLibs.Connections.Repositories
 
         #region Private Members
 
+
+        Mutex DBBusy = new Mutex();
 
         /// <summary>
         /// Connection string of data base (App.config)
@@ -73,6 +76,8 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="data">Info to add</param>
         public override bool Add(T data)
         {
+            DBBusy.WaitOne();
+
             try
             {
                 using (var cnn = new SQLiteConnection(LoadConnectionString()))
@@ -86,6 +91,8 @@ namespace CommonLibs.Connections.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e);
+
+                DBBusy.ReleaseMutex();
                 return false;
             }
 
@@ -94,6 +101,7 @@ namespace CommonLibs.Connections.Repositories
 
             //Fires INotifyDataChanged event
             DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, "add"));
+            DBBusy.ReleaseMutex();
             return true;
         }
 
@@ -104,6 +112,8 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="data">Info to add</param>
         public override bool AddRange(IEnumerable<T> dataRange)
         {
+            DBBusy.WaitOne();
+
             try
             {
                 using (var con = new SQLiteConnection(LoadConnectionString()))
@@ -120,12 +130,14 @@ namespace CommonLibs.Connections.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
                 return false;
             }
 
 
             //Fires INotifyDataChanged event
             DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(dataRange, table, "addRange"));
+            DBBusy.ReleaseMutex();
             return true;
         }
 
@@ -138,19 +150,34 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override bool Update(string column, string value, T data)
         {
+            DBBusy.WaitOne();
+
             var dp = new DynamicParameters();
 
             dp.Add(column, value);
 
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            try
             {
-                con.Open();
 
-                var request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
-                var query = con.Execute(request, dp);
+                //TODO Remake Update functin in Repository
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
 
-                request = "INSERT INTO " + table.ToString() + " ( " + table.GetFields() + " ) VALUES ( " + table.GetFieldsForQuery() + " )";
-                con.Execute(request, data);
+                    var request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
+                    var query = con.Execute(request, dp);
+
+                    request = "INSERT INTO " + table.ToString() + " ( " + table.GetFields() + " ) VALUES ( " + table.GetFieldsForQuery() + " )";
+                    con.Execute(request, data);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+
+                return false;
             }
 
             var ls = new List<T>();
@@ -158,6 +185,7 @@ namespace CommonLibs.Connections.Repositories
 
             //Fires INotifyDataChanged event
             DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, "Update"));
+            DBBusy.ReleaseMutex();
             return true;
         }
 
@@ -170,18 +198,33 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override IEnumerable<T> Find(string column, string value)
         {
+            DBBusy.WaitOne();
+
             var dp = new DynamicParameters();
 
             dp.Add(column, value);
 
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            try
             {
-                con.Open();
 
-                string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
-                var query = con.Query<T>(request, dp);
 
-                return query.ToList<T>();
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
+
+                    string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
+                    var query = con.Query<T>(request, dp);
+
+                    DBBusy.ReleaseMutex();
+                    return query.ToList<T>();
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return null;
             }
         }
         
@@ -193,18 +236,32 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override T FindFirst(string column, string value)
         {
+            DBBusy.WaitOne();
+
             var dp = new DynamicParameters();
 
             dp.Add(column, value);
 
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            try
             {
-                con.Open();
 
-                string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
-                var query = con.Query<T>(request, dp).First<T>();
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
 
-                return query;
+                    string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
+                    var query = con.Query<T>(request, dp).First<T>();
+
+                    DBBusy.ReleaseMutex();
+                    return query;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return null;
             }
         }
 
@@ -216,13 +273,27 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override T Get(int id)
         {
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            DBBusy.WaitOne();
+
+            try
             {
-                con.Open();
 
-                var query = con.Query<T>("select * from " + table.ToString() + " WHERE Id = " + id, new DynamicParameters()).First<T>();
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
 
-                return query;
+                    var query = con.Query<T>("select * from " + table.ToString() + " WHERE Id = " + id, new DynamicParameters()).First<T>();
+
+                    DBBusy.ReleaseMutex();
+                    return query;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return null;
             }
         }
 
@@ -232,15 +303,33 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override IEnumerable<T> GetAll()
         {
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            DBBusy.WaitOne();
+
+            try
             {
-                con.Open();
 
-                string request = "select * from " + table.ToString();
-                var query = con.Query<T>(request);
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
 
-                return query.ToList();
+                    string request = "select * from " + table.ToString();
+                    var query = con.Query<T>(request);
+
+                    DBBusy.ReleaseMutex();
+                    return query.ToList();
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return null;
+            }
+        }
+
+        public override T GetLast()
+        {
+            return GetAll().First();
         }
 
 
@@ -252,23 +341,36 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override bool Remove(string column, string value)
         {
+            DBBusy.WaitOne();
+
             IEnumerable<T> data;
             var dp = new DynamicParameters();
 
             dp.Add(column, value);
-
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            try
             {
-                con.Open();
-                string request = $"SELECT * FROM {table.ToString()} WHERE {column}=@{column}";
-                data = con.Query<T>(request, dp);
 
-                request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
-                var query = con.Execute(request, dp);
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
+                    string request = $"SELECT * FROM {table.ToString()} WHERE {column}=@{column}";
+                    data = con.Query<T>(request, dp);
+
+                    request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
+                    var query = con.Execute(request, dp);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return false;
             }
 
             //Fires INotifyDataChanged event
             DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(data, table, "Remove"));
+            DBBusy.ReleaseMutex();
             return true;
         }
 
@@ -280,12 +382,19 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override bool RemoveRange(string column, IEnumerable<string> values)
         {
+            DBBusy.WaitOne();
 
             foreach (var value in values)
             {
-                Remove(column, value);
+                if (!Remove(column, value))
+                {
+                    DBBusy.ReleaseMutex();
+
+                    return false;
+                }
             }
 
+            DBBusy.ReleaseMutex();
             return true;
         }
 
@@ -297,14 +406,30 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public override bool IsExists(string column, string value)
         {
+            DBBusy.WaitOne();
+
             var dp = new DynamicParameters();
 
             dp.Add(column, value);
 
-            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            try
             {
-                con.Open();
-                return con.ExecuteScalar<bool>($"select count(1) from {table.ToString()} where {column}=@{column}", dp);
+
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
+
+                    var res = con.ExecuteScalar<bool>($"select count(1) from {table.ToString()} where {column}=@{column}", dp);
+                    DBBusy.ReleaseMutex();
+                    return res;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return false;
             }
         }
 
@@ -319,8 +444,8 @@ namespace CommonLibs.Connections.Repositories
         public string LoadConnectionString()
         {
             //TODO delete comments
-            //return ConfigurationManager.ConnectionStrings[connectionString].ConnectionString;
-            return @"Data Source=..\..\SQLiteLocalDB.db; Version=3";
+            return ConfigurationManager.ConnectionStrings[connectionString].ConnectionString;
+            //return @"Data Source=..\..\SQLiteRemoteDB.db; Version=3";
         }
 
         #endregion

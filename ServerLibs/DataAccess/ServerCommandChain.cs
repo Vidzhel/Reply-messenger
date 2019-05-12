@@ -46,7 +46,7 @@ namespace ServerLibs.DataAccess
         /// <summary>
         /// Adds new command to the chain
         /// </summary>
-        public override void AddCommand(ClientCommand clientCommand)
+        public override void SendResponseCommand(ClientCommand clientCommand)
         {
             //Send command
             AsynchronousClientListener.SendData(clientCommand.Client, clientCommand.Command);
@@ -58,7 +58,7 @@ namespace ServerLibs.DataAccess
         /// <param name="comType"></param>
         /// <param name="data"></param>
         /// <param name="user"></param>
-        public override void SendResponseCommand(ClientCommand command)
+        public override void AddCommand(ClientCommand command)
         {
 
             //Adding command to the queue 

@@ -18,11 +18,13 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            while (true)
+            int i = 0;
+            while (i != 10)
             {
+                i++;
+                //var response = UnitOfWork.SignUp(new User("Vidzhel", "HardPass", "MyEmail", "MyBio", "+2"));
+                var response = UnitOfWork.SendMessage(new Message(1, 2, DataType.Text, DateTime.Now , "Hello, I'm a new user", MessageStatus.SendingInProgress));
 
-
-                var response = UnitOfWork.SendMessage(new Message(1, 2, DataType.Text, DateTime.Now, "Hello, I'm a new user", MessageStatus.SendingInProgress));
 
                 if (response)
                     Console.WriteLine("Yeah, probably, that command means that all sh** work like have expected");

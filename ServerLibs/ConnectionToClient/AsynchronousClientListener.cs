@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace ServerLibs.ConnectionToClient
 {
-    public static class AsynchronousClientListener
+    public static class AsynchronousClientListener 
     {
 
         #region Public Members
@@ -98,7 +98,7 @@ namespace ServerLibs.ConnectionToClient
             }
             catch (Exception e)
             {
-                displayMessageOnScreen("Error on starting listening " +e.ToString());
+                displayMessageOnScreen("Error on starting listening " + e.ToString());
             }
 
             displayMessageOnScreen("End listening");
@@ -207,6 +207,13 @@ namespace ServerLibs.ConnectionToClient
             catch (Exception)
             {
                 displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
+
+                //Remove from online clients
+                ConnectedClients.Remove(client);
+
+                //Set user status to offline
+                client.HandleCommand(new Command(CommandType.SignOut, null, null));
+
                 return;
             }
 
@@ -234,12 +241,25 @@ namespace ServerLibs.ConnectionToClient
                     //All the data has benn read from the client. Display it on the console
                     displayMessageOnScreen($"Read {content.Length} bytes from socket {client?.UserInfo?.UserName}");
 
-                    //Send response command
-                    var response = client.HandleCommand();
-                    SendData(client, response);
+                    client.HandleCommand();
 
-                    // Begin recieve data
-                    handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
+                    try
+                    {
+                        // Begin recieve data
+                        handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
+                    }
+                    catch (Exception)
+                    {
+                        displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
+
+                        //Remove from online clients
+                        ConnectedClients.Remove(client);
+
+                        //Set user status to offline
+                        client.HandleCommand(new Command(CommandType.SignOut, null, null));
+
+                        return;
+                    }
                 }
                 else
                 {

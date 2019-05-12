@@ -1,9 +1,7 @@
 ﻿using CommonLibs.Data;
-using System;
+using ServerLibs.DataAccess;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ServerLibs.ConnectionToClient
 {
@@ -15,8 +13,6 @@ namespace ServerLibs.ConnectionToClient
     {
 
         #region Public Members
-
-        static event EventHandler<Command> incomingCommand;
 
         // Client Socket
         public Socket HandledSocket { get; set; }
@@ -49,86 +45,31 @@ namespace ServerLibs.ConnectionToClient
         #region Public Methods
 
         /// <summary>
-        /// Adds new handler to handle incomming from client commands
+        /// Converts from bin representation and adds command to the server command chain
         /// </summary>
-        /// <param name="handler"></param>
-        public void OnIncomingCommand(EventHandler<Command> handler)
-        {
-            incomingCommand += handler;
-        }
-
-        public Command HandleCommand()
+        public void HandleCommand()
         {
             //Deserealize data and get command
-            var command = (Command) deserializeData();
+            var command = (Command)DataConverter.DeserializeData(BinReceivedData.ToArray());
 
             //copy user data
-            if (UserInfo == null)
+            if (command.UserData != null)
                 UserInfo = command.UserData;
-            else
-                ;
 
-            OnIncomingCommand
+            UnitOfWork.CommandChain.AddCommand(new ClientCommand(command, this));
+        }
 
-            return new Command(CommandType.Answer, true, UserInfo);
+        /// <summary>
+        /// Adds the command to the server command chain
+        /// </summary>
+        /// <param name="com"></param>
+        public void HandleCommand(Command com)
+        {
+
+            UnitOfWork.CommandChain.AddCommand(new ClientCommand(com, this));
         }
 
         #endregion
 
-        #region Private Methods
-
-
-
-        /// <summary>
-        /// Serealize data
-        /// </summary>
-        /// <returns>return true if object deserialized without problems</returns>
-        byte[] serializeData(object dataToSerealize)
-        {
-            //Create binary formatter for deserialize data
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            try
-            {
-
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    formatter.Serialize(ms, dataToSerealize);
-
-                    return ms.ToArray();
-                }
-
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Deserialize data from <see cref="BinReceivedData"/> and put into <see cref="ReceivedData"/>
-        /// </summary>
-        /// <returns>return true if object deserialized without problems</returns>
-        object deserializeData()
-        {
-            //Create binary formatter for deserialize data
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            try
-            {
-
-                using (MemoryStream ms = new MemoryStream(BinReceivedData.ToArray()))
-                {
-                    return formatter.Deserialize(ms);
-                }
-
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        #endregion
     }
 }

@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionToClient\AsynchronousClientListener.cs" />
-    <Compile Include="ConnectionToClient\BaseCommandChain.cs" />
     <Compile Include="ConnectionToClient\Client.cs" />
     <Compile Include="ConnectionToClient\ClientCommand.cs" />
     <Compile Include="DataAccess\ServerCommandChain.cs" />

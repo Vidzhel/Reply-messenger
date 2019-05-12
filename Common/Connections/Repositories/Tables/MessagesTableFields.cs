@@ -3,10 +3,10 @@ namespace CommonLibs.Connections.Repositories.Tables
 {
     public enum MessagesTableFields
     {
-        MessageId,
+        Id,
         SenderId,
         ReceiverId,
-        MessageData,
+        Data,
         DataType,
         Date,
         Status

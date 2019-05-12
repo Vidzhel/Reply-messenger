@@ -61,3 +61,11 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.exe
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.pdb
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Ninject.dll
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Ninject.xml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatUserControl.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatUserControl.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatInfoBarUserControl.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatInfoBarUserControl.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageList.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageListItem.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageList.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageListItem.baml

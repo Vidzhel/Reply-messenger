@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="UI.UserControls.MessageListItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             
+             xmlns:local="clr-namespace:UI.UserControls"
+             xmlns:viewModel="clr-namespace:UI.UIPresenter.ViewModels"
+             xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+             
+             mc:Ignorable="d" d:DesignWidth="974">
+    <UserControl.Resources>
+
+        <Style TargetType="ContentControl" x:Key="ContentControl">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+
+                        <Border Background="{Binding IsYourMessage, Converter={converters:BoolToColorBrushConverter}}"
+                                CornerRadius="10"
+                                MinHeight="10"
+                                HorizontalAlignment="{Binding IsYourMessage, Converter={converters:BoolToHorizontalAlignmentConverter}}">
+                            
+                            <Grid Margin="5">
+
+                                <Grid.RowDefinitions>
+
+                                    <!--User name-->
+                                    <RowDefinition Height="auto"/>
+
+                                    <!--Text-->
+                                    <RowDefinition Height="*"/>
+
+                                    <!--Date and is read info-->
+                                    <RowDefinition Height="auto"/>
+
+                                </Grid.RowDefinitions>
+
+                                <!--User name-->
+                                <Label Content="Anaiya Harrington"
+                                       Foreground="{StaticResource MiddleGrayBgBrush}"
+                                       FontSize="15"
+                                       Visibility="{Binding DisplayUserName, Converter={converters:BoolToVisibilityConverter}}"/>
+
+                                <!--Text-->
+                                <TextBlock Grid.Row="1"
+                                           TextWrapping="Wrap"
+                                           Text="{Binding MessageText}"
+                                           Foreground="{StaticResource LightGrayBgBrush}"/>
+
+                                <!--Time and is read info-->
+                                <StackPanel Grid.Row="2"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right">
+
+                                    <!--Time-->
+                                    <Label Style="{StaticResource RegularText}"
+                                           Content="{Binding MessageTime, Converter={converters:DateToTextHoursConverter}}"
+                                           Foreground="{StaticResource MiddleGrayBgBrush}"/>
+
+                                    <!--Message status-->
+                                    <Label Style="{StaticResource Sumbol}"
+                                           Content="{Binding MessageStatus, Converter={converters:MessageStatusToIconConverter}}"
+                                           Foreground="{StaticResource LightBlueBrush}"
+                                           FontSize="10"/>
+
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </UserControl.Resources>
+    
+    <ContentControl Style="{StaticResource ContentControl}" DataContext="{x:Static viewModel:MessageListItemDesignViewModel.Instance}"/>
+
+</UserControl>

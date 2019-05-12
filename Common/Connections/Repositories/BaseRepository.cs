@@ -20,6 +20,7 @@ namespace CommonLibs.Connections.Repositories
 
         public abstract IEnumerable<T> GetAll();
         public abstract T Get(int id);
+        public abstract T GetLast();
 
         public abstract IEnumerable<T> Find(string column, string value);
         public abstract T FindFirst(string column, string value);

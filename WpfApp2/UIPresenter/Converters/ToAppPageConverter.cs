@@ -10,15 +10,15 @@ namespace UI.UIPresenter.Converters
         //Convert to page
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch ((ApplicationPage)value)
+            switch ((ApplicationPages)value)
             {
-                case ApplicationPage.SignInPage:
+                case ApplicationPages.SignInPage:
                     return new SignInPage();
 
-                case ApplicationPage.SignUpPage:
+                case ApplicationPages.SignUpPage:
                     return new SignUpPage();
 
-                case ApplicationPage.ChatPage:
+                case ApplicationPages.ChatPage:
                     return new ChatPage();
 
                 default:

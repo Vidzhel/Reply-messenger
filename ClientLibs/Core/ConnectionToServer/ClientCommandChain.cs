@@ -10,7 +10,7 @@ namespace ClientLibs.Core.ConnectionToServer
 
         #region Private Members
 
-        protected event EventHandler<Command> newClientCommand;
+        protected event EventHandler<Command> newIncomingCommand;
 
         //There will be storing answer on the request
         protected Command answer;
@@ -71,7 +71,7 @@ namespace ClientLibs.Core.ConnectionToServer
         /// Adds handler to handle incoming commands
         /// </summary>
         /// <param name="handler"></param>
-        public override void OnNewIncomingCommand(EventHandler<Command> handler)
+        public void OnNewIncomingCommand(EventHandler<Command> handler)
         {
             newIncomingCommand += handler;
         }

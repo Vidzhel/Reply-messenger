@@ -73,45 +73,67 @@
     <Compile Include="Animations\AnimationPresets.cs" />
     <Compile Include="InversionOfControl\ApplicationService.cs" />
     <Compile Include="InversionOfControl\IoCController.cs" />
-    <Compile Include="Pages\ApplicationPage.cs" />
+    <Compile Include="Pages\ApplicationPages.cs" />
     <Compile Include="Pages\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ChatPages.cs" />
     <Compile Include="Pages\SignInPage.xaml.cs">
       <DependentUpon>SignInPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIPresenter\Converters\BaseMultiValueConverter.cs" />
-    <Compile Include="UIPresenter\Converters\BaseValueConverter.cs" />
+    <Compile Include="UIPresenter\Converters\Base\BaseMultiValueConverter.cs" />
+    <Compile Include="UIPresenter\Converters\Base\BaseValueConverter.cs" />
+    <Compile Include="UIPresenter\Converters\BoolToColorConverter.cs" />
+    <Compile Include="UIPresenter\Converters\BoolToHorizontalAlignmentConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="UIPresenter\Converters\ControlStateToColorBrush.cs" />
     <Compile Include="UIPresenter\Converters\DateToTextConverter.cs" />
+    <Compile Include="UIPresenter\Converters\DateToTextHoursConverter.cs" />
     <Compile Include="UIPresenter\Converters\FieldPlaceholder.cs" />
     <Compile Include="UIPresenter\Converters\MessageStatusToIconConverter.cs" />
     <Compile Include="UIPresenter\Converters\ParametersToArrayConverter.cs" />
     <Compile Include="UIPresenter\Converters\TextToIcon.cs" />
     <Compile Include="UIPresenter\Converters\ToAppPageConverter.cs" />
+    <Compile Include="UIPresenter\Converters\ToChatPageConverter.cs" />
     <Compile Include="UIPresenter\ViewModels\ApplicationViewModel.cs" />
-    <Compile Include="UIPresenter\ViewModels\BaseViewModel.cs" />
-    <Compile Include="Pages\BasePage.cs" />
+    <Compile Include="UIPresenter\ViewModels\Base\BaseViewModel.cs" />
+    <Compile Include="Pages\Base\BasePage.cs" />
     <Compile Include="UIPresenter\ViewModels\ChatListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ChatListViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ChatPageViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\ChatUserControlViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ControlStates.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListItemDesignViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListDesignViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListItemDesignViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\MessageListItemViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\MessageListViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\RelayCommandParametrized.cs" />
     <Compile Include="UIPresenter\ViewModels\RelayCommand.cs" />
     <Compile Include="UIPresenter\ViewModels\SignInPageViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\SignUpPageViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\WindowViewModel.cs" />
+    <Compile Include="UserControls\ChatInfoBarUserControl.xaml.cs">
+      <DependentUpon>ChatInfoBarUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ChatList.xaml.cs">
       <DependentUpon>ChatList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ChatListItem.xaml.cs">
       <DependentUpon>ChatListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ChatUserControl.xaml.cs">
+      <DependentUpon>ChatUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MessageList.xaml.cs">
+      <DependentUpon>MessageList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MessageListItem.xaml.cs">
+      <DependentUpon>MessageListItem.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -157,11 +179,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\ChatInfoBarUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\ChatList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ChatListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ChatUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\MessageList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\MessageListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

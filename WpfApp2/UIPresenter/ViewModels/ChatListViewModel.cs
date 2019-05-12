@@ -8,7 +8,7 @@ namespace UI.UIPresenter.ViewModels
     {
 
         //List of chats
-        public List<ChatListItemViewModel> Items { get; set; }
+        public List<ChatListItemViewModel> Items { get; set; } = new List<ChatListItemViewModel>();
 
         #region Constructor
 

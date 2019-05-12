@@ -22,7 +22,7 @@ namespace Server
             StartServer.IsEnabled = false;
             StopServer.IsEnabled = true;
             AsynchronousClientListener.DisplayMessageOnScreenContext = displayMessageOnScreen;
-            Task.Run(() => AsynchronousClientListener.SrtartListening());
+            Task.Run(() => AsynchronousClientListener.Start());
         }
 
         /// <summary>

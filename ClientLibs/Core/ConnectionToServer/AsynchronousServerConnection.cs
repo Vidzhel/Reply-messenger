@@ -150,7 +150,7 @@ namespace ClientLibs.Core.ConnectionToServer
             }
             catch (Exception)
             {
-                return false;
+                SendData(obj);
             }
 
             return true;

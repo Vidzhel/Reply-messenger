@@ -13,7 +13,7 @@ namespace ClientLibs.Core.DataAccess
     public static class UnitOfWork
     {
 
-        public static BaseRepository<Message> MessagesTableRepo = new Repository<Message>(new Table(new MessagesTableFields(), "Messanges"), "LocalDB");
+        public static BaseRepository<Message> MessagesTableRepo = new Repository<Message>(new Table(new MessagesTableFields(), "Messages"), "LocalDB");
         public static BaseRepository<Contact> ContactsTableRepo = new Repository<Contact>(new Table(new ContactTableFields(), "Contacts"), "LocalDB");
 
         static ClientCommandChain commandChain = new ClientCommandChain();
@@ -36,13 +36,64 @@ namespace ClientLibs.Core.DataAccess
 
         #region Public Methods
 
+        /// <summary>
+        /// Sends message to the server
+        /// </summary>
+        /// <param name="mes"></param>
+        /// <returns></returns>
         public static bool SendMessage(Message mes)
         {
-            //Make request to the server
-            var response = commandChain.MakeRequest(CommandType.SendMesssage, mes, user);
+            //Send command to the server
+            commandChain.SendCommand(CommandType.SendMesssage, mes, user);
 
-            //Return bool response
-            return (bool)response.RequestData;
+            //Add message to local rep
+            return MessagesTableRepo.Add(mes);
+        }
+
+        /// <summary>
+        /// Make Log In request to the server, return true if all ok
+        /// </summary>
+        /// <param name="userData"></param>
+        /// <returns></returns>
+        public static bool SighIn(User userData)
+        {
+            //Make response to the server
+            var response =  commandChain.MakeRequest(CommandType.SignIn, null, userData);
+
+            // if all Ok save user data
+            if ((bool)response.RequestData)
+            {
+                user = response.UserData;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Registrate user, return true if all ok
+        /// </summary>
+        /// <param name="userData"></param>
+        /// <returns></returns>
+        public static bool SignUp(User userData)
+        {
+            //Make SignUp request to the server
+            var response = commandChain.MakeRequest(CommandType.SignUp, null, userData);
+
+            //If registered
+            if ((bool)response.RequestData)
+            {
+                user = response.UserData;
+                return true;
+            }
+
+            return false;
+
+        }
+        
+        public static bool SyncData()
+        {
+            return false;
         }
 
         #endregion
