@@ -19,11 +19,14 @@ namespace CommonLibs.Data
         /// <returns></returns>
         public static string ListToString(List<int> list)
         {
+            if (list == null || list.Count == 0)
+                return "";
+
             string result = String.Empty;
 
             foreach (var item in list)
             {
-                result += " " + item;
+                result += item + " ";
             }
 
             return result;
@@ -37,15 +40,13 @@ namespace CommonLibs.Data
         public static List<int> StringToList(string value)
         {
             var strArray = value.Split(new char[] { ' ' });
-            var intArray = new int[strArray.Length];
+            var intArray = new List<int>();
 
             for (int i = 0; i < strArray.Length; i++)
-                intArray[i] = Convert.ToInt32(strArray[i]);
-
-            var list = new List<int>();
-
-            list.AddRange(intArray);
-            return list;
+                if (strArray[i] != "")
+                    intArray.Add(Convert.ToInt32(strArray[i]));
+                        
+            return intArray;
         }
 
         /// <summary>

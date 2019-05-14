@@ -7,8 +7,9 @@
              xmlns:viewModels="clr-namespace:UI.UIPresenter.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="974">
-    <Grid DataContext="{x:Static viewModels:MessageListDesignViewModel.Instance}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+    
+    <Grid d:DataContext="{x:Static viewModels:MessageListDesignViewModel.Instance}">
+        <ScrollViewer Padding="30 0 30 0"  VerticalScrollBarVisibility="Auto" VerticalAlignment="Bottom">
             <ItemsControl ItemsSource="{Binding Items}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

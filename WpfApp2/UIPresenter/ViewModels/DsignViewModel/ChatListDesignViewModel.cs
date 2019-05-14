@@ -29,18 +29,18 @@ namespace UI.UIPresenter.ViewModels
             var message1 = new Message(10, 20, DataType.Image, DateTime.Now, "file source", MessageStatus.SendingInProgress);
             var message2 = new Message(10, 20, DataType.Text, DateTime.Now, "Ohh, thenks for the pressent, i very appreciated", MessageStatus.IsRead);
 
-            Items = new List<ChatListItemViewModel> {
+            //Items = new List<ChatListItemViewModel> {
 
-                new ChatListItemViewModel(user, message, false),
-                new ChatListItemViewModel(user1, message1, true),
-                new ChatListItemViewModel(user1, message1, false),
-                new ChatListItemViewModel(user1, message1, false),
-                new ChatListItemViewModel(user1, message1, false),
-                new ChatListItemViewModel(user1, message1, false),
-                new ChatListItemViewModel(user1, message1, false),
-                new ChatListItemViewModel(user2, message2, false)
+            //    new ChatListItemViewModel(user, message),
+            //    new ChatListItemViewModel(user1, message1),
+            //    new ChatListItemViewModel(user1, message1),
+            //    new ChatListItemViewModel(user1, message1),
+            //    new ChatListItemViewModel(user1, message1),
+            //    new ChatListItemViewModel(user1, message1),
+            //    new ChatListItemViewModel(user1, message1),
+            //    new ChatListItemViewModel(user2, message2)
 
-            };
+            //};
         }
     }
 }

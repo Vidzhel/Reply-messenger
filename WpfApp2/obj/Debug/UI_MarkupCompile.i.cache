@@ -12,9 +12,9 @@ DEBUG;TRACE
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\App.xaml
 15-126114961
 1984027045
-58477454911
+61-867048408
 18-361764016
 MainWindow.xaml;Pages\ChatPage.xaml;Pages\SignInPage.xaml;Pages\SignUpPage.xaml;Styles\Buttons.xaml;Styles\Colors.xaml;Styles\Fonts.xaml;Styles\Text.xaml;Styles\TextBoxes.xaml;UserControls\ChatInfoBarUserControl.xaml;UserControls\ChatList.xaml;UserControls\ChatListItem.xaml;UserControls\ChatUserControl.xaml;UserControls\MessageList.xaml;UserControls\MessageListItem.xaml;
 
-False
+True
 

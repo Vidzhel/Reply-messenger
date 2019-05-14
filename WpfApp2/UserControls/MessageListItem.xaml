@@ -18,10 +18,11 @@
 
                         <Border Background="{Binding IsYourMessage, Converter={converters:BoolToColorBrushConverter}}"
                                 CornerRadius="10"
+                                Margin="0 5 0 5"
                                 MinHeight="10"
                                 HorizontalAlignment="{Binding IsYourMessage, Converter={converters:BoolToHorizontalAlignmentConverter}}">
                             
-                            <Grid Margin="5">
+                            <Grid Margin="10 5 10 2">
 
                                 <Grid.RowDefinitions>
 
@@ -48,18 +49,20 @@
                                            Text="{Binding MessageText}"
                                            Foreground="{StaticResource LightGrayBgBrush}"/>
 
-                                <!--Time and is read info-->
+                                <!--Time and message status-->
                                 <StackPanel Grid.Row="2"
                                             Orientation="Horizontal"
                                             HorizontalAlignment="Right">
 
                                     <!--Time-->
                                     <Label Style="{StaticResource RegularText}"
+                                           FontSize="10"
                                            Content="{Binding MessageTime, Converter={converters:DateToTextHoursConverter}}"
                                            Foreground="{StaticResource MiddleGrayBgBrush}"/>
 
                                     <!--Message status-->
                                     <Label Style="{StaticResource Sumbol}"
+                                           Visibility="{Binding IsYourMessage, Converter={converters:BoolToVisibilityConverter}}"
                                            Content="{Binding MessageStatus, Converter={converters:MessageStatusToIconConverter}}"
                                            Foreground="{StaticResource LightBlueBrush}"
                                            FontSize="10"/>
@@ -75,6 +78,6 @@
         
     </UserControl.Resources>
     
-    <ContentControl Style="{StaticResource ContentControl}" DataContext="{x:Static viewModel:MessageListItemDesignViewModel.Instance}"/>
+    <ContentControl Style="{StaticResource ContentControl}" d:DataContext="{x:Static viewModel:MessageListItemDesignViewModel.Instance}"/>
 
 </UserControl>

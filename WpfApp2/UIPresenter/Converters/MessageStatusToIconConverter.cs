@@ -16,6 +16,8 @@ namespace UI.UIPresenter.Converters
 
             switch (status)
             {
+                case MessageStatus.Null:
+                    return "";
                 case MessageStatus.IsRead:
                     return "";
                 case MessageStatus.Sended:

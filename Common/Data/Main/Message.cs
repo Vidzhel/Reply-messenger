@@ -17,11 +17,11 @@ namespace CommonLibs.Data
 
         #region public Members
 
-        public ulong Id { get; private set; }
+        public int Id { get; private set; }
 
-        public long SenderId { get; private set; }
+        public int SenderId { get; private set; }
 
-        public long ReceiverId { get; private set; }
+        public int ReceiverId { get; private set; }
 
         public DataType DataType { get; private set; }
 
@@ -46,7 +46,7 @@ namespace CommonLibs.Data
         public string Date {
             get
             {
-                return date.ToUniversalTime().ToString();
+                return date.ToUniversalTime().ToBinary().ToString();
             }
             set
             {
@@ -62,7 +62,7 @@ namespace CommonLibs.Data
 
         #region Constructor
         
-        public Message(long senderId, long recieverId, DataType dataType, string UTCBin, string data, MessageStatus status = MessageStatus.SendingInProgress, ulong id = 0)
+        public Message(int senderId, int recieverId, DataType dataType, string UTCBin, string data, MessageStatus status = MessageStatus.SendingInProgress, int id = 0)
         {
             Id = id;
             SenderId = senderId;
@@ -73,7 +73,7 @@ namespace CommonLibs.Data
             Data = data;
         }
         
-        public Message(long senderId, long recieverId, DataType dataType, DateTime localTime, string data, MessageStatus status = MessageStatus.SendingInProgress, ulong id = 0)
+        public Message(int senderId, int recieverId, DataType dataType, DateTime localTime, string data, MessageStatus status = MessageStatus.SendingInProgress, int id = 0)
         {
             Id = id;
             SenderId = senderId;

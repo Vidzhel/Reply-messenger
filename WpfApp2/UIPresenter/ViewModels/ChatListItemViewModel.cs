@@ -1,39 +1,22 @@
-﻿using CommonLibs.Data;
-using PropertyChanged;
+﻿using ClientLibs.Core.DataAccess;
+using CommonLibs.Data;
 using System;
 
 namespace UI.UIPresenter.ViewModels
 {
     public class ChatListItemViewModel : BaseViewModel
     {
-
-        #region Private Members
-
-        Contact contactData;
-        Message lastMessage;
-
-        #endregion
-
+        
         #region Public Members
 
 
         //Contact info, user name, bio, eth..
-        public Contact ContactData { get { return contactData; }
-            set
-            {
-                contactData = value;
-            } }
+        public Group GroupData { get; set; }
+
 
         //Last message info
-        public Message LastMessage { get { return lastMessage; }
-            set {
-                lastMessage = value;
-            } }
+        public Message LastMessage { get; set; }
 
-        /// <summary>
-        /// Get User Name
-        /// </summary>
-        
         /// <summary>
         /// Return last message info
         /// </summary>
@@ -54,31 +37,36 @@ namespace UI.UIPresenter.ViewModels
                             return LastMessage.Data;
 
                     default:
-                            return "error";
+                            return "";
                 }
             }
         }
         
-        public string UserName => ContactData?.UserName;
+        public string UserName => GroupData?.Name;
         
         public DateTime LastMessageTime { get {
                 if (LastMessage != null)
-                    return LastMessage.Date;
+                    return LastMessage.LocalDate;
+
                 else
                     return DateTime.Now;
             }
         }
 
+        /// <summary>
+        /// If the message sent by the user
+        /// </summary>
+        public bool IsYourMessage => UnitOfWork.User.Id == LastMessage.SenderId;
+
+        /// <summary>
+        /// If group has 2 memebers, then will show is user online
+        /// </summary>
         public bool IsOnline {
             get {
-                if (contactData == null)
-                    return false;
-
-
-                if (ContactData.Online.Equals("True", StringComparison.InvariantCultureIgnoreCase))
+                if (GroupData.IsChat && GroupData.UsersOnline == 2)
                     return true;
-                else
-                    return false;
+                
+               return false;
             }
         }
 
@@ -90,10 +78,13 @@ namespace UI.UIPresenter.ViewModels
         public MessageStatus MessageStatus{
             get
             {
+                if (!IsYourMessage)
+                    return MessageStatus.Null;
+
                 if (LastMessage != null)
                     return LastMessage.Status;
                 else
-                    return MessageStatus.SendingInProgress;
+                    return MessageStatus.Null;
             }
         }
 
@@ -108,11 +99,10 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         /// <param name="contact">Contact data</param>
         /// <param name="message">Last message in the chat</param>
-        public ChatListItemViewModel(Contact contact, Message message, bool IsSelected)
+        public ChatListItemViewModel(Group group, Message message)
         {
-            ContactData = contact;
+            GroupData = group;
             LastMessage = message;
-            this.IsSelected = IsSelected;
         }
 
         public ChatListItemViewModel()

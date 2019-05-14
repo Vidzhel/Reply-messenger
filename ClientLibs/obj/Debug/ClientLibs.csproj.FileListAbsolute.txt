@@ -6,8 +6,10 @@ C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.dll
 C:\Users\Oleg\source\repos\Messenger\ClientLibs\obj\Debug\ClientLibs.pdb
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\ClientLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\ClientLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\Common.dll
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\Dapper.dll
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\System.Data.SQLite.dll
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\Common.pdb
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\Dapper.xml
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\System.Data.SQLite.xml
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\System.Data.SQLite.dll.config
@@ -16,5 +18,3 @@ C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.csproj.Co
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Debug\ClientLibs.pdb
-C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\Common.dll
-C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Debug\Common.pdb

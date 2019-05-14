@@ -20,11 +20,11 @@ namespace UI.UIPresenter.ViewModels
         public ChatListItemDesignViewModel()
         {
 
-            var user = new Contact("Vidzhel", "myemail.com", "somthing there");
+            //var user = new Contact("Vidzhel", "myemail.com", "somthing there");
             var message = new Message(10, 20, DataType.Text, DateTime.Now, "Hello there, thenks for the pressent, i very", MessageStatus.Sended);
 
             LastMessage = message;
-            ContactData = user;
+            //GroupData = user;
         }
 
         #endregion

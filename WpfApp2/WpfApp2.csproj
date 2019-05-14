@@ -89,15 +89,18 @@
     <Compile Include="UIPresenter\Converters\BoolToColorConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToHorizontalAlignmentConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="UIPresenter\Converters\Comparers\ChatListItemViewModelComparer.cs" />
     <Compile Include="UIPresenter\Converters\ControlStateToColorBrush.cs" />
     <Compile Include="UIPresenter\Converters\DateToTextConverter.cs" />
     <Compile Include="UIPresenter\Converters\DateToTextHoursConverter.cs" />
     <Compile Include="UIPresenter\Converters\FieldPlaceholder.cs" />
+    <Compile Include="UIPresenter\Converters\IntToUsersOnlineConverter.cs" />
     <Compile Include="UIPresenter\Converters\MessageStatusToIconConverter.cs" />
     <Compile Include="UIPresenter\Converters\ParametersToArrayConverter.cs" />
     <Compile Include="UIPresenter\Converters\TextToIcon.cs" />
     <Compile Include="UIPresenter\Converters\ToAppPageConverter.cs" />
     <Compile Include="UIPresenter\Converters\ToChatPageConverter.cs" />
+    <Compile Include="UIPresenter\Converters\UsersOnlineToColorConverter.cs" />
     <Compile Include="UIPresenter\ViewModels\ApplicationViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\Base\BaseViewModel.cs" />
     <Compile Include="Pages\Base\BasePage.cs" />
@@ -237,6 +240,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UIPresenter\Images\Logos\" />
+    <Folder Include="UIPresenter\ViewModels\Comparers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientLibs\ClientLibs.csproj">

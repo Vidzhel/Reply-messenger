@@ -41,7 +41,7 @@
             <TextBox Margin="10 5 10 10" Style="{StaticResource SearchBox}" />
 
             <!--Chat list-->
-            <userControls:ChatList Grid.Row="1"/>
+            <userControls:ChatList DataContext="{Binding ChatList}" Grid.Row="1"/>
 
         </Grid>
 

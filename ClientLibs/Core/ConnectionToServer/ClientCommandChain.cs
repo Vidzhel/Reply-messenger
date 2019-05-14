@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ClientLibs.Core.ConnectionToServer
 {
@@ -26,7 +27,10 @@ namespace ClientLibs.Core.ConnectionToServer
             commandsChain = new Queue<Command>();
 
             //Connect Server
-            AsynchronousServerConnection.Start();
+            Thread startServer = new Thread( new ThreadStart(AsynchronousServerConnection.Start));
+            startServer.IsBackground = true;
+            startServer.Name = "Start Server";
+            startServer.Start();
 
             //Add event handler for server answer ready event
             AsynchronousServerConnection.OnAnswerDataReady((sender, args) => addIncomingCommand(sender, args));
@@ -34,11 +38,13 @@ namespace ClientLibs.Core.ConnectionToServer
 
             //Start new thread for handling answers
             Thread answersHandler = new Thread(new ThreadStart(incomingCommandsHanddler));
+            answersHandler.IsBackground = true;
             answersHandler.Name = "Answer Handler";
             answersHandler.Start();
 
             //Start new thread for handling commands
             Thread commandHandler = new Thread(new ThreadStart(sendCommand));
+            commandHandler.IsBackground = true;
             commandHandler.Name = "Command Handler";
             commandHandler.Start();
         }

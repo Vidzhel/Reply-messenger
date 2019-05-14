@@ -100,12 +100,14 @@ namespace ClientLibs.Core.ConnectionToServer
                     ServerConnected = true;
 
                     //Start receiving data
-                    Thread resieveData = new Thread(new ThreadStart(ReceiveData));
-                    resieveData.Name = "Receiver From Server";
-                    resieveData.Start();
+                    Thread receiveData = new Thread(new ThreadStart(ReceiveData));
+                    receiveData.IsBackground = true;
+                    receiveData.Name = "Receiver From Server";
+                    receiveData.Start();
                     
                     //Start checking connection
                     Thread checkingConnection = new Thread(new ThreadStart(checkConnection));
+                    checkingConnection.IsBackground = true;
                     checkingConnection.Name = "Check Connection";
                     checkingConnection.Start();
                 }

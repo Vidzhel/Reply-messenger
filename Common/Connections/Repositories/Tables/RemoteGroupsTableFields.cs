@@ -6,8 +6,9 @@ namespace CommonLibs.Connections.Repositories.Tables
         Name,
         AdminsId,
         MembersId,
+        UsersOnline,
         IsPrivate,
-        IsChanel,
+        IsChannel,
         Image
     }
 }

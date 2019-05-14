@@ -19,7 +19,7 @@ namespace UI.UserControls
             InitializeComponent();
 
             //Bind data
-            this.DataContext = new ChatUserControlViewModel();
+            this.DataContext = new ChatUserControlViewModel(new CommonLibs.Data.Group(true, "sadsad", false));
         }
     }
 }

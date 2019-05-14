@@ -15,9 +15,11 @@ namespace ClientLibs.Core.DataAccess
 
         public static BaseRepository<Message> MessagesTableRepo = new Repository<Message>(new Table(new MessagesTableFields(), "Messages"), "LocalDB");
         public static BaseRepository<Contact> ContactsTableRepo = new Repository<Contact>(new Table(new ContactTableFields(), "Contacts"), "LocalDB");
+        public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new GroupsTableFields(), "Groups"), "LocalDB");
+
+        public static User User { get; private set; } = new User("Vidzhel", "MyPass", "MyEmail", "MyBio", "+2");
 
         static ClientCommandChain commandChain = new ClientCommandChain();
-        static User user = new User("Vidzhel", "MyPass", "MyEmail", "MyBio", "+2");
 
         #region Constructor
 
@@ -36,6 +38,14 @@ namespace ClientLibs.Core.DataAccess
 
         #region Public Methods
 
+        public static List<Contact> GetUsersInfo(List<int> id)
+        {
+            //Make request to server and get response command
+            var res = commandChain.MakeRequest(CommandType.GetUsersInfo, id, User);
+
+            return (List<Contact>)res.RequestData;
+        }
+
         /// <summary>
         /// Sends message to the server
         /// </summary>
@@ -44,7 +54,7 @@ namespace ClientLibs.Core.DataAccess
         public static bool SendMessage(Message mes)
         {
             //Send command to the server
-            commandChain.SendCommand(CommandType.SendMesssage, mes, user);
+            commandChain.SendCommand(CommandType.SendMesssage, mes, User);
 
             //Add message to local rep
             return MessagesTableRepo.Add(mes);
@@ -63,7 +73,7 @@ namespace ClientLibs.Core.DataAccess
             // if all Ok save user data
             if ((bool)response.RequestData)
             {
-                user = response.UserData;
+                User = response.UserData;
                 return true;
             }
 
@@ -83,7 +93,7 @@ namespace ClientLibs.Core.DataAccess
             //If registered
             if ((bool)response.RequestData)
             {
-                user = response.UserData;
+                User = response.UserData;
                 return true;
             }
 

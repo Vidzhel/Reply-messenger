@@ -64,6 +64,7 @@
     <Compile Include="Connections\Repositories\Tables\UsersTableFields.cs" />
     <Compile Include="Data\BaseCommandChain.cs" />
     <Compile Include="Data\BaseDoubleCommandChain.cs" />
+    <Compile Include="Data\Enums\RepositoryActions.cs" />
     <Compile Include="Data\Main\Command.cs" />
     <Compile Include="Data\Enums\CommandType.cs" />
     <Compile Include="Data\Main\Contact.cs" />

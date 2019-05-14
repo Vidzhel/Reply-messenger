@@ -6,8 +6,12 @@ C:\Users\Oleg\source\repos\Messenger\ServerLibs\obj\Debug\ServerLibs.dll
 C:\Users\Oleg\source\repos\Messenger\ServerLibs\obj\Debug\ServerLibs.pdb
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ServerLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ServerLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ClientLibs.dll
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Common.dll
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Dapper.dll
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\System.Data.SQLite.dll
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ClientLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Common.pdb
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Dapper.xml
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\System.Data.SQLite.xml
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\System.Data.SQLite.dll.config
@@ -16,7 +20,3 @@ C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Debug\ServerLibs.csproj.Co
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Debug\ServerLibs.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Debug\ServerLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Debug\ServerLibs.pdb
-C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Common.dll
-C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\Common.pdb
-C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ClientLibs.dll
-C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Debug\ClientLibs.pdb

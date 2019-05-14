@@ -14,16 +14,18 @@ C:\Users\Oleg\source\repos\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.CoreCompil
 C:\Users\Oleg\source\repos\Messenger\WpfApp2\obj\Debug\WpfApp2.exe
 C:\Users\Oleg\source\repos\Messenger\WpfApp2\obj\Debug\WpfApp2.pdb
 C:\Users\Oleg\source\repos\Messenger\WpfApp2\obj\Debug\GeneratedInternalTypeHelper.g.cs
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\SqLiteLocalDB.db
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\UI.exe.config
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\UI.exe
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\UI.pdb
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\ClientLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Common.dll
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\System.Data.SQLite.dll
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Dapper.dll
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\ClientLibs.pdb
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Common.pdb
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Ninject.dll
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\SqLiteLocalDB.db
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\UI.exe.config
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\UI.pdb
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Ninject.xml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\System.Data.SQLite.xml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\System.Data.SQLite.dll.config
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Dapper.xml
@@ -33,8 +35,12 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\MainWindow.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Pages\ChatPage.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Pages\SignInPage.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Pages\SignUpPage.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatInfoBarUserControl.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatList.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatListItem.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatUserControl.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageList.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageListItem.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\App.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI_Content.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\GeneratedInternalTypeHelper.g.cs
@@ -49,8 +55,12 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Buttons.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Fonts.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\Text.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\TextBoxes.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatInfoBarUserControl.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatList.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatListItem.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatUserControl.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageList.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageListItem.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.g.resources
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.Properties.Resources.resources
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.GenerateResource.cache
@@ -59,13 +69,3 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.Fody.Cop
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.exe
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.pdb
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Ninject.dll
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\bin\Debug\Ninject.xml
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatUserControl.g.cs
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatUserControl.baml
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatInfoBarUserControl.g.cs
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ChatInfoBarUserControl.baml
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageList.g.cs
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageListItem.g.cs
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageList.baml
-C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\MessageListItem.baml

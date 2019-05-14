@@ -7,7 +7,7 @@ namespace UI.UIPresenter.Converters
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((DateTime)value).TimeOfDay.ToString();
+            return ((DateTime)value).ToShortTimeString();
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

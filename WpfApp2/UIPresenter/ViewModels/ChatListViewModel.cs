@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Collections.ObjectModel;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -8,7 +8,7 @@ namespace UI.UIPresenter.ViewModels
     {
 
         //List of chats
-        public List<ChatListItemViewModel> Items { get; set; } = new List<ChatListItemViewModel>();
+        public ObservableCollection<ChatListItemViewModel> Items { get; set; } = new ObservableCollection<ChatListItemViewModel>();
 
         #region Constructor
 
@@ -17,9 +17,19 @@ namespace UI.UIPresenter.ViewModels
 
         }
 
-        public ChatListViewModel(List<ChatListItemViewModel> chats) 
+        public ChatListViewModel(ObservableCollection<ChatListItemViewModel> chats) 
         {
             Items = chats;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void SortChatList()
+        {
+            
+            //Items.Sort(new ChatListItemViewModelComparer());
         }
 
         #endregion

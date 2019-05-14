@@ -76,7 +76,7 @@ namespace UI.UIPresenter.ViewModels
             get
             {
                 if (Message != null)
-                    return Message.Date;
+                    return Message.LocalDate;
                 else
                     return DateTime.Now;
             }

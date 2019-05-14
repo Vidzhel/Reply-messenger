@@ -13,13 +13,17 @@ namespace CommonLibs.Data
 
         #region Private Members
 
-        List<int> adminsIdList = new List<int>();
+        bool isPrivate;
 
-        List<int> membersIdList = new List<int>();
+        bool isChannel;
 
         #endregion
 
         #region Public Members
+
+        public List<int> AdminsIdList = new List<int>();
+
+        public List<int> MembersIdList = new List<int>();
 
         public int Id { get; private set; }
 
@@ -31,12 +35,12 @@ namespace CommonLibs.Data
         public string AdminsId {
             get
             {
-                return DataConverter.ListToString(adminsIdList);
+                return DataConverter.ListToString(AdminsIdList);
             }
 
             set
             {
-                adminsIdList = DataConverter.StringToList(value);
+                AdminsIdList = DataConverter.StringToList(value);
             }
         }
 
@@ -47,18 +51,30 @@ namespace CommonLibs.Data
         {
             get
             {
-                return DataConverter.ListToString(membersIdList);
+                return DataConverter.ListToString(MembersIdList);
             }
 
             set
             {
-                membersIdList = DataConverter.StringToList(value);
+                MembersIdList = DataConverter.StringToList(value);
             }
         }
 
-        public bool IsPrivate { get; private set; }
+        public string IsPrivate
+        {
+            get => isPrivate.ToString();
+            set => isPrivate = Convert.ToBoolean(value);
+        }
 
-        public bool IsChannel { get; private set; }
+        public string IsChannel
+        {
+            get => isChannel.ToString();
+            set => isChannel = Convert.ToBoolean(value);
+        }
+
+        public int UsersOnline { get; private set; }
+
+        public bool IsChat => MembersIdList.Count > 2 ? false : true;
 
         public string Image { get; private set; }
 
@@ -66,14 +82,24 @@ namespace CommonLibs.Data
 
         #region Constructor
 
-        public Group(bool isPrivate, string name, bool isChannel, string image, int id = 0, List<int> adminsId = null, List<int> members = null)
+        public Group(bool isPrivate, string name, bool isChannel, string image = "", int id = 0, List<int> adminsId = null, List<int> members = null, int usersOnline = 0)
         {
             Id = id;
-            adminsIdList = adminsId;
-            membersIdList = members;
-            IsPrivate = isPrivate;
-            IsChannel = isChannel;
+            AdminsIdList = adminsId ?? new List<int>();
+            MembersIdList = members ?? new List<int>();
+            this.isPrivate = isPrivate;
+            this.isChannel = isChannel;
             Name = name;
+            UsersOnline = usersOnline;
+            Image = image;
+        }
+
+        /// <summary>
+        /// Constructor for dapper
+        /// </summary>
+        private Group()
+        {
+
         }
 
         #endregion
@@ -86,7 +112,7 @@ namespace CommonLibs.Data
         /// <param name="user">new member </param>
         public void AddNewMember(User user)
         {
-            membersIdList.Add(user.Id);
+            MembersIdList.Add(user.Id);
         }
 
         /// <summary>
@@ -95,7 +121,7 @@ namespace CommonLibs.Data
         /// <param name="user"></param>
         public void AddNewAdmin(User user)
         {
-            adminsIdList.Add(user.Id);
+            AdminsIdList.Add(user.Id);
         }
 
         /// <summary>
@@ -104,7 +130,7 @@ namespace CommonLibs.Data
         /// <param name="user"></param>
         public void RemoveMember(User user)
         {
-            membersIdList.Remove(user.Id);
+            MembersIdList.Remove(user.Id);
         }
 
         /// <summary>
@@ -113,7 +139,7 @@ namespace CommonLibs.Data
         /// <param name="user"></param>
         public void RemoveAdmin(User user)
         {
-            adminsIdList.Remove(user.Id);
+            AdminsIdList.Remove(user.Id);
         }
 
         #endregion

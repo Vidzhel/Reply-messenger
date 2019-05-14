@@ -21,16 +21,28 @@ namespace UI.UIPresenter.ViewModels
         public MessageListDesignViewModel()
         {
 
-            var user = new Contact("VidzhelNeSuka", "myemail.com", "somthing there");
+            var user = new Contact("VidzhelNeSuka", "myemail.com", "something there");
             var user1 = new Contact("Oleg", "myemail.com", "somthing there", null, "false");
 
-            var message = new Message(10, 20, DataType.Text, new DateTime(2018, 2, 25), "Hello there, thanks for the pressent, i very", MessageStatus.Sended);
+            var message = new Message(10, 20, DataType.Text, new DateTime(2018, 2, 25), "Hi, how do you do?", MessageStatus.Sended);
             var message1 = new Message(10, 20, DataType.Image, DateTime.Now, "file source", MessageStatus.SendingInProgress);
             var message2 = new Message(10, 20, DataType.Text, DateTime.Now, "Ohh, thanks for the pressent, i very appreciated", MessageStatus.IsRead);
 
             Items = new List<MessageListItemViewModel> {
 
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
                 new MessageListItemViewModel(user, message, true, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, true, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
+                new MessageListItemViewModel(user, message, false, true),
                 new MessageListItemViewModel(user1, message1, true, true),
                 new MessageListItemViewModel(user, message2, false, true)
 

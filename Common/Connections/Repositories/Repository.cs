@@ -1,4 +1,5 @@
 ﻿using CommonLibs.Connections.Repositories.Tables;
+using CommonLibs.Data;
 using Dapper;
 using System;
 using System.Collections.Generic;
@@ -100,7 +101,7 @@ namespace CommonLibs.Connections.Repositories
             ls.Add(data);
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, "add"));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, RepositoryActions.Add));
             DBBusy.ReleaseMutex();
             return true;
         }
@@ -136,7 +137,7 @@ namespace CommonLibs.Connections.Repositories
 
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(dataRange, table, "addRange"));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(dataRange, table, RepositoryActions.Add));
             DBBusy.ReleaseMutex();
             return true;
         }
@@ -184,7 +185,7 @@ namespace CommonLibs.Connections.Repositories
             ls.Add(data);
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, "Update"));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, RepositoryActions.Update));
             DBBusy.ReleaseMutex();
             return true;
         }
@@ -251,6 +252,43 @@ namespace CommonLibs.Connections.Repositories
 
                     string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
                     var query = con.Query<T>(request, dp).First<T>();
+
+                    DBBusy.ReleaseMutex();
+                    return query;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// Finds last match in table
+        /// </summary>
+        /// <param name="column">Columnt to search</param>
+        /// <param name="value">Search parameter</param>
+        /// <returns></returns>
+        public override T FindLast(string column, string value)
+        {
+            DBBusy.WaitOne();
+
+            var dp = new DynamicParameters();
+
+            dp.Add(column, value);
+
+            try
+            {
+
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
+
+                    string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
+                    var query = con.Query<T>(request, dp).Last<T>();
 
                     DBBusy.ReleaseMutex();
                     return query;
@@ -369,7 +407,7 @@ namespace CommonLibs.Connections.Repositories
             }
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(data, table, "Remove"));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(data, table, RepositoryActions.Remove));
             DBBusy.ReleaseMutex();
             return true;
         }

@@ -24,6 +24,7 @@ namespace CommonLibs.Connections.Repositories
 
         public abstract IEnumerable<T> Find(string column, string value);
         public abstract T FindFirst(string column, string value);
+        public abstract T FindLast(string column, string value);
 
         public abstract bool Add(T data);
         public abstract bool AddRange(IEnumerable<T> dataEntity);
