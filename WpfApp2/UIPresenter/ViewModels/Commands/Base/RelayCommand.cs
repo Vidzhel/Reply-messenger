@@ -3,16 +3,16 @@ using System.Windows.Input;
 
 namespace UI.UIPresenter.ViewModels
 {
-    class RelayCommandParametrized : ICommand
+    public class RelayCommand : ICommand
     {
 
-        private Action<object> action;
+        private Action action;
 
         public event EventHandler CanExecuteChanged = (sender, e) => { };
 
         #region Constructor
 
-        public RelayCommandParametrized(Action<object> action)
+        public RelayCommand(Action action)
         {
             this.action = action;
         }
@@ -29,7 +29,7 @@ namespace UI.UIPresenter.ViewModels
 
         public void Execute(object parameter)
         {
-            action(parameter);
+            action();
         }
 
         #endregion

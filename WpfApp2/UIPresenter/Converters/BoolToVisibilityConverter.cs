@@ -14,6 +14,9 @@ namespace UI.UIPresenter.Converters
         {
             bool isVisible = (bool)value;
 
+            if (parameter != null && String.Compare((string)parameter, "true") == 0)
+                isVisible = !isVisible;
+
             if (isVisible)
                 return Visibility.Visible;
             else

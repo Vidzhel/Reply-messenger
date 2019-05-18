@@ -1,8 +1,9 @@
 ﻿
 namespace CommonLibs.Connections.Repositories.Tables
 {
-    public enum ContactTableFields
+    public enum ContactsTableFields
     {
+        Id,
         UserName,
         //ProfilePhoto,
         Email,

@@ -5,6 +5,7 @@ using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UI.InversionOfControl;
 using UI.Pages;
 using WpfApp2;
 
@@ -16,9 +17,9 @@ namespace UI.UIPresenter.ViewModels
         #region Public Members
 
         /// <summary>
-        /// Current Choosen page
+        /// store сurrent Choosen page and eth.
         /// </summary>
-        public ChatPages ActiveChatContent { get; set; } = ChatPages.Chat;
+        public ChatViewModel ChatViewModel { get; set; } = ApplicationService.GetChatViewModel;
 
         public ChatListViewModel ChatList { get; set; } = new ChatListViewModel();
 
@@ -29,13 +30,14 @@ namespace UI.UIPresenter.ViewModels
         public ChatPageViewModel()
         {
             //TODO delete
-            UnitOfWork.MessagesTableRepo.Add(new Message(1, 2, DataType.Text, DateTime.Now, "Hello world", MessageStatus.Sended));
-            UnitOfWork.MessagesTableRepo.Add(new Message(0, 2, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 1));
-            UnitOfWork.MessagesTableRepo.Add(new Message(0, 3, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 2));
-            UnitOfWork.MessagesTableRepo.Add(new Message(0, 4, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 3));
-            UnitOfWork.GroupsTableRepo.Add(new Group(false, "V Chat", false, "",2, new List<int>() { 1 }));
-            UnitOfWork.GroupsTableRepo.Add(new Group(false, "It's Mark", false, "",3, new List<int>() { 1 }));
-            UnitOfWork.GroupsTableRepo.Add(new Group(false, "Vlad", false, "",4, new List<int>() { 1 }));
+            //UnitOfWork.MessagesTableRepo.Add(new Message(1, 2, DataType.Text, DateTime.Now, "Hello world", MessageStatus.Sended));
+            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 2, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 1));
+            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 3, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 2));
+            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 4, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 3));
+            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 2, DataType.Text, DateTime.Now, "This is very and very long message that I use to check sddjhagj dhsaj dklsa jdlksa jdkls ajdlk sakdlj sadlka jsdlks ajdkl sajdlk sajdl ksajd lkas jd", MessageStatus.Sended, 7));
+            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "V Chat", false, "", 2, new List<int>() { 1 }, new List<int>() { 1, 0 }));
+            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "It's Mark", false, "", 3, new List<int>() { 1 }, new List<int>() { 1, 0 }));
+            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "Vlad", false, "", 4, new List<int>() { 1 }, new List<int>() { 1, 0 }));
 
             //Add all groups from the Groups repository and add them to chat list
             AddGroupToChatList((List<Group>)UnitOfWork.GroupsTableRepo.GetAll());
@@ -54,11 +56,12 @@ namespace UI.UIPresenter.ViewModels
         //TODO Delate
         async void Check()
         {
-            await Task.Delay(3000);
+            await Task.Delay(10000);
 
             //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "It's not Mark", false, "", 3, new List<int>() { 1 }));
-            UnitOfWork.MessagesTableRepo.Add(new Message(0, 4, DataType.Text, DateTime.Now, "Hi Mark, how do you do, i haven't seen you for ages", MessageStatus.Sended, 4));
-            UnitOfWork.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), "4");
+            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 4, DataType.Text, DateTime.Now, "Hi Mark, how do you do, i haven't seen you for ages", MessageStatus.Sended, 4));
+            //UnitOfWork.MessagesTableRepo.Add(new Message(1, 2, DataType.Text, DateTime.Now, "Hi new message", MessageStatus.Sended, 9));
+            //UnitOfWork.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), "4");
         }
 
         /// <summary>
@@ -136,7 +139,7 @@ namespace UI.UIPresenter.ViewModels
                     foreach (var group in ChatList.Items)
                     {
                         //If message from the group, then update
-                        if (group.GroupData.Id == data.Id)
+                        if (group.GroupData.Id == data.ReceiverId)
                             group.LastMessage = data;
 
                     }

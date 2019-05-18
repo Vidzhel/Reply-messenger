@@ -1,5 +1,6 @@
 ﻿using CommonLibs.Data;
 using System;
+using System.Windows;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -15,7 +16,6 @@ namespace UI.UIPresenter.ViewModels
         #endregion
 
         #region Public Members
-
 
         //Contact info, user name, bio, eth..
         public Contact ContactData

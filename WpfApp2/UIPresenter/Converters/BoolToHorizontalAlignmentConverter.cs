@@ -13,9 +13,15 @@ namespace UI.UIPresenter.Converters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if ((bool)value)
-                return HorizontalAlignment.Right;
+                if(((string)parameter).Equals("true"))
+                    return HorizontalAlignment.Left;
+                else
+                    return HorizontalAlignment.Right;
             else
-                return HorizontalAlignment.Left;
+                if (((string)parameter).Equals("true"))
+                    return HorizontalAlignment.Right;
+
+            return HorizontalAlignment.Left;
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

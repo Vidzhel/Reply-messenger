@@ -16,61 +16,149 @@
                 <Setter.Value>
                     <ControlTemplate>
 
-                        <Border Background="{Binding IsYourMessage, Converter={converters:BoolToColorBrushConverter}}"
-                                CornerRadius="10"
-                                Margin="0 5 0 5"
-                                MinHeight="10"
-                                HorizontalAlignment="{Binding IsYourMessage, Converter={converters:BoolToHorizontalAlignmentConverter}}">
-                            
-                            <Grid Margin="10 5 10 2">
+                        <!--<Grid Name="Container">
 
-                                <Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+
+                                --><!--Buttons place--><!--
+                                <ColumnDefinition Width="auto"/>
+                                
+                                --><!--Message buble--><!--
+                                <ColumnDefinition Width="*"/>
+                                
+                                --><!--Buttons place--><!--
+                                <ColumnDefinition Width="auto"/>
+
+                            </Grid.ColumnDefinitions>-->
+                            
+                            <!--Message Buble-->
+                        <Grid x:Name="MessageContainer">
+
+                            <Border Background="{Binding IsYourMessage, Converter={converters:BoolToColorBrushConverter}}"
+                                    CornerRadius="10"
+                                    Margin="0 2 0 2"
+                                    MinHeight="10"
+                                    HorizontalAlignment="{Binding IsYourMessage, Converter={converters:BoolToHorizontalAlignmentConverter}, ConverterParameter=false}">
+
+                                <Grid Margin="10 5 10 2">
+
+                                    <Grid.RowDefinitions>
+
+                                        <!--User name-->
+                                        <RowDefinition Height="auto"/>
+
+                                        <!--Text-->
+                                        <RowDefinition Height="*"/>
+
+                                        <!--Date and is read info-->
+                                        <RowDefinition Height="auto"/>
+
+                                    </Grid.RowDefinitions>
 
                                     <!--User name-->
-                                    <RowDefinition Height="auto"/>
-
-                                    <!--Text-->
-                                    <RowDefinition Height="*"/>
-
-                                    <!--Date and is read info-->
-                                    <RowDefinition Height="auto"/>
-
-                                </Grid.RowDefinitions>
-
-                                <!--User name-->
-                                <Label Content="Anaiya Harrington"
+                                    <Label Content="Anaiya Harrington"
                                        Foreground="{StaticResource MiddleGrayBgBrush}"
                                        FontSize="15"
                                        Visibility="{Binding DisplayUserName, Converter={converters:BoolToVisibilityConverter}}"/>
 
-                                <!--Text-->
-                                <TextBlock Grid.Row="1"
+                                    <!--Text-->
+                                    <TextBlock Grid.Row="1"
                                            TextWrapping="Wrap"
                                            Text="{Binding MessageText}"
                                            Foreground="{StaticResource LightGrayBgBrush}"/>
 
-                                <!--Time and message status-->
-                                <StackPanel Grid.Row="2"
+                                    <!--Time and message status-->
+                                    <StackPanel Grid.Row="2"
                                             Orientation="Horizontal"
-                                            HorizontalAlignment="Right">
+                                            HorizontalAlignment="{Binding IsYourMessage, Converter={converters:BoolToHorizontalAlignmentConverter}, ConverterParameter=true}">
 
-                                    <!--Time-->
-                                    <Label Style="{StaticResource RegularText}"
-                                           FontSize="10"
+                                        <!--Time-->
+                                        <Label Style="{StaticResource RegularText}"
+                                           FontSize="8"
                                            Content="{Binding MessageTime, Converter={converters:DateToTextHoursConverter}}"
                                            Foreground="{StaticResource MiddleGrayBgBrush}"/>
 
-                                    <!--Message status-->
-                                    <Label Style="{StaticResource Sumbol}"
+                                        <!--Message status-->
+                                        <Label Style="{StaticResource Sumbol}"
                                            Visibility="{Binding IsYourMessage, Converter={converters:BoolToVisibilityConverter}}"
                                            Content="{Binding MessageStatus, Converter={converters:MessageStatusToIconConverter}}"
                                            Foreground="{StaticResource LightBlueBrush}"
-                                           FontSize="10"/>
+                                           FontSize="8"/>
 
-                                </StackPanel>
-                            </Grid>
-                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
 
+                        </Grid>
+                            <!--Buttons--><!--
+                            <StackPanel Margin="20 0 0 0"
+                                        Name="OptionalButtons"
+                                        Visibility="Collapsed"
+                                        Grid.Column="1"
+                                        Opacity="0"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+
+                                <Button Tag="LightBlueBrush" Margin="10 0" Style="{StaticResource IconicButton}" Content=""/>
+
+                                <Button Tag="OrangeBrush" Margin="20 0"  Style="{StaticResource IconicButton}" Content=""/>
+
+                            </StackPanel>
+
+                        </Grid>-->
+
+                        <!--<ControlTemplate.Triggers>
+
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            
+                                            <ObjectAnimationUsingKeyFrames  Duration="0"
+                                                                             SpeedRatio="90"
+                                                                             Storyboard.TargetName="OptionalButtons"
+                                                                             Storyboard.TargetProperty="(UIElement.Visibility)">
+
+                                                <DiscreteObjectKeyFrame  KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+
+                                            </ObjectAnimationUsingKeyFrames>
+                                                
+                                            <DoubleAnimation Duration="0:0:0.2"
+                                                             SpeedRatio="90"
+                                                             Storyboard.TargetName="Style"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0:0:0.2"
+                                                             SpeedRatio="90"
+                                                             Storyboard.TargetName="OptionalButtons"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0"/>
+
+                                            <ObjectAnimationUsingKeyFrames  Duration="0"
+                                                                             SpeedRatio="90"
+                                                                             Storyboard.TargetName="OptionalButtons"
+                                                                             Storyboard.TargetProperty="(UIElement.Visibility)">
+
+                                                <DiscreteObjectKeyFrame  KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            
+                        </ControlTemplate.Triggers>-->
+                        
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

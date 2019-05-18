@@ -19,6 +19,7 @@ namespace UI.InversionOfControl
         public static void Bind()
         {
             Kernel.Bind<ApplicationViewModel>().ToConstant(new ApplicationViewModel());
+            Kernel.Bind<ChatViewModel>().ToConstant(new ChatViewModel());
         }
     }
 }

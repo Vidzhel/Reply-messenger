@@ -30,7 +30,7 @@
                         <!--Binding Border brush to control state at View Model-->
                         <Border x:Name="border"  CornerRadius="2" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
                             <Border.BorderBrush>
-                                <MultiBinding Converter="{converters:ControlStateToColorBrush}" FallbackValue="{StaticResource LightGrayBgBrush}">
+                                <MultiBinding Converter="{converters:ControlStateToColorBrush}">
                                     <Binding Path="FieldState"/>
                                     <Binding Path="Tag" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=TextBox}"/>
                                 </MultiBinding>

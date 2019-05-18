@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:UI.Styles">
+                    xmlns:local="clr-namespace:UI.Styles"
+                    xmlns:converters="clr-namespace:UI.UIPresenter.Converters">
 
 
     <!--Style For Sign Button, other big buttons-->
@@ -111,7 +112,7 @@
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter Property="Cursor" Value="Hand"/>
-                            <Setter Property="Foreground" Value="{StaticResource LightBlueBrush}"/>
+                            <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Mode=Self}, Converter={converters:ResourceKeyToColorBrushConverter}}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -119,7 +120,6 @@
         </Setter>
     </Style>
 
-    
     
     <!--Window chrome Buttons-->
     <Style TargetType="Button" x:Key="WindowSystemButtons">

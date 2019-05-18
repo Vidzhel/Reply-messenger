@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using UI.UIPresenter.ViewModels;
@@ -15,31 +16,31 @@ namespace UI.UIPresenter.Converters
             switch ((ControlStates)value[0])
             {
                 case ControlStates.NormalGray:
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9FA4C0"));
+                    return Application.Current.FindResource("DarkBlueBrush");
 
                 case ControlStates.EmailError:
                     if(fieldType != "E-mail")
-                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9FA4C0"));
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF6666"));
+                        return Application.Current.FindResource("DarkBlueBrush");
+                    return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.PasswordError:
                     if(fieldType != "Password" && fieldType != "Repeat Password")
-                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9FA4C0"));
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF6666"));
+                        return Application.Current.FindResource("DarkBlueBrush");
+                    return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.UserNameError:
                     if(fieldType != "User name")
-                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9FA4C0"));
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF6666"));
+                        return Application.Current.FindResource("DarkBlueBrush");
+                    return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.Error:
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF6666"));
+                    return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.Ok:
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#56FF50"));
+                    return Application.Current.FindResource("LightGreen");
 
                 default:
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9FA4C0"));
+                    return Application.Current.FindResource("DarkBlueBrush");
             }
         }
 

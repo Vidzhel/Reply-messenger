@@ -54,13 +54,13 @@
     <Compile Include="Connections\Repositories\DataChangedArgs.cs" />
     <Compile Include="Connections\Repositories\INotifyDataChanged.cs" />
     <Compile Include="Connections\Repositories\Repository.cs" />
+    <Compile Include="Connections\Repositories\Tables\ContactsTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\GroupsTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\MessagesTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\RemoteGroupsTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\RemoteMessagesTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\Table.cs" />
     <Compile Include="Connections\Repositories\Tables\IBaseTable.cs" />
-    <Compile Include="Connections\Repositories\Tables\ContactTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\UsersTableFields.cs" />
     <Compile Include="Data\BaseCommandChain.cs" />
     <Compile Include="Data\BaseDoubleCommandChain.cs" />

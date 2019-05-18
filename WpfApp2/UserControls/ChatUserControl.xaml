@@ -8,157 +8,167 @@
              
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="974">
+    <Border Background="{StaticResource GrayBGBrush}" CornerRadius="10">
 
-    <Grid Background="{StaticResource GrayBGBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="296*"/>
-            <ColumnDefinition Width="191*"/>
-        </Grid.ColumnDefinitions>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="296*"/>
+                <ColumnDefinition Width="191*"/>
+            </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+
+                <!--Chat info bar-->
+                <RowDefinition Height="Auto"/>
+
+                <!--space for Message-->
+                <RowDefinition Height="*"/>
+
+                <!--Bar for typing messages-->
+                <RowDefinition Height="Auto"/>
+
+            </Grid.RowDefinitions>
 
             <!--Chat info bar-->
-            <RowDefinition Height="Auto"/>
-
-            <!--space for Message-->
-            <RowDefinition Height="*"/>
-
-            <!--Bar for typing messages-->
-            <RowDefinition Height="Auto"/>
-
-        </Grid.RowDefinitions>
-
-        <!--Chat info bar-->
-        <Grid Grid.ColumnSpan="2" Margin="0,0,0,0.333">
-            <Border VerticalAlignment="Top"
+            <Grid Grid.ColumnSpan="2" Margin="0,0,0,0.333">
+                <Border VerticalAlignment="Top"
                     Margin="20 20 20 0"
                     Height="45"
                     Background="{StaticResource DarkBgBrush}"
                     CornerRadius="7">
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+
+                            <!--Photo circle-->
+                            <ColumnDefinition Width="auto"/>
+
+                            <!--User info-->
+                            <ColumnDefinition Width="*"/>
+
+                            <!--Buttons-->
+                            <ColumnDefinition Width="auto"/>
+
+                        </Grid.ColumnDefinitions>
 
                         <!--Photo circle-->
-                        <ColumnDefinition Width="auto"/>
+                        <Grid Margin="20 3 0 3">
+
+                            <!--Photo-->
+                            <Border Name="Photo"  Height="35" Width="35" Background="{StaticResource GrayBGBrush}" CornerRadius="25"/>
+
+                        </Grid>
 
                         <!--User info-->
-                        <ColumnDefinition Width="*"/>
+                        <StackPanel Margin="20 3 0 3" Grid.Column="1" Orientation="Vertical">
 
-                        <!--Buttons-->
-                        <ColumnDefinition Width="auto"/>
-
-                    </Grid.ColumnDefinitions>
-
-                    <!--Photo circle-->
-                    <Grid Margin="20 3 0 3">
-
-                        <!--Photo-->
-                        <Border Name="Photo"  Height="35" Width="35" Background="{StaticResource GrayBGBrush}" CornerRadius="25"/>
-
-                    </Grid>
-
-                    <!--User info-->
-                    <StackPanel Margin="20 3 0 3" Grid.Column="1" Orientation="Vertical">
-
-                        <!--User Name-->
-                        <Label Content="{Binding ChatName}"
+                            <!--User Name-->
+                            <Label Content="{Binding ChatName}"
                                Foreground="{StaticResource LightGrayBgBrush}"
                                FontWeight="DemiBold"
                                FontSize="13"/>
 
-                        <!--Last Time online-->
-                        <Label Content="{Binding UsersOnline, Converter={converters:IntToUsersOnlineConverter}}"
+                            <!--Last Time online-->
+                            <Label Content="{Binding UsersOnline, Converter={converters:IntToUsersOnlineConverter}}"
                                Margin="0 -10 0 0"
                                FontSize="10"
                                Foreground="{Binding UsersOnline, Converter={converters:UsersOnlineToColorConverter}}"/>
 
-                    </StackPanel>
+                        </StackPanel>
 
-                    <!--Additional buttons-->
-                    <StackPanel Grid.Column="2" Margin="0 0 10 0" Orientation="Horizontal">
+                        <!--Additional buttons-->
+                        <StackPanel Grid.Column="2" Margin="0 0 10 0" Orientation="Horizontal">
 
-                        <Border Height="25"
+                            <Border Height="25"
                                 Width="25"
                                 Background="{StaticResource GrayBGBrush}"
                                 CornerRadius="15"
                                 Margin="5 0 5 0"/>
 
-                        <Border Height="25"
+                            <Border Height="25"
                                 Width="25"
                                 Background="{StaticResource GrayBGBrush}"
                                 CornerRadius="15"
                                 Margin="5 0 5 0"/>
 
-                        <Border Height="25"
+                            <Border Height="25"
                                 Width="25"
                                 Background="{StaticResource GrayBGBrush}"
                                 CornerRadius="15"
                                 Margin="5 0 5 0"/>
 
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
 
-        <!--MessageList-->
-        <local:MessageList Grid.Row="1" Margin="40,4.667" DataContext="{Binding MessageList}" Grid.ColumnSpan="2"/>
+            <!--MessageList-->
+            <local:MessageList x:Name="ScrollMessagesList" Grid.Row="1" Margin="40,4.667" DataContext="{Binding MessageList}" Grid.ColumnSpan="2"/>
 
-        <!--typing Bar -->
-        <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0.333,0,0">
+            <!--typing Bar -->
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0.333,0,0">
 
-            <Border VerticalAlignment="Top"
+                <Border VerticalAlignment="Top"
                     Margin="20 0 20 20"
                     MinHeight="45"
                     MaxHeight="200"
                     Background="{StaticResource DarkBgBrush}"
                     CornerRadius="7">
 
-                <Grid>
+                    <Grid>
 
-                    <Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+
+                            <!--Attachments-->
+                            <ColumnDefinition Width="auto"/>
+
+                            <!--TextBox-->
+                            <ColumnDefinition Width="*"/>
+
+                            <!--Send button-->
+                            <ColumnDefinition Width="auto"/>
+
+                        </Grid.ColumnDefinitions>
 
                         <!--Attachments-->
-                        <ColumnDefinition Width="auto"/>
-
-                        <!--TextBox-->
-                        <ColumnDefinition Width="*"/>
-
-                        <!--Send button-->
-                        <ColumnDefinition Width="auto"/>
-
-                    </Grid.ColumnDefinitions>
-
-                    <!--Attachments-->
-                    <Button Margin="20 10 0 10"
+                        <Button Margin="20 10 0 10"
                             VerticalAlignment="Bottom"
                             Content=""
+                            Tag="LightBlueBrush"
                             FontSize="20"
                             Style="{StaticResource IconicButton}"
                             />
 
-                    <!--Typing box-->
-                    <TextBox Grid.Column="1"
+                        <!--Typing box-->
+                        <TextBox Grid.Column="1"
+                             Name="MessageTextBox"
+                             Text="{Binding MessageContent, Mode=TwoWay,
+                             UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource MessageTypingBox}"
                              TextWrapping="Wrap"
                              />
 
-                    <!--Buttons-->
-                    <StackPanel Margin="20 0 20 0" VerticalAlignment="Bottom" Grid.Column="2">
+                        <!--Buttons-->
+                        <StackPanel Margin="20 0 30 0" VerticalAlignment="Bottom" Grid.Column="2">
 
-                        <!--Send-->
-                        <Button Content=""
+                            <!--Send-->
+                            <Button Content=""
                                 Style="{StaticResource IconicButton}"
                                 FontSize="20"
+                                Command="{Binding SendMessage}"
+                                IsDefault="True"
+                                Tag="OrangeBrush"
                                 Margin="0 10 0 10"
                                 FontWeight="Black"
                                 Foreground="{StaticResource LightBlueBrush}"/>
 
-                    </StackPanel>
-                </Grid>
+                        </StackPanel>
+                    </Grid>
 
-            </Border>
+                </Border>
 
+            </Grid>
         </Grid>
-    </Grid>
+
+    </Border>
 </UserControl>

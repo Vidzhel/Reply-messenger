@@ -7,6 +7,8 @@
       xmlns:local="clr-namespace:UI.Pages"
       xmlns:viewModels="clr-namespace:UI.UIPresenter.ViewModels"
       xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+      xmlns:commands="clr-namespace:UI.UIPresenter.ViewModels.Commands"
+      xmlns:unitOfWork="clr-namespace:ClientLibs.Core.DataAccess;assembly=ClientLibs"
       xmlns:userControls="clr-namespace:UI.UserControls"
               
        
@@ -38,7 +40,33 @@
             </Grid.RowDefinitions>
 
             <!--Search-->
-            <TextBox Margin="10 5 10 10" Style="{StaticResource SearchBox}" />
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+
+                    <ColumnDefinition Width="auto"/>
+                    
+                    <ColumnDefinition Width="*"/>
+
+                </Grid.ColumnDefinitions>
+
+                <!--User Info page button-->
+                    <Button Style="{StaticResource IconicButton}"
+                            Content=""
+                            FontWeight="Black"
+                            Command="{x:Static commands:CommonCommands.OpenUserInfo}"
+                            CommandParameter="{x:Static unitOfWork:UnitOfWork.Contact}"
+                            Tag="OrangeBrush"
+                            FontSize="17"
+                            Margin="10 0 6 0"/>
+
+                
+                <TextBox Grid.Column="1"
+                         Margin="10 5 10 10"
+                         VerticalAlignment="Center"
+                         Style="{StaticResource SearchBox}" />
+
+            </Grid>
 
             <!--Chat list-->
             <userControls:ChatList DataContext="{Binding ChatList}" Grid.Row="1"/>
@@ -46,7 +74,7 @@
         </Grid>
 
         <!--Content of right pannel-->
-        <Frame Grid.Column="1" Content="{Binding ActiveChatContent, Converter={converters:ToChatPageConverter}}"/>
+        <Frame Grid.Column="1" Content="{Binding ChatViewModel.CurrentChatPage, Converter={converters:ToChatPageConverter}}"/>
 
     </Grid>
 </local:BasePage>

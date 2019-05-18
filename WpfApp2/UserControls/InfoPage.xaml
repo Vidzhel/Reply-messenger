@@ -1,0 +1,223 @@
+﻿<UserControl x:Class="UI.UserControls.InfoUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+            
+             xmlns:local="clr-namespace:UI.UserControls"
+             xmlns:viewModels="clr-namespace:UI.UIPresenter.ViewModels"
+             xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+             xmlns:commands="clr-namespace:UI.UIPresenter.ViewModels.Commands"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="974">
+    
+    <Border Background="{StaticResource GrayBGBrush}" CornerRadius="10">
+        
+        <Grid>
+            
+            <Grid.ColumnDefinitions>
+
+                <!--Additional info and options-->
+                <ColumnDefinition Width="*"/>
+                
+                <!--User info-->
+                <ColumnDefinition Width="auto"/>
+
+            </Grid.ColumnDefinitions>
+
+            <!--Option tabs-->
+            <TabControl Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}"
+                        Margin="20 80 10 80"
+                        Style="{DynamicResource TabControlStyle1}">
+                
+                <TabItem Style="{StaticResource CustomTabPanel}" Header="Contacts">
+                    <local:ContactsList DataContext="{Binding ContactsList}" />
+                </TabItem>
+
+                <TabItem  Style="{StaticResource CustomTabPanel}" Header="Change profile info">
+                    
+                </TabItem>
+
+                <TabItem Style="{StaticResource CustomTabPanel}" Header="Change Password">
+                    
+                </TabItem>
+            </TabControl>
+            
+            <!--User Info-->
+            <Border VerticalAlignment="Center"
+                    Grid.Column="1"
+                    Margin="20 0"
+                    Background="{StaticResource DarkBgBrush}"
+                    Width="240"
+                    CornerRadius="10">
+                
+                <StackPanel Margin="10 20" >
+                
+                    <!--User info Label-->
+                    <Border Background="{StaticResource GrayBGBrush}" CornerRadius="10" Width="150">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="30 2 30 2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+
+                            <Label Content=""
+                                   FontWeight="Black"
+                                   Margin="0 0 10 0"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource Sumbol}"/>
+
+                            <Label Content="User Info"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource LightGrayBgBrush}"
+                                   Style="{StaticResource RegularText}"/>
+
+                        </StackPanel>
+                    </Border>
+                
+                    <!--Profile Photo-->
+                    <Border Width="100"
+                            Height="100"
+                            Margin="0 20 0 0"
+                            CornerRadius="50"
+                            Background="{StaticResource GrayBGBrush}"
+                            />
+
+                    <!--User name-->
+                    <Label Style="{StaticResource RegularText}"
+                           Content="{Binding UserName}"
+                           Margin="0 5 0 0"
+                           HorizontalAlignment="Center"
+                           FontSize="15"
+                           Foreground="{StaticResource LightGrayBgBrush}"/>
+
+                    <!--Status-->
+                    <Label Style="{StaticResource RegularText}"
+                           Content="{Binding }"
+                           Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
+                           HorizontalAlignment="Center"
+                           Margin="0 -10 0 0"
+                           FontSize="10"
+                           Foreground="{StaticResource MiddleGrayBgBrush}"/>
+                    
+                    <!--buttons-->
+                    <StackPanel Margin="0 10 0 0"
+                                Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                        
+                        <!--Add to contact list-->
+                        <Button Content=""
+                                Command="{x:Static commands:CommonCommands.AddToContactList}"
+                                CommandParameter="{Binding UserInfo}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=false}"
+                                Margin="8"
+                                FontSize="14"
+                                Tag="OrangeBrush"
+                                Style="{StaticResource IconicButton}"
+                        />
+                        
+                        <!--Remove from contact list-->
+                        <Button Content=""
+                                HorizontalAlignment="Center"
+                                Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}}"
+                                VerticalAlignment="Center"
+                                Command="{x:Static commands:CommonCommands.DeleteFromContactList}"
+                                CommandParameter="{Binding UserInfo}"
+                                Margin="8"
+                                FontSize="14"
+                                Tag="LightRedBrush"
+                                Style="{StaticResource IconicButton}"
+                                />
+
+                        <!--Start Chat-->
+                        <Button Content=""
+                                Command="{x:Static commands:CommonCommands.StartChat}"
+                                CommandParameter="{Binding UserInfo}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="8"
+                                FontSize="14"
+                                FontWeight="Black"
+                                Tag="LightBlueBrush"
+                                Style="{StaticResource IconicButton}"
+                                />
+                        
+                    </StackPanel>
+
+                    <!--Bio-->
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0 10 0 0"
+                                HorizontalAlignment="Center">
+
+                        <Border Background="{StaticResource GrayBGBrush}"
+                                CornerRadius="20"
+                                Margin="0 0 10 0"
+                                VerticalAlignment="Center">
+                            
+                            <Label Content=""
+                                   FontSize="12"
+                                   Foreground="{StaticResource LightBlueBrush}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Style="{StaticResource Sumbol}"/>
+                        </Border>
+                        
+                        <Border Background="{StaticResource GrayBGBrush}"
+                                CornerRadius="5"
+                                Width="180">
+      
+                                <TextBlock Text="{Binding Bio}"
+                                           VerticalAlignment="Center"
+                                           Margin="10 5"
+                                           TextWrapping="Wrap"
+                                           FontSize="10"
+                                           Foreground="{StaticResource LightGrayBgBrush}"/>
+
+                        </Border>
+
+                    </StackPanel>
+                    
+                    <!--Email-->
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0 10 0 0"
+                                HorizontalAlignment="Center">
+
+                        <Border Background="{StaticResource GrayBGBrush}"
+                                CornerRadius="20"
+                                Margin="0 0 10 0"
+                                VerticalAlignment="Center">
+
+                            <Label Content=""
+                                   FontSize="12"
+                                   Foreground="{StaticResource LightBlueBrush}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Style="{StaticResource Sumbol}"/>
+                        </Border>
+                        
+                        <Border Background="{StaticResource GrayBGBrush}"
+                                CornerRadius="5"
+                                Width="180">
+      
+                                <TextBlock Text="{Binding Email}"
+                                           VerticalAlignment="Center"
+                                           Margin="10 5"
+                                           TextWrapping="Wrap"
+                                           FontSize="10"
+                                           Foreground="{StaticResource LightGrayBgBrush}"/>
+
+                        </Border>
+
+                    </StackPanel>
+                    
+                </StackPanel>
+            </Border>
+
+        </Grid>
+        
+    </Border>
+</UserControl>

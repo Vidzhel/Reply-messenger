@@ -1,6 +1,5 @@
-﻿
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -9,13 +8,13 @@ namespace UI.UIPresenter.ViewModels
 
         #region Public Members
 
-        public List<MessageListItemViewModel> Items { get; set; } = new List<MessageListItemViewModel>();
+        public ObservableCollection<MessageListItemViewModel> Items { get; set; } = new ObservableCollection<MessageListItemViewModel>();
 
         #endregion
 
         #region 
 
-        public MessageListViewModel(List<MessageListItemViewModel> items)
+        public MessageListViewModel(ObservableCollection<MessageListItemViewModel> items)
         {
             Items = items;
         }

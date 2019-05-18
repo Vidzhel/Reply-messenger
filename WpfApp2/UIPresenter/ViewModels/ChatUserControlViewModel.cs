@@ -1,105 +1,278 @@
 ﻿using ClientLibs.Core.DataAccess;
+using CommonLibs.Connections.Repositories;
 using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
+using UI.InversionOfControl;
+using WpfApp2;
 
 namespace UI.UIPresenter.ViewModels
 {
-    public class ChatUserControlViewModel
+    public class ChatUserControlViewModel : BaseViewModel
     {
 
         #region Private Members
 
-        Group groupData;
+        Group currentChat;
+
+        Contact contact;
 
         #endregion
 
         #region Public Members
 
-        Contact contact;
+        /// <summary>
+        /// Command for send message button
+        /// </summary>
+        public ICommand SendMessage { set; get; }
 
+        /// <summary>
+        /// Contain text of message from Typing Box
+        /// </summary>
+        public string MessageContent { get; set; }
+
+        /// <summary>
+        /// List of all messages in the chat
+        /// </summary>
         public MessageListViewModel MessageList { get; set; } = new MessageListViewModel();
 
         /// <summary>
         /// Gets name of the group
         /// </summary>
-        public string ChatName => groupData.Name;
+        public string ChatName => currentChat?.Name;
 
         /// <summary>
         /// Gets count of online users except you
         /// </summary>
-        public int UsersOnline => groupData.UsersOnline - 1;
-        //public string UsersOnline => groupData.IsChat ? contact.LastTimeOnline : (groupData.UsersOnline - 1).ToString();
+        public int UsersOnline => currentChat != null ? currentChat.UsersOnline - 1: 0;
 
-        public bool IsChat => groupData.IsChat;
+        /// <summary>
+        /// Return true if in the chat are less or equal than 3 users
+        /// </summary>
+        public bool IsChat => currentChat != null? currentChat.IsChat : false;
+
+        #endregion
+
+        #region Public Methods
+        
+        /// <summary>
+        /// Changes current chat
+        /// </summary>
+        /// <param name="group"></param>
+        public void ChangeChat(Group group)
+        {
+            currentChat = group;
+
+            //Cleat Message list and load messages
+            MessageList = new MessageListViewModel();
+            loadMessages();
+
+            //Update UI
+            OnPropertyChanged("ChatName");
+            OnPropertyChanged("UsersOnline");
+            OnPropertyChanged("IsChat");
+        }
 
         #endregion
 
         #region Constructor
 
-        public ChatUserControlViewModel(Group group)
+        public ChatUserControlViewModel()
         {
-            groupData = group;
+            //Set up handelrs
+            ApplicationService.GetChatViewModel.OnCurrentChatChanged((sender, args) => ChangeChat(args));
+            UnitOfWork.MessagesTableRepo.AddDataChangedHandler((sender, args) => OnMessagesTableRepoChanged(sender, args));
+            UnitOfWork.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupsTableRepoChanged(sender, args));
 
-            //TODO delete
-            var user = new Contact("VidzhelNeSuka", "myemail.com", "something there");
-            var user1 = new Contact("Oleg", "myemail.com", "somthing there", null, "false");
+            //Set up commands
+            SendMessage = new RelayCommand(() => sendMessage());
 
-            var message = new Message(10, 20, DataType.Text, new DateTime(2018, 2, 25), "Hi, how do you do?", MessageStatus.Sended);
-            var message1 = new Message(10, 20, DataType.Image, DateTime.Now, "file source", MessageStatus.SendingInProgress);
-            var message2 = new Message(10, 20, DataType.Text, DateTime.Now, "Ohh, thanks for the pressent, i very appreciated", MessageStatus.IsRead);
-
-
-            MessageList.Items = new List<MessageListItemViewModel> {
-
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, true, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, true, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user1, message1, true, true),
-                new MessageListItemViewModel(user, message2, false, true)
-
-            };
+            //Set current chat
+            ChangeChat(ApplicationService.GetCurrentChoosenChat);
         }
 
         #endregion
 
         #region Private Methods
 
+        void OnGroupsTableRepoChanged(object sender, DataChangedArgs<IEnumerable<Group>> args)
+        {
+            switch (args.Action)
+            {
+                case RepositoryActions.Add:
+                    break;
+                case RepositoryActions.Update:
+                    UpdateGroup((List<Message>)args.Data);
+                    break;
+                case RepositoryActions.Remove:
+                    RemoveGroup((List<Message>)args.Data);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void RemoveGroup(List<Message> dataChanged)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void UpdateGroup(List<Message> dataChanged)
+        {
+            throw new NotImplementedException();
+        }
+
+        void OnMessagesTableRepoChanged(object sender, DataChangedArgs<IEnumerable<Message>> args)
+        {
+            if (currentChat == null)
+                return;
+
+            switch (args.Action)
+            {
+                case RepositoryActions.Add:
+                    AddMessagesToMessagesList((List<Message>)args.Data);
+                    break;
+                case RepositoryActions.Update:
+                    UpdateMessagesInMessagesList((List<Message>)args.Data);
+                    break;
+                case RepositoryActions.Remove:
+                    RemoveMessagesFromMessagesList((List<Message>)args.Data);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Updates messages if they from the chat
+        /// </summary>
+        /// <param name="dataChanged"></param>
+        private void UpdateMessagesInMessagesList(List<Message> dataChanged)
+        {
+            if (dataChanged == null)
+                return;
+
+            foreach (var data in dataChanged)
+            {
+
+                //If message from the chat
+                if (data.ReceiverId == currentChat.Id)
+
+                    //Find the message to update
+                    for (int i = 0; i < MessageList.Items.Count; i++)
+                    {
+
+                        if (MessageList.Items[i].Message.Id == data.Id)
+                        {
+                            MessageList.Items[i].Message = data;
+                            break;
+                        }
+                    }
+
+
+            }
+        }
+
+        /// <summary>
+        /// Removes messages if they from the chat
+        /// </summary>
+        /// <param name="dataChanged"></param>
+        private void RemoveMessagesFromMessagesList(List<Message> dataChanged)
+        {
+            if (dataChanged == null)
+                return;
+
+            foreach (var data in dataChanged)
+            {
+
+                //If message from the chat
+                if(data.ReceiverId == currentChat.Id)
+
+                    //Find the message to delete
+                    for(int i = 0; i < MessageList.Items.Count; i++)
+                    {
+
+                        if (MessageList.Items[i].Message.Id == data.Id)
+                        {
+                            MessageList.Items.RemoveAt(i);
+                            break;
+                        }
+                    }
+
+
+            }
+        }
+
+        /// <summary>
+        /// Adds messages if they from the chat 
+        /// </summary>
+        /// <param name="dataChanged"></param>
+        private void AddMessagesToMessagesList(List<Message> dataChanged)
+        {
+            if (dataChanged == null)
+                return;
+
+            foreach (var data in dataChanged)
+            {
+                if (currentChat.Id == data.ReceiverId)
+                {
+                    //get user info
+                    var user = UnitOfWork.GetUsersInfo(new List<int>() { data.SenderId });
+
+                    //Becouse Items is ObservableCollection we should update elements from the main thread
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, currentChat.IsChat));
+                    });
+
+                }
+            }
+
+        }
+
         /// <summary>
         /// Loads all messages from the data base
         /// </summary>
         void loadMessages()
         {
-            //Get all messages whick match to the croup Id
-            var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), groupData.Id.ToString());
+            //Get all messages whick match to the group Id
+            var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), currentChat.Id.ToString());
 
             //Get all users data from server
-            var users = UnitOfWork.GetUsersInfo(groupData.MembersIdList);
+            var users = UnitOfWork.GetUsersInfo(new List<int>(currentChat.MembersIdList));
 
 
             foreach (var message in messages)
                 foreach (var user in users)
-                    //if user Id match to sender Id, than add message to chat
-                    if (user.Id == message.SenderId)
+                    if(user.Id == message.SenderId)
                     {
                         //If it's chat and it's not you, than add to contact
-                        if (groupData.IsChat)
+                        if (currentChat.IsChat)
                             if (UnitOfWork.User.Email != user.Email)
                                 contact = user;
 
-                        MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, groupData.IsChat));
+                        //Becouse Items is ObservableCollection we should update elements from the main thread
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, currentChat.IsChat));
+                        });
                     }
+        }
+
+        void sendMessage()
+        {
+            if (currentChat == null || this.MessageContent == null)
+                return;
+
+            //Delete unnecessary spaces
+            var text = System.Text.RegularExpressions.Regex.Replace(MessageContent, @"^(\s*)(\S*)(\s*)$", "$2");
+
+            //Add message to repository
+            UnitOfWork.MessagesTableRepo.Add(new Message(UnitOfWork.User.Id, currentChat.Id, DataType.Text, DateTime.Now, text));
+
+            MessageContent = "";
         }
 
         #endregion

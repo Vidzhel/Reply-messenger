@@ -1,18 +1,18 @@
 ﻿using ClientLibs.Core.DataAccess;
 using CommonLibs.Data;
 using System;
+using System.Windows.Input;
+using UI.InversionOfControl;
 
 namespace UI.UIPresenter.ViewModels
 {
     public class ChatListItemViewModel : BaseViewModel
     {
-        
-        #region Public Members
 
+        #region Public Members
 
         //Contact info, user name, bio, eth..
         public Group GroupData { get; set; }
-
 
         //Last message info
         public Message LastMessage { get; set; }
@@ -56,7 +56,7 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// If the message sent by the user
         /// </summary>
-        public bool IsYourMessage => UnitOfWork.User.Id == LastMessage.SenderId;
+        public bool IsYourMessage => UnitOfWork.User.Id == LastMessage?.SenderId;
 
         /// <summary>
         /// If group has 2 memebers, then will show is user online
@@ -101,6 +101,9 @@ namespace UI.UIPresenter.ViewModels
         /// <param name="message">Last message in the chat</param>
         public ChatListItemViewModel(Group group, Message message)
         {
+            //Set up hadlers
+            ApplicationService.GetChatViewModel.OnCurrentChatChanged((sender, args) => OnCurrentChatChanged(args));
+
             GroupData = group;
             LastMessage = message;
         }
@@ -111,5 +114,25 @@ namespace UI.UIPresenter.ViewModels
         }
 
         #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Selects the chat list item if it's the right chat
+        /// </summary>
+        /// <param name="group"></param>
+        void OnCurrentChatChanged(Group group)
+        {
+            if (group.Id == GroupData.Id)
+            {
+                IsSelected = true;
+                return;
+            }
+
+            IsSelected = false;
+        }
+
+        #endregion
+
     }
 }

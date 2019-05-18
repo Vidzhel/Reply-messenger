@@ -3,6 +3,7 @@ using CommonLibs.Connections.Repositories;
 using CommonLibs.Connections.Repositories.Tables;
 using System.Collections.Generic;
 using ClientLibs.Core.ConnectionToServer;
+using System;
 
 namespace ClientLibs.Core.DataAccess
 {
@@ -13,13 +14,27 @@ namespace ClientLibs.Core.DataAccess
     public static class UnitOfWork
     {
 
+        #region Private Members
+
+        static event EventHandler UserInfoUpdated;
+
+
+        #endregion
+
+        #region Public Members
+
+
         public static BaseRepository<Message> MessagesTableRepo = new Repository<Message>(new Table(new MessagesTableFields(), "Messages"), "LocalDB");
-        public static BaseRepository<Contact> ContactsTableRepo = new Repository<Contact>(new Table(new ContactTableFields(), "Contacts"), "LocalDB");
+        public static BaseRepository<Contact> ContactsTableRepo = new Repository<Contact>(new Table(new ContactsTableFields(), "Contacts"), "LocalDB");
         public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new GroupsTableFields(), "Groups"), "LocalDB");
 
-        public static User User { get; private set; } = new User("Vidzhel", "MyPass", "MyEmail", "MyBio", "+2");
+        public static User User { get; private set; } = new User("Vidzhel", "MyPass", "MyEmail", "MyBio", "+2", "false", null, 0);
+        public static Contact Contact => new Contact(User.UserName, User.Email, User.Bio, User.ProfilePhoto, User.Online, User.Id);
 
         static ClientCommandChain commandChain = new ClientCommandChain();
+
+
+        #endregion
 
         #region Constructor
 
@@ -38,12 +53,47 @@ namespace ClientLibs.Core.DataAccess
 
         #region Public Methods
 
+        public static void OnUserInfoUpdated(EventHandler handler)
+        {
+            UserInfoUpdated += handler;
+        }
+
         public static List<Contact> GetUsersInfo(List<int> id)
         {
-            //Make request to server and get response command
-            var res = commandChain.MakeRequest(CommandType.GetUsersInfo, id, User);
+            List<Contact> users = new List<Contact>();
+            Contact temp;
 
-            return (List<Contact>)res.RequestData;
+            //Add yourself
+            users.Add(new Contact(User.UserName, User.Email, User.Bio, User.ProfilePhoto, User.Online, User.Id));
+            id.Remove(User.Id);
+
+            //Check local data base for the contacts
+            for (int i = 0; i < id.Count; i++)
+            {
+                //Try to find users in local data base
+                temp = ContactsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), id[i].ToString());
+
+
+                //If we found user, than remove from id list and add to user list
+                if(temp != null)
+                {
+                    id.RemoveAt(i);
+                    users.Add(temp);
+                }
+            }
+
+            //If we didn't find all users
+            if (id.Count != 0)
+            {
+
+                //Make request to server and get response command
+                var res = commandChain.MakeRequest(CommandType.GetUsersInfo, id, User);
+
+                users.AddRange((List<Contact>)res.RequestData);
+
+            }
+
+            return users;
         }
 
         /// <summary>

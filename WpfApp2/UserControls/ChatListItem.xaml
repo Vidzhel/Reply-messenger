@@ -7,6 +7,7 @@
              xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
              xmlns:local="clr-namespace:UI.UserControls"
              xmlns:viewModel="clr-namespace:UI.UIPresenter.ViewModels"
+             xmlns:commands="clr-namespace:UI.UIPresenter.ViewModels.Commands"
              
              mc:Ignorable="d" 
              
@@ -21,6 +22,12 @@
                     <ControlTemplate TargetType="ContentControl">
 
                         <Border Name="background"  Background="{StaticResource DarkBgBrush}" CornerRadius="5 0 0 5" >
+
+                            <!--Set up on click event handler-->
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" Command="{x:Static commands:CommonCommands.OpenChat}" CommandParameter="{Binding GroupData}"/>
+                            </Border.InputBindings>
+                            
                             <Border Name="container"  Background="Transparent" CornerRadius="5 0 0 5" >
                             <Grid>
                             <Grid.ColumnDefinitions>
@@ -62,6 +69,10 @@
                             <!--Photo circle-->
                             <Grid VerticalAlignment="Bottom" Margin="0 0 0 5">
 
+                                        <Grid.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{x:Static commands:CommonCommands.OpenGroupInfo}" CommandParameter="{Binding GroupData}"/>
+                                        </Grid.InputBindings>
+                                
                                 <!--IsOnline circle-->
                                 <Border Name="OnlineCircle" Height="14" Margin="0 0 7 3" BorderThickness="3" BorderBrush="{StaticResource DarkBgBrush}" Panel.ZIndex="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="14" Background="{StaticResource LightGreenBrush}" Visibility="{Binding IsOnline, Converter={converters:BoolToVisibilityConverter}}" CornerRadius="25"/>
                                 
@@ -109,8 +120,8 @@
 
 
                         <ControlTemplate.Triggers>
-                            
-                            
+
+
                             <DataTrigger Binding="{Binding IsSelected}" Value="true">
                                 <Setter Property="Background" TargetName="background" Value="{StaticResource GrayBGBrush}"/>
                                 <Setter Property="Background" TargetName="MessageBG" Value="{StaticResource  DarkBgBrush}"/>

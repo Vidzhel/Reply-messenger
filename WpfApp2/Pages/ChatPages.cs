@@ -13,9 +13,10 @@ namespace UI.Pages
     {
 
         Chat,
+        ChatInfo,
 
         //Sturtup page
-        UserProfile
+        UserInfo
 
     }
 }

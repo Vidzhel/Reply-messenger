@@ -108,15 +108,21 @@
     <Compile Include="UIPresenter\ViewModels\ChatListViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ChatPageViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ChatUserControlViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\ChatViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\Commands\CommonCommands.cs" />
+    <Compile Include="UIPresenter\ViewModels\ContactsListItemViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\ContactsListViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ControlStates.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListItemDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListItemDesignViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\InfoUserControlViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\MessageListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\MessageListViewModel.cs" />
-    <Compile Include="UIPresenter\ViewModels\RelayCommandParametrized.cs" />
-    <Compile Include="UIPresenter\ViewModels\RelayCommand.cs" />
+    <Compile Include="UIPresenter\ViewModels\Commands\Base\RelayCommandParametrized.cs" />
+    <Compile Include="UIPresenter\ViewModels\Commands\Base\RelayCommand.cs" />
+    <Compile Include="UIPresenter\Converters\ResourceKeyToColorBrush.cs" />
     <Compile Include="UIPresenter\ViewModels\SignInPageViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\SignUpPageViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\WindowViewModel.cs" />
@@ -131,6 +137,15 @@
     </Compile>
     <Compile Include="UserControls\ChatUserControl.xaml.cs">
       <DependentUpon>ChatUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ContactsList.xaml.cs">
+      <DependentUpon>ContactsList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ContactsListItem.xaml.cs">
+      <DependentUpon>ContactsListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\InfoPage.xaml.cs">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MessageList.xaml.cs">
       <DependentUpon>MessageList.xaml</DependentUpon>
@@ -174,6 +189,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\ScrollViews.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\TabControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\TabPanels.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Text.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -195,6 +222,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ChatUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ContactsList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ContactsListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\InfoPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

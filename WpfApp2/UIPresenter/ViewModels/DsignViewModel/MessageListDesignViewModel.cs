@@ -28,7 +28,7 @@ namespace UI.UIPresenter.ViewModels
             var message1 = new Message(10, 20, DataType.Image, DateTime.Now, "file source", MessageStatus.SendingInProgress);
             var message2 = new Message(10, 20, DataType.Text, DateTime.Now, "Ohh, thanks for the pressent, i very appreciated", MessageStatus.IsRead);
 
-            Items = new List<MessageListItemViewModel> {
+            Items = new System.Collections.ObjectModel.ObservableCollection<MessageListItemViewModel> {
 
                 new MessageListItemViewModel(user, message, false, true),
                 new MessageListItemViewModel(user, message, false, true),

@@ -69,3 +69,12 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.Fody.Cop
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.exe
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.pdb
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\InfoPage.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\InfoPage.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ContactsList.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\ScrollViews.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\TabControls.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\TabPanels.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ContactsList.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ContactsListItem.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\ContactsListItem.baml
