@@ -1,4 +1,5 @@
-﻿using ClientLibs.Core.DataAccess;
+﻿using ClientLibs.Core;
+using ClientLibs.Core.DataAccess;
 using CommonLibs.Connections.Repositories;
 using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
@@ -12,16 +13,12 @@ namespace UI.UIPresenter.ViewModels
 {
     public class ChatUserControlViewModel : BaseViewModel
     {
-
-        #region Private Members
-
-        Group currentChat;
-
-        Contact contact;
-
-        #endregion
-
+        
         #region Public Members
+
+        public Contact Contact { get; set; }
+
+        public Group CurrentChat { get; set; }
 
         /// <summary>
         /// Command for send message button
@@ -41,17 +38,17 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// Gets name of the group
         /// </summary>
-        public string ChatName => currentChat?.Name;
+        public string ChatName => CurrentChat?.Name;
 
         /// <summary>
         /// Gets count of online users except you
         /// </summary>
-        public int UsersOnline => currentChat != null ? currentChat.UsersOnline - 1: 0;
+        public int UsersOnline => CurrentChat != null ? CurrentChat.UsersOnline - 1: 0;
 
         /// <summary>
         /// Return true if in the chat are less or equal than 3 users
         /// </summary>
-        public bool IsChat => currentChat != null? currentChat.IsChat : false;
+        public bool IsChat => CurrentChat != null? CurrentChat.IsChat : false;
 
         #endregion
 
@@ -63,7 +60,7 @@ namespace UI.UIPresenter.ViewModels
         /// <param name="group"></param>
         public void ChangeChat(Group group)
         {
-            currentChat = group;
+            CurrentChat = group;
 
             //Cleat Message list and load messages
             MessageList = new MessageListViewModel();
@@ -126,7 +123,7 @@ namespace UI.UIPresenter.ViewModels
 
         void OnMessagesTableRepoChanged(object sender, DataChangedArgs<IEnumerable<Message>> args)
         {
-            if (currentChat == null)
+            if (CurrentChat == null)
                 return;
 
             switch (args.Action)
@@ -158,7 +155,7 @@ namespace UI.UIPresenter.ViewModels
             {
 
                 //If message from the chat
-                if (data.ReceiverId == currentChat.Id)
+                if (data.ReceiverId == CurrentChat.Id)
 
                     //Find the message to update
                     for (int i = 0; i < MessageList.Items.Count; i++)
@@ -188,7 +185,7 @@ namespace UI.UIPresenter.ViewModels
             {
 
                 //If message from the chat
-                if(data.ReceiverId == currentChat.Id)
+                if(data.ReceiverId == CurrentChat.Id)
 
                     //Find the message to delete
                     for(int i = 0; i < MessageList.Items.Count; i++)
@@ -216,7 +213,7 @@ namespace UI.UIPresenter.ViewModels
 
             foreach (var data in dataChanged)
             {
-                if (currentChat.Id == data.ReceiverId)
+                if (CurrentChat.Id == data.ReceiverId)
                 {
                     //get user info
                     var user = UnitOfWork.GetUsersInfo(new List<int>() { data.SenderId });
@@ -224,7 +221,7 @@ namespace UI.UIPresenter.ViewModels
                     //Becouse Items is ObservableCollection we should update elements from the main thread
                     App.Current.Dispatcher.Invoke(() =>
                     {
-                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, currentChat.IsChat));
+                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, CurrentChat.IsChat));
                     });
 
                 }
@@ -238,10 +235,10 @@ namespace UI.UIPresenter.ViewModels
         void loadMessages()
         {
             //Get all messages whick match to the group Id
-            var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), currentChat.Id.ToString());
+            var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), CurrentChat.Id.ToString());
 
             //Get all users data from server
-            var users = UnitOfWork.GetUsersInfo(new List<int>(currentChat.MembersIdList));
+            var users = UnitOfWork.GetUsersInfo(new List<int>(CurrentChat.MembersIdList));
 
 
             foreach (var message in messages)
@@ -249,28 +246,28 @@ namespace UI.UIPresenter.ViewModels
                     if(user.Id == message.SenderId)
                     {
                         //If it's chat and it's not you, than add to contact
-                        if (currentChat.IsChat)
+                        if (CurrentChat.IsChat)
                             if (UnitOfWork.User.Email != user.Email)
-                                contact = user;
+                                Contact = user;
 
                         //Becouse Items is ObservableCollection we should update elements from the main thread
                         App.Current.Dispatcher.Invoke(() =>
                         {
-                            MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, currentChat.IsChat));
+                            MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, CurrentChat.IsChat));
                         });
                     }
         }
 
         void sendMessage()
         {
-            if (currentChat == null || this.MessageContent == null)
+            if (CurrentChat == null || this.MessageContent == null)
                 return;
 
             //Delete unnecessary spaces
             var text = System.Text.RegularExpressions.Regex.Replace(MessageContent, @"^(\s*)(\S*)(\s*)$", "$2");
 
             //Add message to repository
-            UnitOfWork.MessagesTableRepo.Add(new Message(UnitOfWork.User.Id, currentChat.Id, DataType.Text, DateTime.Now, text));
+            UnitOfWork.MessagesTableRepo.Add(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text));
 
             MessageContent = "";
         }

@@ -9,6 +9,7 @@
         Bio,
         Online,
         ChatsId,
+        ContactsId,
         ProfilePhoto
     }
 }

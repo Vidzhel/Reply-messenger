@@ -8,6 +8,12 @@ namespace CommonLibs.Data
     [Serializable]
     public class Contact
     {
+        #region Private Members
+
+        DateTime online;
+
+        #endregion
+
         #region public Members
 
         public int Id { get; private set; }
@@ -20,15 +26,56 @@ namespace CommonLibs.Data
 
         public string ProfilePhoto { get; set; }
 
-        public string Online { get; set; }
 
-        //Return DateTime.Now if user is online, else return last time online
-        public DateTime LastTimeOnline { get {
-                if (Online.Equals("True", StringComparison.InvariantCultureIgnoreCase))
-                    return DateTime.Now;
-                else
-                    return DateTime.FromBinary(Convert.ToInt64(Online)).ToLocalTime();
-            } }
+        /// <summary>
+        /// Get and set local DateTime online
+        /// </summary>
+        public DateTime LocalLastTimeOnline
+        {
+            get
+            {
+                return online;
+            }
+
+            set
+            {
+                online = value;
+            }
+        }
+
+        /// <summary>
+        /// Converted binary representation of universal time
+        /// </summary>
+        public string Online
+        {
+            get
+            {
+                //If oline equals to zero, that means user online
+                if (online == DateTime.MaxValue)
+                    return "true";
+
+                else if (online == DateTime.MinValue)
+                    return "false";
+
+                return online.ToUniversalTime().ToBinary().ToString();
+            }
+            set
+            {
+                if (value.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    online = DateTime.MaxValue;
+                    return;
+                }
+
+                else if (value.Equals("false", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    online = DateTime.MinValue;
+                    return;
+                }
+
+                online = DateTime.FromBinary((long)Convert.ToUInt64(value)).ToLocalTime();
+            }
+        }
 
         #endregion
 

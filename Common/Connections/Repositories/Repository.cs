@@ -101,7 +101,7 @@ namespace CommonLibs.Connections.Repositories
             ls.Add(data);
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, RepositoryActions.Add));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table.ToString(), RepositoryActions.Add));
             DBBusy.ReleaseMutex();
             return true;
         }
@@ -137,7 +137,7 @@ namespace CommonLibs.Connections.Repositories
 
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(dataRange, table, RepositoryActions.Add));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(dataRange, table.ToString(), RepositoryActions.Add));
             DBBusy.ReleaseMutex();
             return true;
         }
@@ -185,7 +185,7 @@ namespace CommonLibs.Connections.Repositories
             ls.Add(data);
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table, RepositoryActions.Update));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(ls, table.ToString(), RepositoryActions.Update));
             DBBusy.ReleaseMutex();
             return true;
         }
@@ -407,7 +407,7 @@ namespace CommonLibs.Connections.Repositories
             }
 
             //Fires INotifyDataChanged event
-            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(data, table, RepositoryActions.Remove));
+            DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(data, table.ToString(), RepositoryActions.Remove));
             DBBusy.ReleaseMutex();
             return true;
         }

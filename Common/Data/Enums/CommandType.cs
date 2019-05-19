@@ -17,6 +17,8 @@ namespace CommonLibs.Data
         SignOut,
 
         GetUsersInfo,
+        GetGroupsInfo,
+        GetUserGroupsInfo,
 
         CreateGroup,
         ConnectToGroup,

@@ -33,6 +33,8 @@ namespace ClientLibs.Core.ConnectionToServer
         /// </summary>
         static event EventHandler<byte[]> answerDataReady;
 
+        static event EventHandler<bool> connectionChanged;
+
         #endregion
 
 
@@ -61,9 +63,18 @@ namespace ClientLibs.Core.ConnectionToServer
         /// Adds new handler on answer data ready to use
         /// </summary>
         /// <param name="handler"></param>
-        static public void OnAnswerDataReady(EventHandler<byte[]> handler)
+        static public void AddAnswerDataReadyHandler(EventHandler<byte[]> handler)
         {
             answerDataReady += handler;
+        }
+
+        /// <summary>
+        /// Adds new handler on connetction to the server changed
+        /// </summary>
+        /// <param name="handler"></param>
+        static public void AddConnectionChanged(EventHandler<bool> handler)
+        {
+            connectionChanged += handler;
         }
 
         /// <summary>
@@ -98,6 +109,8 @@ namespace ClientLibs.Core.ConnectionToServer
                     Socket.EndConnect(asyncResult);
 
                     ServerConnected = true;
+                    //Notify connection changed
+                    connectionChanged(null, ServerConnected);
 
                     //Start receiving data
                     Thread receiveData = new Thread(new ThreadStart(ReceiveData));
@@ -235,6 +248,9 @@ namespace ClientLibs.Core.ConnectionToServer
 
         #region Private Methods
 
+        /// <summary>
+        /// Check connection, notify connection lost
+        /// </summary>
         static void checkConnection()
         {
             do
@@ -246,7 +262,10 @@ namespace ClientLibs.Core.ConnectionToServer
                 if ((Socket.Poll(1, SelectMode.SelectRead) && Socket.Available == 0) || Socket == null)
                 {
                     ServerConnected = false;
-                    
+                    //Notify connection changed
+                    connectionChanged(null, ServerConnected);
+
+
                     //Reconnect
                     Start();
                 }

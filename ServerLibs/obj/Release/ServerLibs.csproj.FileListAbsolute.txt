@@ -10,3 +10,7 @@ C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Release\ServerLibs.csproj.
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Release\ServerLibs.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Release\ServerLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\obj\Release\ServerLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Release\ClientLibs.dll
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Release\Common.dll
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Release\ClientLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ServerLibs\bin\Release\Common.pdb

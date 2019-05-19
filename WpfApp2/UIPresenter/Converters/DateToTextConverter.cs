@@ -17,6 +17,12 @@ namespace UI.UIPresenter.Converters
 
             var date = (DateTime)value;
 
+            if (date == DateTime.MaxValue)
+                return "Online";
+
+            if (date == DateTime.MinValue)
+                return "Registered";
+
             var yearsPassed = date.Year - DateTime.Now.Year;
             if (yearsPassed != 0)
                 return $"{date.Day} {Enum.GetName(typeof(MonthsOfYear), date.Month) } {date.Year}";

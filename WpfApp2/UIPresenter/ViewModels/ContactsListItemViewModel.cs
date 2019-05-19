@@ -18,12 +18,17 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// True if the user is in your contact list
         /// </summary>
-        public bool IsYourContact { get; set; }
+        public bool IsYourContact => UnitOfWork.User.contactsIdList.Contains(UserInfo.Id);
 
         /// <summary>
         /// Gets user status
         /// </summary>
         public bool IsOnline => UserInfo.Online.Equals("true", StringComparison.CurrentCultureIgnoreCase);
+
+        /// <summary>
+        /// Retur true if it's you
+        /// </summary>
+        public bool IfYou => UserInfo.Id == UnitOfWork.User.Id;
 
         /// <summary>
         /// Gets user name
@@ -48,11 +53,12 @@ namespace UI.UIPresenter.ViewModels
             UserInfo = user;
 
             //Check data base
-            IsYourContact = UnitOfWork.ContactsTableRepo.IsExists(ContactsTableFields.Id.ToString(), user.Id.ToString());
 
             //update UI
             OnPropertyChanged("UserName");
             OnPropertyChanged("IsOnline");
+            OnPropertyChanged("IsYourContact");
+            OnPropertyChanged("IfYou");
         }
 
         #endregion

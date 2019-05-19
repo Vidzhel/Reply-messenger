@@ -9,7 +9,7 @@ namespace CommonLibs.Connections.Repositories
     {
         public T Data { get; private set; }
 
-        public BaseTable Table { get; private set; }
+        public string ExtraInfo { get; private set; }
 
         public RepositoryActions Action { get; private set; }
 
@@ -21,9 +21,9 @@ namespace CommonLibs.Connections.Repositories
         /// </summary>
         /// <param name="data">The data thet changed</param>
         /// <param name="dataAction">Data Action</param>
-        public DataChangedArgs(T data, BaseTable table, RepositoryActions dataAction)
+        public DataChangedArgs(T data, string extraInfo, RepositoryActions dataAction)
         {
-            Table = table;
+            ExtraInfo = extraInfo;
             Data = data;
             Action = dataAction;
         }

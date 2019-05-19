@@ -3,14 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
              xmlns:local="clr-namespace:UI.UserControls"
              xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+             xmlns:commands="clr-namespace:UI.UIPresenter.ViewModels.Commands"
              
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="974">
     <Border Background="{StaticResource GrayBGBrush}" CornerRadius="10">
 
-        <Grid >
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="296*"/>
                 <ColumnDefinition Width="191*"/>
@@ -53,6 +55,12 @@
 
                         <!--Photo circle-->
                         <Grid Margin="20 3 0 3">
+
+                            <Grid.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{x:Static commands:CommonCommands.OpenGroupInfo}"
+                                              CommandParameter="{Binding CurrentChat}"/>
+                            </Grid.InputBindings>
 
                             <!--Photo-->
                             <Border Name="Photo"  Height="35" Width="35" Background="{StaticResource GrayBGBrush}" CornerRadius="25"/>

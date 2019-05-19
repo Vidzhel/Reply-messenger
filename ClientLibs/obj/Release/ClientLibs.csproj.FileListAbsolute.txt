@@ -10,3 +10,5 @@ C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\System.Data.SQLite
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.dll
 C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\obj\Release\ClientLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\Common.dll
+C:\work\Visual studio\C#\OOP\Messenger\ClientLibs\bin\Release\Common.pdb

@@ -33,7 +33,7 @@ namespace ClientLibs.Core.ConnectionToServer
             startServer.Start();
 
             //Add event handler for server answer ready event
-            AsynchronousServerConnection.OnAnswerDataReady((sender, args) => addIncomingCommand(sender, args));
+            AsynchronousServerConnection.AddAnswerDataReadyHandler((sender, args) => addIncomingCommand(sender, args));
 
 
             //Start new thread for handling answers

@@ -112,11 +112,13 @@
     <Compile Include="UIPresenter\ViewModels\Commands\CommonCommands.cs" />
     <Compile Include="UIPresenter\ViewModels\ContactsListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ContactsListViewModel.cs" />
-    <Compile Include="UIPresenter\ViewModels\ControlStates.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListItemDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListItemDesignViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\GroupsListItemViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\GroupsListViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\InfoGroupControlViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\InfoUserControlViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\MessageListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\MessageListViewModel.cs" />
@@ -138,14 +140,23 @@
     <Compile Include="UserControls\ChatUserControl.xaml.cs">
       <DependentUpon>ChatUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\GroupsList.xaml.cs">
+      <DependentUpon>GroupsList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ContactsList.xaml.cs">
       <DependentUpon>ContactsList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\GroupListItem.xaml.cs">
+      <DependentUpon>GroupListItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ContactsListItem.xaml.cs">
       <DependentUpon>ContactsListItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\InfoPage.xaml.cs">
-      <DependentUpon>InfoPage.xaml</DependentUpon>
+    <Compile Include="UserControls\InfoGroupControl.xaml.cs">
+      <DependentUpon>InfoGroupControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\InfoUserPage.xaml.cs">
+      <DependentUpon>InfoUserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MessageList.xaml.cs">
       <DependentUpon>MessageList.xaml</DependentUpon>
@@ -225,15 +236,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\GroupsList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\ContactsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\GroupListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\ContactsListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\InfoPage.xaml">
+    <Page Include="UserControls\InfoGroupControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\InfoUserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,161 @@
+﻿<UserControl x:Class="UI.UserControls.InfoGroupControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:local="clr-namespace:UI.UserControls"
+             xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+             xmlns:commands="clr-namespace:UI.UIPresenter.ViewModels.Commands"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Border Background="{StaticResource GrayBGBrush}" CornerRadius="10">
+
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+
+                <!--Additional info and options-->
+                <ColumnDefinition Width="*"/>
+
+                <!--User info-->
+                <ColumnDefinition Width="auto"/>
+
+            </Grid.ColumnDefinitions>
+
+            <!--Option tabs-->
+            <TabControl Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}"
+                        Margin="20 80 10 80"
+                        Style="{DynamicResource TabControlStyle1}">
+
+                <TabItem Style="{StaticResource CustomTabPanel}" Header="Members">
+                    <local:ContactsList DataContext="{Binding ContactsList}" />
+                </TabItem>
+
+                <TabItem  Style="{StaticResource CustomTabPanel}" Header="Shared Media">
+
+
+
+                </TabItem>
+
+                <TabItem Style="{StaticResource CustomTabPanel}" Header="Shared Documents">
+
+                </TabItem>
+
+                <TabItem Visibility="{Binding AreYouAdmin, Converter={converters:BoolToVisibilityConverter}}" Style="{StaticResource CustomTabPanel}" Header="Change Chat Info">
+
+                </TabItem>
+            </TabControl>
+
+            <!--User Info-->
+            <Border VerticalAlignment="Center"
+                    Grid.Column="1"
+                    Margin="20 0"
+                    Background="{StaticResource DarkBgBrush}"
+                    Width="240"
+                    CornerRadius="10">
+
+                <StackPanel Margin="10 20" >
+
+                    <!--User info Label-->
+                    <Border Background="{StaticResource GrayBGBrush}" CornerRadius="10" Width="150">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="30 2 30 2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+
+                            <Label Content=""
+                                   FontWeight="Black"
+                                   Margin="0 0 10 0"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource Sumbol}"/>
+
+                            <Label Content="Chat Info"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource LightGrayBgBrush}"
+                                   Style="{StaticResource RegularText}"/>
+
+                        </StackPanel>
+                    </Border>
+
+                    <!--Profile Photo-->
+                    <Border Width="100"
+                            Height="100"
+                            Margin="0 20 0 0"
+                            CornerRadius="50"
+                            Background="{StaticResource GrayBGBrush}"
+                            />
+
+                    <!--Group name-->
+                    <Label Style="{StaticResource RegularText}"
+                           Content="{Binding GroupName}"
+                           Margin="0 5 0 0"
+                           HorizontalAlignment="Center"
+                           FontSize="15"
+                           Foreground="{StaticResource LightGrayBgBrush}"/>
+
+                    <!--Status-->
+                    <Label Style="{StaticResource RegularText}"
+                           Content="{Binding IsOnline, Converter={converters:IntToUsersOnlineConverter}}"
+                           Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
+                           HorizontalAlignment="Center"
+                           Margin="0 -10 0 0"
+                           FontSize="10"
+                           Foreground="{Binding IsOnline, Converter={converters:UsersOnlineToColorConverter}}"/>
+
+                    <!--buttons-->
+                    <StackPanel Margin="0 10 0 0"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+
+                        <!--Add to contact list-->
+                        <Button Content=""
+                                Command="{x:Static commands:CommonCommands.JoinChat}"
+                                CommandParameter="{Binding GroupInfo}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontWeight="Black"
+                                Visibility="{Binding IsYourGroup, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
+                                Margin="8"
+                                
+                                FontSize="14"
+                                Tag="OrangeBrush"
+                                Style="{StaticResource IconicButton}"
+                        />
+
+                        <!--Leave chat-->
+                        <Button Content=""
+                                FontWeight="Black"
+                                HorizontalAlignment="Center"
+                                Visibility="{Binding IsYourGroup, Converter={converters:BoolToVisibilityConverter}}"
+                                VerticalAlignment="Center"
+                                Command="{x:Static commands:CommonCommands.LeaveChat}"
+                                CommandParameter="{Binding GroupInfo}"
+                                Margin="8"
+                                FontSize="14"
+                                Tag="LightRedBrush"
+                                Style="{StaticResource IconicButton}"
+                                />
+
+                        <Button Content=""
+                                FontWeight="Black"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="8"
+                                FontSize="14"
+                                Tag="LightBlueBrush"
+                                Style="{StaticResource IconicButton}"
+                                />
+
+
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+        </Grid>
+
+    </Border>
+</UserControl>

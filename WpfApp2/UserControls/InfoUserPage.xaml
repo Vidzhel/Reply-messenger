@@ -27,20 +27,155 @@
             </Grid.ColumnDefinitions>
 
             <!--Option tabs-->
-            <TabControl Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}"
-                        Margin="20 80 10 80"
+            <TabControl Margin="20 80 10 80"
                         Style="{DynamicResource TabControlStyle1}">
                 
-                <TabItem Style="{StaticResource CustomTabPanel}" Header="Contacts">
+                <!--Contacts-->
+                <TabItem
+                    Style="{StaticResource CustomTabPanel}"
+                    Header="Contacts"
+                    Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}">
+                    
                     <local:ContactsList DataContext="{Binding ContactsList}" />
                 </TabItem>
 
-                <TabItem  Style="{StaticResource CustomTabPanel}" Header="Change profile info">
-                    
+                <!--Change user info-->
+                <TabItem  
+                    Style="{StaticResource CustomTabPanel}"
+                    Header="Change profile info"
+                    Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}">
+
+                    <StackPanel Margin="50 20"
+                                VerticalAlignment="Center"
+                                >
+
+                        <!--Change name Field-->
+                        <TextBox Tag="Change Name"
+                                 Name="NameField"
+                                 Width="300"
+                                 HorizontalAlignment="Left"
+                                 Margin="0 0 0 30"
+                                 Style="{StaticResource RegularTextBox}"/>
+
+                        <TextBox Tag="Change E-mail"
+                                 Name="EmailField"
+                                 HorizontalAlignment="Left"
+                                 Width="300"
+                                 Margin="0 0 0 30"
+                                 Style="{StaticResource RegularTextBox}"/>
+
+                        <TextBox Tag="Change Bio"
+                                 Name="BioField"
+                                 HorizontalAlignment="Left"
+                                 Width="300"
+                                 Margin="0 0 0 10"
+                                 Style="{StaticResource RegularTextBox}"/>
+
+                        <Label Margin="0 0 0 20"
+                               Style="{StaticResource RegularText}"
+                               Foreground="{StaticResource LightRedBrush}"
+                               Content="{Binding ChangeUserInfoErrorMessage}"/>
+
+                        <Button HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Width="130"
+                                Margin="0 30 0 0"
+                                Command="{Binding ChangeUserInfo}"
+                                Height="30"
+                                Style="{StaticResource RegularButton}"
+                                Content="Save changes">
+
+                            <Button.CommandParameter>
+
+                                <MultiBinding Converter="{converters:ParametersToArrayConverter}">
+
+                                    <Binding ElementName="NameField" Path="Text"/>
+                                    <Binding ElementName="EmailField" Path="Text"/>
+                                    <Binding ElementName="BioField" Path="Text"/>
+
+                                </MultiBinding>
+                                
+                            </Button.CommandParameter>
+                            
+                        </Button>
+
+                    </StackPanel>
+
+
                 </TabItem>
 
-                <TabItem Style="{StaticResource CustomTabPanel}" Header="Change Password">
-                    
+                <!--User Groups-->
+                <TabItem  Style="{StaticResource CustomTabPanel}"
+                          Header="Groups"
+                          Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}">
+
+                    <local:GroupsList />
+
+                </TabItem>
+
+                <!--Change password form-->
+                <TabItem 
+                    Style="{StaticResource CustomTabPanel}"
+                    Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}"
+                    Header="Change Password">
+
+
+                    <StackPanel Margin="50 20"
+                                VerticalAlignment="Center">
+
+                        <!--Change password Fields-->
+                        <TextBox Tag="Old Password"
+                                 Name="OldPassField"
+                                 Width="300"
+                                 HorizontalAlignment="Left"
+                                 Margin="0 0 0 30"
+                                 Style="{StaticResource RegularTextBox}"/>
+
+                        <TextBox Tag="New Password"
+                                 Name="NewPassField"
+                                 Width="300"
+                                 HorizontalAlignment="Left"
+                                 Margin="0 0 0 30"
+                                 Style="{StaticResource RegularTextBox}"/>
+
+                        <TextBox Tag="Repeat New Password"
+                                 Name="RepeatPassField"
+                                 HorizontalAlignment="Left"
+                                 Width="300"
+                                 Margin="0 0 0 10"
+                                 Style="{StaticResource RegularTextBox}"/>
+                        
+                        <Label Margin="0 0 0 20"
+                               Style="{StaticResource RegularText}"
+                               Foreground="{StaticResource LightRedBrush}"
+                               Content="{Binding ChangePassErrorMessage}"/>
+
+                        <Button HorizontalAlignment="Right"
+                                Width="150"
+                                VerticalAlignment="Bottom"
+                                Margin="0 30 0 0"
+                                Command="{Binding ChangeUserPass}"
+                                Height="30"
+                                Style="{StaticResource RegularButton}"
+                                Content="Change Password">
+
+                            <Button.CommandParameter>
+
+                                <MultiBinding Converter="{converters:ParametersToArrayConverter}">
+
+                                    <Binding ElementName="OldPassField" Path="Text"/>
+                                    <Binding ElementName="NewPassField" Path="Text"/>
+                                    <Binding ElementName="RepeatPassField" Path="Text"/>
+
+                                </MultiBinding>
+
+                            </Button.CommandParameter>
+
+                        </Button>
+
+                    </StackPanel>
+
+
                 </TabItem>
             </TabControl>
             
@@ -94,7 +229,7 @@
 
                     <!--Status-->
                     <Label Style="{StaticResource RegularText}"
-                           Content="{Binding }"
+                           Content="{Binding Online, Converter={converters:DateToTextConverter}}"
                            Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
                            HorizontalAlignment="Center"
                            Margin="0 -10 0 0"
@@ -113,7 +248,8 @@
                                 CommandParameter="{Binding UserInfo}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=false}"
+                                FontWeight="Black"
+                                Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
                                 Margin="8"
                                 FontSize="14"
                                 Tag="OrangeBrush"

@@ -1,9 +1,7 @@
-﻿using System;
+﻿using ClientLibs.Core;
+using System;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media;
-using UI.UIPresenter.ViewModels;
 
 namespace UI.UIPresenter.Converters
 {
@@ -16,21 +14,21 @@ namespace UI.UIPresenter.Converters
             switch ((ControlStates)value[0])
             {
                 case ControlStates.NormalGray:
-                    return Application.Current.FindResource("DarkBlueBrush");
+                    return Application.Current.FindResource("MiddleGrayBgBrush");
 
                 case ControlStates.EmailError:
-                    if(fieldType != "E-mail")
-                        return Application.Current.FindResource("DarkBlueBrush");
+                    if(fieldType != "E-mail" && fieldType != "Change E-mail")
+                        return Application.Current.FindResource("MiddleGrayBgBrush");
                     return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.PasswordError:
-                    if(fieldType != "Password" && fieldType != "Repeat Password")
-                        return Application.Current.FindResource("DarkBlueBrush");
+                    if(fieldType != "Password" && fieldType != "Repeat Password" && fieldType != "Old Password" && fieldType != "New Password" && fieldType != "Repeat New Password")
+                        return Application.Current.FindResource("MiddleGrayBgBrush");
                     return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.UserNameError:
-                    if(fieldType != "User name")
-                        return Application.Current.FindResource("DarkBlueBrush");
+                    if(fieldType != "User name" && fieldType != "Change Name")
+                        return Application.Current.FindResource("MiddleGrayBgBrush");
                     return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.Error:

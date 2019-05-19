@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using ClientLibs.Core;
+using Ninject;
 using PropertyChanged;
 using System;
 using System.Threading.Tasks;

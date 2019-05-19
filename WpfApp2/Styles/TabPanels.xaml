@@ -34,7 +34,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="{StaticResource LightBlueBrush}"/>
         <Setter Property="Padding" Value="6,2,6,2"/>
-        <Setter Property="Margin" Value="4,0"/>
+        <Setter Property="Margin" Value="0,0"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="Template">

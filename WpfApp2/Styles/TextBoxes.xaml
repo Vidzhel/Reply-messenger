@@ -123,7 +123,7 @@
         </Style.Triggers>
     </Style>
 
-    <!--SearchBox-->
+    <!--Search Box-->
     <Style TargetType="TextBox" x:Key="SearchBox">
         <Setter Property="Background" Value="{StaticResource GrayBGBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource LightGrayBgBrush}"/>
@@ -165,6 +165,87 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Cursor" Value="IBeam"/>
+                        </Trigger>
+
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{converters:FieldPlaceholder}">
+                                    <Binding Path="IsFocused" RelativeSource="{RelativeSource Mode=Self}"/>
+                                    <Binding Path="Text.IsEmpty" RelativeSource="{RelativeSource  Mode=Self}"/>
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter Property="Visibility" TargetName="Placeholder" Value="Collapsed"/>
+                        </DataTrigger>
+                        
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                    <Condition Property="IsSelectionActive" Value="false"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Regular Box-->
+    <Style TargetType="TextBox" x:Key="RegularTextBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource LightGrayBgBrush}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource LightBlueBrush}"/>
+        <Setter Property="Padding" Value="40 0 0 0"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="AllowDrop" Value="true"/>
+        <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+
+                    <Grid>
+
+                        <!--Bind Birder Brush to Field state at view model-->
+                        <Border x:Name="border"  BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <Border.BorderBrush>
+                                <MultiBinding Converter="{converters:ControlStateToColorBrush}">
+                                    <Binding Path="FieldState"/>
+                                    <Binding Path="Tag" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=TextBox}"/>
+                                </MultiBinding>
+                            </Border.BorderBrush>
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+
+                        <!--Search icon-->
+                        <Label Margin="5 0 0 0" FontSize="15" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource Sumbol}" Content="{Binding ElementName=Placeholder, Path=Content, Converter={converters:TextToIcon}}" VerticalAlignment="Center"/>
+                        
+                        <!--Placeholder-->
+                        <Label Name="Placeholder" Margin="35 0 0 0" FontSize="14" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource RegularText}" Content="{Binding Path=Tag, RelativeSource={RelativeSource AncestorType=TextBox, Mode=FindAncestor}}" VerticalAlignment="Center"/>
+
+                    </Grid>
+                    
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource LightBlueBrush}"/>
+                            <Setter Property="Cursor" Value="IBeam"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="true">
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource LightBlueBrush}"/>
                         </Trigger>
 
                         <DataTrigger Value="True">

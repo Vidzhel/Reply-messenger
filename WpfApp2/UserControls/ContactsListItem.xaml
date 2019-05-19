@@ -79,6 +79,7 @@
 
                                 <!--buttons-->
                                 <StackPanel Orientation="Horizontal"
+                                            Visibility="{Binding IfYou, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
                                             Margin="10 0"
                                             Grid.Column="1">
 

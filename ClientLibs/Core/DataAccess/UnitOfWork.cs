@@ -16,20 +16,20 @@ namespace ClientLibs.Core.DataAccess
 
         #region Private Members
 
-        static event EventHandler UserInfoUpdated;
-
+        static event EventHandler<DataChangedArgs<IEnumerable<object>>> UserInfoUpdated;
 
         #endregion
 
         #region Public Members
 
-
         public static BaseRepository<Message> MessagesTableRepo = new Repository<Message>(new Table(new MessagesTableFields(), "Messages"), "LocalDB");
         public static BaseRepository<Contact> ContactsTableRepo = new Repository<Contact>(new Table(new ContactsTableFields(), "Contacts"), "LocalDB");
         public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new GroupsTableFields(), "Groups"), "LocalDB");
 
-        public static User User { get; private set; } = new User("Vidzhel", "MyPass", "MyEmail", "MyBio", "+2", "false", null, 0);
+        public static User User { get; private set; } = new User("Vidzhel", "MyPass", "MyEmail", "MyBio", "+2", "false", null, new List<int>(){1},0);
         public static Contact Contact => new Contact(User.UserName, User.Email, User.Bio, User.ProfilePhoto, User.Online, User.Id);
+
+        public static bool ServerConnected { get; set; }
 
         static ClientCommandChain commandChain = new ClientCommandChain();
 
@@ -41,9 +41,12 @@ namespace ClientLibs.Core.DataAccess
         static UnitOfWork()
         {
 
-            //Set up event data changed handler for tables
+            //Setup event data changed handler for tables
             MessagesTableRepo.AddDataChangedHandler((sender, args) => OnMessagesTableChanged(sender, args));
             ContactsTableRepo.AddDataChangedHandler((sender, args) => OnContactsTableChanged(sender, args));
+
+            //Setup handler on connection changed
+            AsynchronousServerConnection.AddConnectionChanged((sender, args) => OnServerConnectionChanged(sender, args));
 
             //Add handler on new server command received e.g. new message
             commandChain.OnNewIncomingCommand((sender, args) => OnServerCommand(sender, args));
@@ -53,19 +56,45 @@ namespace ClientLibs.Core.DataAccess
 
         #region Public Methods
 
-        public static void OnUserInfoUpdated(EventHandler handler)
+        /// <summary>
+        /// Notify about Connection to the server changed
+        /// </summary>
+        /// <param name="handler"></param>
+        public static void AddConnectionChangedHandler(EventHandler<bool> handler)
+        {
+            AsynchronousServerConnection.AddConnectionChanged(handler);
+        }
+
+        public static void OnUserUpdated(object sender, DataChangedArgs<IEnumerable<object>> args)
+        {
+            UserInfoUpdated.Invoke(sender, args);
+        }
+
+        /// <summary>
+        /// Notify about user data changed
+        /// </summary>
+        /// <param name="handler"></param>
+        public static void AddUserInfoUpdatedHandler(EventHandler<DataChangedArgs<IEnumerable<object>>> handler)
         {
             UserInfoUpdated += handler;
         }
 
+        /// <summary>
+        /// Gets users data from local db and server
+        /// </summary>
+        /// <param name="id">copy of list(items will be delated)</param>
+        /// <returns></returns>
         public static List<Contact> GetUsersInfo(List<int> id)
         {
             List<Contact> users = new List<Contact>();
             Contact temp;
 
             //Add yourself
-            users.Add(new Contact(User.UserName, User.Email, User.Bio, User.ProfilePhoto, User.Online, User.Id));
-            id.Remove(User.Id);
+            if (id.Contains(User.Id))
+            {
+                users.Add(new Contact(User.UserName, User.Email, User.Bio, User.ProfilePhoto, User.Online, User.Id));
+                id.Remove(User.Id);
+            }
 
             //Check local data base for the contacts
             for (int i = 0; i < id.Count; i++)
@@ -83,7 +112,7 @@ namespace ClientLibs.Core.DataAccess
             }
 
             //If we didn't find all users
-            if (id.Count != 0)
+            if (id.Count != 0 && ServerConnected)
             {
 
                 //Make request to server and get response command
@@ -94,6 +123,62 @@ namespace ClientLibs.Core.DataAccess
             }
 
             return users;
+        }
+
+        /// <summary>
+        /// Gets groups data from local db and server
+        /// </summary>
+        /// <param name="id">copy of list(items will be delated)</param>
+        /// <returns></returns>
+        public static List<Group> GetGroupsInfo(List<int> id)
+        {
+            List<Group> groups = new List<Group>();
+            Group temp;
+
+            //Check local data base for the contacts
+            for (int i = 0; i < id.Count; i++)
+            {
+                //Try to find users in local data base
+                temp = GroupsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), id[i].ToString());
+
+
+                //If we found user, than remove from id list and add to user list
+                if (temp != null)
+                {
+                    id.RemoveAt(i);
+                    groups.Add(temp);
+                }
+
+            }
+
+            //If we didn't find all users
+            if (id.Count != 0 && ServerConnected)
+            {
+
+                //Make request to server and get response command
+                var res = commandChain.MakeRequest(CommandType.GetGroupsInfo, id, User);
+
+                groups.AddRange((List<Group>)res.RequestData);
+
+            }
+
+            return groups;
+        }
+
+        /// <summary>
+        /// Gets groups data from server
+        /// </summary>
+        /// <param name="id">whose groups to search</param>
+        /// <returns></returns>
+        public static List<Group> GetUserGroupsInfo(Contact user)
+        {
+            if (!ServerConnected)
+                return null;
+
+
+            var res = commandChain.MakeRequest(CommandType.GetUserGroupsInfo, user, User);
+
+            return (List<Group>)res.RequestData;
         }
 
         /// <summary>
@@ -159,6 +244,16 @@ namespace ClientLibs.Core.DataAccess
         #endregion
 
         #region Private Handlers
+
+        /// <summary>
+        /// Update ServerConnected property
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        static void OnServerConnectionChanged(object sender, bool args)
+        {
+            ServerConnected = args;
+        }
 
         /// <summary>
         /// Hande commands from server e.g. new message

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UI.Animations;
 
 namespace UI.UserControls
 {
@@ -23,6 +24,23 @@ namespace UI.UserControls
         public ContactsListItem()
         {
             InitializeComponent();
+
+            //Starts all page animations
+            startAnimationsAsync();
         }
+
+        public float SlideDurationSec { get; private set; } = 0.5F;
+
+        #region Animation Helpers
+
+        private async Task startAnimationsAsync()
+        {
+            //Wait for Page animation done
+            await Task.Delay(TimeSpan.FromMilliseconds((int)SlideDurationSec * 1000));
+            //Element Animations
+            AnimationPresets.SlideAndFadeFromDown(this, SlideDurationSec, 150);
+        }
+
+        #endregion
     }
 }

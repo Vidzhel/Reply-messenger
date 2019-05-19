@@ -10,12 +10,24 @@ namespace UI.UIPresenter.Converters
             switch (value)
             {
                 case "E-mail":
-                    return "";
+                    return "";
+                case "Change E-mail":
+                    return "";
                 case "User name":
                     return "";
+                case "Change Name":
+                    return "";
+                case "Change Bio":
+                    return "";
                 case "Password":
                     return "";
                 case "Repeat Password":
+                    return "";
+                case "Old Password":
+                    return "";
+                case "New Password":
+                    return "";
+                case "Repeat New Password":
                     return "";
                 default:
                     return "";

@@ -1,5 +1,6 @@
 ﻿using ClientLibs.Core.DataAccess;
 using CommonLibs.Connections.Repositories;
+using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +21,7 @@ namespace UI.UIPresenter.ViewModels
         public ContactsListViewModel(List<Contact> contacts)
         {
             //Add event handler
-            UnitOfWork.ContactsTableRepo.AddDataChangedHandler((sender, args) => OnContactRepoChanged(sender, args));
+            UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnContactsListChanged(sender, args));
 
             foreach (var contact in contacts)
                 Items.Add(new ContactsListItemViewModel(contact));
@@ -30,7 +31,7 @@ namespace UI.UIPresenter.ViewModels
         {
 
             //Add event handler
-            UnitOfWork.ContactsTableRepo.AddDataChangedHandler((sender, args) => OnContactRepoChanged(sender, args));
+            UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnContactsListChanged(sender, args));
 
         }
 
@@ -39,25 +40,26 @@ namespace UI.UIPresenter.ViewModels
 
         #region Private Methods
 
-        void OnContactRepoChanged(object sender, DataChangedArgs<IEnumerable<Contact>> args)
+        void OnContactsListChanged(object sender, DataChangedArgs<IEnumerable<object>> args)
         {
-            switch (args.Action)
-            {
-                case RepositoryActions.Add:
-                    AddContacts((List<Contact>)args.Data);
-                    break;
-                case RepositoryActions.Update:
-                    UpdateContacts((List<Contact>)args.Data);
-                    break;
-                case RepositoryActions.Remove:
-                    RemoveContacts((List<Contact>)args.Data);
-                    break;
-                default:
-                    break;
-            }
+            if(args.ExtraInfo == UsersTableFields.ContactsId.ToString())
+                switch (args.Action)
+                {
+                    case RepositoryActions.Add:
+                        AddContacts((List<Contact>)args.Data);
+                        break;
+                    case RepositoryActions.Update:
+                        UpdateContacts((List<Contact>)args.Data);
+                        break;
+                    case RepositoryActions.Remove:
+                        RemoveContacts((List<Contact>)args.Data);
+                        break;
+                    default:
+                        break;
+                }
         }
 
-        private void AddContacts(List<Contact> contacts)
+        public void AddContacts(List<Contact> contacts)
         {
             bool add;
 
@@ -80,7 +82,7 @@ namespace UI.UIPresenter.ViewModels
             }
         }
 
-        private void UpdateContacts(List<Contact> contacts)
+        public void UpdateContacts(List<Contact> contacts)
         {
             foreach (var contact in contacts)
             {
@@ -100,7 +102,7 @@ namespace UI.UIPresenter.ViewModels
             }
         }
         
-        private void RemoveContacts(List<Contact> contacts)
+        public void RemoveContacts(List<Contact> contacts)
         {
             foreach (var contact in contacts)
             {

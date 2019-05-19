@@ -1,4 +1,4 @@
-﻿
+﻿C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\GeneratedInternalTypeHelper.g.cs
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\App.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\MainWindow.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\ChatPage.xaml;;
@@ -14,9 +14,12 @@ FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatInfoBarUserCont
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatList.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatListItem.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatUserControl.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\GroupsList.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ContactsList.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\GroupListItem.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ContactsListItem.xaml;;
-FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\InfoPage.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\InfoGroupControl.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\InfoUserPage.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\MessageList.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\MessageListItem.xaml;;
 

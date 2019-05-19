@@ -52,7 +52,7 @@
 
                 <!--User Info page button-->
                     <Button Style="{StaticResource IconicButton}"
-                            Content=""
+                            Content=""
                             FontWeight="Black"
                             Command="{x:Static commands:CommonCommands.OpenUserInfo}"
                             CommandParameter="{x:Static unitOfWork:UnitOfWork.Contact}"

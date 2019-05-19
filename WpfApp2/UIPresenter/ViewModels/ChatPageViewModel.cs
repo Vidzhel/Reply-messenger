@@ -29,16 +29,7 @@ namespace UI.UIPresenter.ViewModels
 
         public ChatPageViewModel()
         {
-            //TODO delete
-            //UnitOfWork.MessagesTableRepo.Add(new Message(1, 2, DataType.Text, DateTime.Now, "Hello world", MessageStatus.Sended));
-            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 2, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 1));
-            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 3, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 2));
-            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 4, DataType.Text, DateTime.Now, "It's me", MessageStatus.Sended, 3));
-            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 2, DataType.Text, DateTime.Now, "This is very and very long message that I use to check sddjhagj dhsaj dklsa jdlksa jdkls ajdlk sakdlj sadlka jsdlks ajdkl sajdlk sajdl ksajd lkas jd", MessageStatus.Sended, 7));
-            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "V Chat", false, "", 2, new List<int>() { 1 }, new List<int>() { 1, 0 }));
-            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "It's Mark", false, "", 3, new List<int>() { 1 }, new List<int>() { 1, 0 }));
-            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "Vlad", false, "", 4, new List<int>() { 1 }, new List<int>() { 1, 0 }));
-
+            
             //Add all groups from the Groups repository and add them to chat list
             AddGroupToChatList((List<Group>)UnitOfWork.GroupsTableRepo.GetAll());
 
@@ -46,7 +37,9 @@ namespace UI.UIPresenter.ViewModels
             UnitOfWork.GroupsTableRepo.DataChanged += GroupRepoChangedHandler;
             UnitOfWork.MessagesTableRepo.DataChanged += MessageRepoChangedHandler;
 
+            //TODO delete
             Task.Run(() => Check());
+            UnitOfWork.ContactsTableRepo.Add(new Contact("Vidzhel's friend", "someEmail@gmail.com", "there is very long text to check form working", null, "True", 1));
         }
 
         #endregion

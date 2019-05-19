@@ -1,6 +1,6 @@
-﻿using PropertyChanged;
+﻿using ClientLibs.Core;
+using PropertyChanged;
 using System;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UI.InversionOfControl;
@@ -37,17 +37,7 @@ namespace UI.UIPresenter.ViewModels
         public bool SignUpIsRunning { get; set; } = false;
 
         #endregion
-
-        #region Private Members
-
-
-        //Regexp for validation
-        private Regex userNameRegex = new Regex(@"^.{3,15}$");
-        private Regex emailRegex = new Regex(@"^\w+[._-]?\w+@\w+.\w+$");
-        private Regex passwordRegex = new Regex(@"^[\w.\-,/]{8,}$");
-
-        #endregion
-
+        
         #region Constructor
 
         public SignUpPageViewModel()
@@ -106,73 +96,35 @@ namespace UI.UIPresenter.ViewModels
 
         bool FieldChecker(object[] values)
         {
+            string temp;
 
             #region Check on emptyness
 
-            if (UserName == String.Empty)
-            {
+            if((temp = ValidateUserData.VilidateUserName(UserName, true)) != null){
+                ErrorMessage = temp;
                 FieldState = ControlStates.UserNameError;
-                ErrorMessage = "User name field is empty";
                 return false;
             }
-            if (Email == String.Empty)
+            
+            if ((temp = ValidateUserData.VilidateEmail(Email, true)) != null)
             {
                 FieldState = ControlStates.EmailError;
-                ErrorMessage = "Email field is empty";
+                ErrorMessage = temp;
                 return false;
             }
 
-            if ((string)values[0] == String.Empty)
+            if ((temp = ValidateUserData.VilidatePassword((string[])values, true)) != null)
             {
                 FieldState = ControlStates.PasswordError;
-                ErrorMessage = "Password field is empty";
-                return false;
-            }
-            if ((string)values[1] == String.Empty)
-            {
-                FieldState = ControlStates.PasswordError;
-                ErrorMessage = "Repeat password field is empty";
+                ErrorMessage = temp;
                 return false;
             }
 
             #endregion
 
-            //Check data correct
-            if (!userNameRegex.IsMatch(UserName))
-            {
-                FieldState = ControlStates.UserNameError;
-                ShowErrorMessage("User name should be 3-15 symbols");
-                return false;
-            }
-
-            if (!emailRegex.IsMatch(Email))
-            {
-                FieldState = ControlStates.EmailError;
-                ShowErrorMessage("Wrong email");
-                return false;
-            }
-
-            if (!passwordRegex.IsMatch((string)values[0]))
-            {
-                FieldState = ControlStates.PasswordError;
-                ShowErrorMessage("Password should have at less 8 symbols");
-                return false;
-            }
-            if((string)values[0] != (string)values[1])
-            {
-                FieldState = ControlStates.PasswordError;
-                ShowErrorMessage("Paswords don't match");
-                return false;
-            }
-
-            ShowErrorMessage("");
+            ErrorMessage = "";
             FieldState = ControlStates.NormalGray;
             return true;
-        }
-
-        void ShowErrorMessage(string message)
-        {
-            ErrorMessage = message;
         }
 
         #endregion

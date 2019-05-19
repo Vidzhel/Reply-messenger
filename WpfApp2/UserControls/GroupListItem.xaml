@@ -1,0 +1,150 @@
+﻿<UserControl x:Class="UI.UserControls.GroupListItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:local="clr-namespace:UI.UserControls"
+             xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
+             xmlns:commands="clr-namespace:UI.UIPresenter.ViewModels.Commands"
+             
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="300">
+        
+    <UserControl.Resources>
+
+        <Style TargetType="ContentControl" x:Key="Content">
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate>
+
+                        <Border Background="{StaticResource GrayBGBrush}"
+                                CornerRadius="5"
+                                Name="Container"
+                                Margin="0 3">
+
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" Command="{x:Static commands:CommonCommands.OpenUserInfo}" CommandParameter="{Binding UserInfo}"/>
+                            </Border.InputBindings>
+                            
+                            
+                            <Grid >
+
+                                <Grid.ColumnDefinitions>
+
+                                    <!--User Info-->
+                                    <ColumnDefinition Width="*"/>
+
+                                    <!--Buttons-->
+                                    <ColumnDefinition Width="auto"/>
+
+                                </Grid.ColumnDefinitions>
+
+                                <!--Group info-->
+                                <StackPanel Orientation="Horizontal">
+
+                                    <!--Group Photo-->
+                                    <Grid>
+
+                                        <Border Width="30"
+                                        Margin="10 5"
+                                        Height="30"
+                                        Background="{StaticResource DarkBgBrush}"
+                                        CornerRadius="20"/>
+                                        
+                                    </Grid>
+
+                                    <!--Group Name-->
+                                    <Label Content="{Binding GroupName}"
+                                       VerticalAlignment="Center"
+                                       Foreground="{StaticResource LightGrayBgBrush}"
+                                       />
+
+                                </StackPanel>
+
+                                <!--buttons-->
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="10 0"
+                                            Grid.Column="1">
+
+                                    <Button Name="LeaveChat"
+                                            Tag="LightRedBrush"
+                                            Command="{x:Static commands:CommonCommands.LeaveChat}"
+                                            CommandParameter="{Binding GroupInfo}"
+                                            Content="" Margin="8 5"
+                                            FontWeight="Black"
+                                            Style="{StaticResource IconicButton}"
+                                            Visibility="{Binding IsYourGroup, Converter={converters:BoolToVisibilityConverter}}"
+                                        />
+
+                                    <Button Name="JoinChat"
+                                        Command="{x:Static commands:CommonCommands.JoinChat}"
+                                        CommandParameter="{Binding GroupInfo}"
+                                        Tag="OrangeBrush"
+                                        FontWeight="Bold"
+                                        Content=""
+                                        Margin="8 5"
+                                        Style="{StaticResource IconicButton}"
+                                        Visibility="{Binding IsYourGroup, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
+                                        />
+
+                                    <Button Name="InviteContact"
+                                        Tag="LightBlueBrush"
+                                        Content=""
+                                        FontWeight="Bold"
+                                        Margin="8 5"
+                                        Style="{StaticResource IconicButton}"
+                                        />
+
+
+                                </StackPanel>
+
+                            </Grid>
+
+                        </Border>
+
+
+                        <ControlTemplate.Triggers>
+
+                            <EventTrigger RoutedEvent="MouseEnter">
+
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="Container" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource GrayBGHover}"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                                
+                            </EventTrigger>
+                            
+                            <EventTrigger RoutedEvent="MouseLeave">
+
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="Container" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource GrayBG}"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                                
+                            </EventTrigger>
+                            
+                        </ControlTemplate.Triggers>
+                        
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+    </UserControl.Resources>
+
+    <ContentControl Style="{StaticResource Content}" />
+    
+</UserControl>
