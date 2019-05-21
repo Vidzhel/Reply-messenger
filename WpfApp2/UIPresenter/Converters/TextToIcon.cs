@@ -11,6 +11,8 @@ namespace UI.UIPresenter.Converters
             {
                 case "E-mail":
                     return "";
+                case "Group Name":
+                    return "";
                 case "Change E-mail":
                     return "";
                 case "User name":

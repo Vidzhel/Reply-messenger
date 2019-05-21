@@ -94,7 +94,7 @@ namespace CommonLibs.Data
         /// <summary>
         /// Constructor for dapper
         /// </summary>
-        private Contact()
+        protected Contact()
         {
 
         }

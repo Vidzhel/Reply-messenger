@@ -11,15 +11,11 @@ namespace CommonLibs.Data
     public class Group
     {
 
-        #region Private Members
-
-        bool isPrivate;
-
-        bool isChannel;
-
-        #endregion
-
         #region Public Members
+        
+        public bool isPrivate;
+
+        public bool isChannel;
 
         public List<int> AdminsIdList = new List<int>();
 
@@ -27,7 +23,7 @@ namespace CommonLibs.Data
 
         public int Id { get; private set; }
 
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Get string representation of Admin id list
@@ -74,9 +70,12 @@ namespace CommonLibs.Data
 
         public int UsersOnline { get; private set; }
 
-        public bool IsChat => MembersIdList.Count > 2 ? false : true;
+        /// <summary>
+        /// If a chat is privat, only with 2 members and without admins 
+        /// </summary>
+        public bool IsPrivateChat => MembersIdList.Count > 2 ? false : true;
 
-        public string Image { get; private set; }
+        public string Image { get; set; }
 
         #endregion
 
@@ -110,36 +109,36 @@ namespace CommonLibs.Data
         /// Adds new member to a chat
         /// </summary>
         /// <param name="user">new member </param>
-        public void AddNewMember(User user)
+        public void AddNewMember(int userId)
         {
-            MembersIdList.Add(user.Id);
+            MembersIdList.Add(userId);
         }
 
         /// <summary>
         /// Add new admin to a chat
         /// </summary>
         /// <param name="user"></param>
-        public void AddNewAdmin(User user)
+        public void AddNewAdmin(int userId)
         {
-            AdminsIdList.Add(user.Id);
+            AdminsIdList.Add(userId);
         }
 
         /// <summary>
         /// Delete member from a chat
         /// </summary>
         /// <param name="user"></param>
-        public void RemoveMember(User user)
+        public void RemoveMember(int userId)
         {
-            MembersIdList.Remove(user.Id);
+            MembersIdList.Remove(userId);
         }
 
         /// <summary>
         /// Delete admin from a chat
         /// </summary>
         /// <param name="user"></param>
-        public void RemoveAdmin(User user)
+        public void RemoveAdmin(int userId)
         {
-            AdminsIdList.Remove(user.Id);
+            AdminsIdList.Remove(userId);
         }
 
         #endregion

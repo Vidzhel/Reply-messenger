@@ -64,3 +64,8 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\InfoGrou
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\InfoUserPage.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\MessageList.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\MessageListItem.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\GroupsList.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\GroupListItem.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\Styles\RadioButtons.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\GroupsList.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\UserControls\GroupListItem.baml

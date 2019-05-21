@@ -1,5 +1,6 @@
 ﻿using CommonLibs.Data;
 using Ninject;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using UI.Pages;
 using UI.UIPresenter.ViewModels;
@@ -11,6 +12,7 @@ namespace UI.InversionOfControl
     /// </summary>
     public static class ApplicationService
     {
+        #region Public Members
 
         ///Gets Application view model
         public static ApplicationViewModel GetApplicationViewModel => IoCController.Kernel.Get<ApplicationViewModel>();
@@ -40,6 +42,27 @@ namespace UI.InversionOfControl
         /// </summary>
         public static Contact GetCurrentChoosenContact => IoCController.Kernel.Get<ChatViewModel>().CurrentUserInfo;
 
+        /// <summary>
+        /// Gets and sets search results
+        /// </summary>
+        public static List<Contact> UsersSearchResult
+        {
+            get => GetChatViewModel.UsersSearchResult;
+            set => GetChatViewModel.UsersSearchResult = value;
+        }
+
+        /// <summary>
+        /// Get and sets search results
+        /// </summary>
+        public static List<Group> GroupsSearchResult {
+            get => GetChatViewModel.GroupsSearchResult;
+            set => GetChatViewModel.GroupsSearchResult = value;
+        }
+
+        #endregion
+
+        #region Public Methods
+        
 
         /// <summary>
         /// Set new application page
@@ -76,5 +99,8 @@ namespace UI.InversionOfControl
         {
             GetChatViewModel.CurrentChat = group;
         }
+
+        #endregion
+
     }
 }

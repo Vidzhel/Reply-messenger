@@ -116,7 +116,7 @@ namespace UI.UIPresenter.ViewModels
             if(name != String.Empty)
             {
 
-                if((temp = ValidateUserData.VilidateUserName(name, false)) != null)
+                if ((temp = ValidateUserData.ValidateUserName(name, false)) != null)
                 {
                     ChangeUserInfoErrorMessage = temp;
                     FieldState = ControlStates.UserNameError;
@@ -125,10 +125,8 @@ namespace UI.UIPresenter.ViewModels
 
                 //Change
                 else
-                {
                     UnitOfWork.User.UserName = name;
                     UnitOfWork.OnUserUpdated(this, new DataChangedArgs<IEnumerable<object>>(new List<object>() { name }, UsersTableFields.UserName.ToString(), RepositoryActions.Update));
-                }
             }
 
 
@@ -136,7 +134,7 @@ namespace UI.UIPresenter.ViewModels
             if (email != String.Empty)
             {
 
-                if ((temp = ValidateUserData.VilidateEmail(email, false)) != null)
+                if ((temp = ValidateUserData.ValidateEmail(email, false)) != null)
                 {
                     ChangeUserInfoErrorMessage = temp;
                     FieldState = ControlStates.EmailError;
@@ -179,7 +177,7 @@ namespace UI.UIPresenter.ViewModels
             {
                 string temp;
                 // Validate new password
-                if ((temp = ValidateUserData.VilidatePassword(new string[] { newPass, repeatNewPass }, true)) != null)
+                if ((temp = ValidateUserData.ValidatePassword(new string[] { newPass, repeatNewPass }, true)) != null)
                 {
                     ChangePassErrorMessage = temp;
                     FieldState = ControlStates.PasswordError;
@@ -260,6 +258,9 @@ namespace UI.UIPresenter.ViewModels
 
         void loadInfo(Contact contact)
         {
+            if (contact == null)
+                return;
+
             //Set user info
             UserInfo = contact;
 

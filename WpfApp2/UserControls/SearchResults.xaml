@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="UI.UserControls.SearchResults"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UI.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="974">
+    
+    <Border Background="{StaticResource GrayBGBrush}"
+            CornerRadius="10">
+        
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+
+                <!--Users match-->
+                <ColumnDefinition Width="*"/>
+                
+                <!--Groups match-->
+                <ColumnDefinition Width="*"/>
+
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Users"
+                   Style="{StaticResource RegularText}"
+                   FontSize="20"
+                   Foreground="{StaticResource LightGrayBgBrush}"
+                   Margin="0 20 0 10"
+                   HorizontalAlignment="Center"/>
+
+            <!--Users match-->
+            <Border Background="{StaticResource DarkBgBrush}"
+                    CornerRadius="10"
+                    Margin="30 60 30 50">
+                
+            <Grid Margin="5 3">
+
+                <local:ContactsList DataContext="{Binding UsersSearchResults}"/>
+
+                </Grid>
+
+            </Border>
+
+            <!--Groups match-->
+
+            <Label Content="Chats"
+                   Style="{StaticResource RegularText}"
+                   FontSize="20"
+                   Grid.Column="1"
+                   Foreground="{StaticResource LightGrayBgBrush}"
+                   Margin="0 20 0 10"
+                   HorizontalAlignment="Center"/>
+
+            <Border Background="{StaticResource DarkBgBrush}"
+                    CornerRadius="10"
+                    Grid.Column="1"
+                    Margin="30 60 30 50">
+
+                <Grid Margin="5 3">
+
+                    <local:GroupsList DataContext="{Binding GroupsSearchResults}"/>
+
+                </Grid>
+            </Border>
+
+
+        </Grid>
+    </Border>
+    
+</UserControl>

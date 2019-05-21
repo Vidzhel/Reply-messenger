@@ -244,6 +244,7 @@
                         
                         <!--Add to contact list-->
                         <Button Content=""
+                                ToolTip="Add to the contacts list"
                                 Command="{x:Static commands:CommonCommands.AddToContactList}"
                                 CommandParameter="{Binding UserInfo}"
                                 HorizontalAlignment="Center"
@@ -258,6 +259,7 @@
                         
                         <!--Remove from contact list-->
                         <Button Content=""
+                                ToolTip="Remove from the contacts list"
                                 HorizontalAlignment="Center"
                                 Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}}"
                                 VerticalAlignment="Center"
@@ -276,6 +278,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Margin="8"
+                                ToolTip="Start Chat"
                                 FontSize="14"
                                 FontWeight="Black"
                                 Tag="LightBlueBrush"

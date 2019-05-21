@@ -16,23 +16,26 @@ namespace CommonLibs.Data
         SignIn,
         SignOut,
 
+        SearchRequest,
+
         GetUsersInfo,
         GetGroupsInfo,
         GetUserGroupsInfo,
 
         CreateGroup,
-        ConnectToGroup,
-        InviteToGroup,
-        AddAdminToGroup,
-        DisconectFromGroup,
+        UpdateGroup,
+        RemoveGroup,
+        JoinGroup,
+        MakeAdmin,
+        LeaveGroup,
         DeleteMemberFromGroup,
 
-        UpdateGroup,
-        UpdateMessage,
-        UpdateUserInfo,
-        SendMesssage,
-        ReceiveMesssage,
 
+        UpdateMessage,
+        RemoveMessage,
+        SendMesssage,
+
+        UpdateUserInfo,
         DeleteUser,
 
         Answer

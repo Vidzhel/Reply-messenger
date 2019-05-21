@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Styles/ScrollViews.xaml"/>
                 <ResourceDictionary Source="Styles/TabPanels.xaml"/>
                 <ResourceDictionary Source="Styles/TabControls.xaml"/>
+                <ResourceDictionary Source="Styles/RadioButtons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

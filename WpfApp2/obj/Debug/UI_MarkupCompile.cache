@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\App.xaml
-24-2133451933
+26682452229
 1984027045
-71515977880
+741061667396
 18-361764016
-MainWindow.xaml;Pages\ChatPage.xaml;Pages\SignInPage.xaml;Pages\SignUpPage.xaml;Styles\Buttons.xaml;Styles\Colors.xaml;Styles\Fonts.xaml;Styles\ScrollViews.xaml;Styles\TabControls.xaml;Styles\TabPanels.xaml;Styles\Text.xaml;Styles\TextBoxes.xaml;UserControls\ChatInfoBarUserControl.xaml;UserControls\ChatList.xaml;UserControls\ChatListItem.xaml;UserControls\ChatUserControl.xaml;UserControls\GroupsList.xaml;UserControls\ContactsList.xaml;UserControls\GroupListItem.xaml;UserControls\ContactsListItem.xaml;UserControls\InfoGroupControl.xaml;UserControls\InfoUserPage.xaml;UserControls\MessageList.xaml;UserControls\MessageListItem.xaml;
+MainWindow.xaml;Pages\ChatPage.xaml;Pages\SignInPage.xaml;Pages\SignUpPage.xaml;Styles\Buttons.xaml;Styles\Colors.xaml;Styles\Fonts.xaml;Styles\RadioButtons.xaml;Styles\ScrollViews.xaml;Styles\TabControls.xaml;Styles\TabPanels.xaml;Styles\Text.xaml;Styles\TextBoxes.xaml;UserControls\ChatInfoBarUserControl.xaml;UserControls\ChatList.xaml;UserControls\ChatListItem.xaml;UserControls\ChatUserControl.xaml;UserControls\GroupsList.xaml;UserControls\ContactsList.xaml;UserControls\GroupListItem.xaml;UserControls\ContactsListItem.xaml;UserControls\InfoGroupControl.xaml;UserControls\InfoUserPage.xaml;UserControls\MessageList.xaml;UserControls\MessageListItem.xaml;UserControls\SearchResults.xaml;
 
 False
 

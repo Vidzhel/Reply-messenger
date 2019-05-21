@@ -63,7 +63,7 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public bool IsOnline {
             get {
-                if (GroupData.IsChat && GroupData.UsersOnline == 2)
+                if (GroupData.IsPrivateChat && GroupData.UsersOnline == 2)
                     return true;
                 
                return false;
@@ -123,6 +123,14 @@ namespace UI.UIPresenter.ViewModels
         /// <param name="group"></param>
         void OnCurrentChatChanged(Group group)
         {
+            // If no one group is selected
+            if (group == null)
+            {
+                IsSelected = false;
+                return;
+            }
+
+            // If selected this group
             if (group.Id == GroupData.Id)
             {
                 IsSelected = true;

@@ -62,6 +62,7 @@
 
                 
                 <TextBox Grid.Column="1"
+                         Text="{Binding SearchRequest, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
                          Margin="10 5 10 10"
                          VerticalAlignment="Center"
                          Style="{StaticResource SearchBox}" />

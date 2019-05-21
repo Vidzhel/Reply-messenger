@@ -23,7 +23,7 @@ namespace ClientLibs.Core
         /// <param name="name">user name to validate</param>
         /// <param name="checkEmptiness">check on emtiness</param>
         /// <returns></returns>
-        public static string VilidateUserName(string name, bool checkEmptiness)
+        public static string ValidateUserName(string name, bool checkEmptiness)
         {
             if(checkEmptiness)
                 if (name == String.Empty)
@@ -42,7 +42,7 @@ namespace ClientLibs.Core
         /// <param name="email">user email to validate</param>
         /// <param name="checkEmptiness">check on emtiness</param>
         /// <returns></returns>
-        public static string VilidateEmail(string email, bool checkEmptiness)
+        public static string ValidateEmail(string email, bool checkEmptiness)
         {
             if(checkEmptiness)
                 if (email == String.Empty)
@@ -55,13 +55,29 @@ namespace ClientLibs.Core
             return null;
         }
 
+        public static string ValidatePassword(string pass, bool checkEmptiness)
+        {
+            if (checkEmptiness)
+            {
+                if (pass == String.Empty)
+                    return "Password field is empty";
+            }
+
+
+            //Check data
+            if (!passwordRegex.IsMatch(pass))
+                return "Password should have at less 8 symbols";
+            
+            return null;
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="pass">user passwords to validate</param>
         /// <param name="checkEmptiness">check on emtiness</param>
         /// <returns></returns>
-        public static string VilidatePassword(string[] pass, bool checkEmptiness)
+        public static string ValidatePassword(string[] pass, bool checkEmptiness)
         {
             if (checkEmptiness)
             {

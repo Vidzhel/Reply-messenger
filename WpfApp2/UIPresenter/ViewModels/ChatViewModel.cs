@@ -1,6 +1,7 @@
 ﻿using ClientLibs.Core.DataAccess;
 using CommonLibs.Data;
 using System;
+using System.Collections.Generic;
 using UI.Pages;
 
 namespace UI.UIPresenter.ViewModels
@@ -14,17 +15,48 @@ namespace UI.UIPresenter.ViewModels
 
         #region Private Members
 
-        //Events
         event EventHandler<Group> CurrentChatChanged;
         event EventHandler<Contact> CurrentUserInfoChanged;
 
-        Group currentChat;
+        //Search Results changed
+        event EventHandler<List<Contact>> UsersSearchResultChanged;
+        event EventHandler<List<Group>> GroupSearchResultChanged;
 
+        Group currentChat;
         Contact currentContactInfo;
+
+        List<Contact> usersSearchResult;
+        List<Group> groupsSearchResult;
 
         #endregion
 
         public ChatPages CurrentChatPage { get; set; }
+
+        /// <summary>
+        /// Result of Search request
+        /// </summary>
+        public List<Contact> UsersSearchResult
+        {
+            get => usersSearchResult;
+            set
+            {
+                usersSearchResult = value;
+                UsersSearchResultChanged?.Invoke(this, value);
+            }
+        }
+
+        /// <summary>
+        /// Result of Search request
+        /// </summary>
+        public List<Group> GroupsSearchResult
+        {
+            get => groupsSearchResult;
+            set
+            {
+                groupsSearchResult = value;
+                GroupSearchResultChanged?.Invoke(this, groupsSearchResult);
+            }
+        }
 
         /// <summary>
         /// Currently opened group in Chat User Control
@@ -69,6 +101,24 @@ namespace UI.UIPresenter.ViewModels
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Occurs on search result changed
+        /// </summary>
+        /// <param name="handler"></param>
+        public void OnUsersSearchResultChanged(EventHandler<List<Contact>> handler)
+        {
+            UsersSearchResultChanged += handler;
+        }
+
+        /// <summary>
+        /// Occurs on search result changed
+        /// </summary>
+        /// <param name="handler"></param>
+        public void OnGroupSearchResultChanged(EventHandler<List<Group>> handler)
+        {
+            GroupSearchResultChanged += handler;
+        }
 
         /// <summary>
         /// Adds handler to <see cref="CurrentChatChanged"/>

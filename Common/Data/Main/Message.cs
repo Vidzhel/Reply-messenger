@@ -56,7 +56,7 @@ namespace CommonLibs.Data
 
         public string Data { get; private set; }
 
-        public MessageStatus Status { get; private set; }
+        public MessageStatus Status { get; set; }
 
         #endregion
 

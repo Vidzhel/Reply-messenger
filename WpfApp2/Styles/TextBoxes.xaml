@@ -229,7 +229,7 @@
                         </Border>
 
                         <!--Search icon-->
-                        <Label Margin="5 0 0 0" FontSize="15" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource Sumbol}" Content="{Binding ElementName=Placeholder, Path=Content, Converter={converters:TextToIcon}}" VerticalAlignment="Center"/>
+                        <Label Margin="5 0 0 0" FontWeight="Bold" FontSize="15" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource Sumbol}" Content="{Binding ElementName=Placeholder, Path=Content, Converter={converters:TextToIcon}}" VerticalAlignment="Center"/>
                         
                         <!--Placeholder-->
                         <Label Name="Placeholder" Margin="35 0 0 0" FontSize="14" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource RegularText}" Content="{Binding Path=Tag, RelativeSource={RelativeSource AncestorType=TextBox, Mode=FindAncestor}}" VerticalAlignment="Center"/>

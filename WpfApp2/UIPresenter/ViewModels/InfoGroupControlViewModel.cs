@@ -1,10 +1,12 @@
-﻿using ClientLibs.Core.DataAccess;
+﻿using ClientLibs.Core;
+using ClientLibs.Core.DataAccess;
 using CommonLibs.Connections.Repositories;
 using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using UI.InversionOfControl;
 
 namespace UI.UIPresenter.ViewModels
@@ -13,13 +15,27 @@ namespace UI.UIPresenter.ViewModels
     {
         #region Public Members
 
+        /// <summary>
+        /// Change group info button
+        /// </summary>
+        public ICommand ChangeGroupInfo { get; set; }
 
-        public Group GroupInfo { get; set; }
+        public Group GroupInfo { get;
+            set; }
 
+        /// <summary>
+        /// Group members list
+        /// </summary>
         public ContactsListViewModel ContactsList { get; set; } = new ContactsListViewModel();
 
+        /// <summary>
+        /// Group files list
+        /// </summary>
         public ContactsListViewModel FilesList { get; set; } = new ContactsListViewModel();
 
+        /// <summary>
+        /// Group photos list
+        /// </summary>
         public ContactsListViewModel PhotosList { get; set; } = new ContactsListViewModel();
         
         /// <summary>
@@ -35,13 +51,34 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// Return count of online users
         /// </summary>
-        public int IsOnline => GroupInfo.UsersOnline;
+        public int Online => GroupInfo.UsersOnline;
+
+        /// <summary>
+        /// Is any user can join a group
+        /// </summary>
+        public bool IsPrivate => GroupInfo.IsPrivate.Equals("true", StringComparison.CurrentCultureIgnoreCase);
+
+        /// <summary>
+        /// Is any user can send messages
+        /// </summary>
+        public bool IsChat => GroupInfo.IsChannel.Equals("false", StringComparison.CurrentCultureIgnoreCase);
 
         /// <summary>
         /// Return true if the user is in your contact list
         /// </summary>
         public bool IsYourGroup => UnitOfWork.User.chatsIdList.Contains(GroupInfo.Id);
-        
+
+        /// <summary>
+        /// Displays error message on group info change error
+        /// </summary>
+        public string ChangeGroupInfoErrorMessage { get; set; } = String.Empty;
+
+
+        /// <summary>
+        /// Represent change group info fields state
+        /// </summary>
+        public ControlStates FieldState { get; set; } = ControlStates.NormalGray;
+
         #endregion
 
         #region Constructor
@@ -58,6 +95,8 @@ namespace UI.UIPresenter.ViewModels
             UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnPropertyChanged("IsYourGroup"));
             ApplicationService.GetChatViewModel.OnCurrentChatChanged((sender, args) => loadInfo(args));
 
+            ChangeGroupInfo = new RelayCommandParametrized((data) => changeGroupInfo(data));
+
             //Load data
             loadInfo(ApplicationService.GetCurrentChoosenChat);
         }
@@ -67,6 +106,49 @@ namespace UI.UIPresenter.ViewModels
 
         #region Private Methods
 
+        void changeGroupInfo(object data)
+        {
+            var groupName = (((object[])data)[0] as string);
+            var isPrivate = (bool)((object[])data)[1];
+            var isChat = (bool)((object[])data)[2];
+
+            bool update = false;
+
+            //Validate data
+
+            if(ValidateUserData.ValidateUserName(groupName, false) != null)
+            {
+                ChangeGroupInfoErrorMessage = "Wrong group name";
+                FieldState = ControlStates.UserNameError;
+                return;
+            }
+            else
+                if(groupName != null)
+                {
+                    update = true;
+                    GroupInfo.Name = groupName;
+                }
+
+            if(IsPrivate != isPrivate)
+            {
+                update = true;
+                GroupInfo.IsPrivate = isPrivate.ToString();
+            }
+
+            if(IsChat != IsChat)
+            {
+                update = true;
+                GroupInfo.IsPrivate = IsChat.ToString();
+            }
+
+            //Update db
+            if(update)
+                UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), GroupInfo.Id.ToString(), GroupInfo);
+
+            ChangeGroupInfoErrorMessage = "";
+            FieldState = ControlStates.NormalGray;
+        }
+
         void OnMessageUpdates(object sender, DataChangedArgs<IEnumerable<Message>> args)
         {
 
@@ -74,6 +156,7 @@ namespace UI.UIPresenter.ViewModels
 
         void OnGroupUpdates(object sender, DataChangedArgs<IEnumerable<Group>> args)
         {
+            //Check specific action 
             if (args.Action == RepositoryActions.Update)
             {
                 foreach (var group in args.Data)
@@ -122,7 +205,7 @@ namespace UI.UIPresenter.ViewModels
             {
                 var membersInfo = UnitOfWork.GetUsersInfo(new List<int>(GroupInfo.MembersIdList));
 
-                ContactsList = new ContactsListViewModel(membersInfo);
+                ContactsList = new ContactsListViewModel(membersInfo, true, false, AreYouAdmin);
             }
 
             //Update UI

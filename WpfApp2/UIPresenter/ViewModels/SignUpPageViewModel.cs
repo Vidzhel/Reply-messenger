@@ -1,4 +1,5 @@
 ﻿using ClientLibs.Core;
+using ClientLibs.Core.DataAccess;
 using PropertyChanged;
 using System;
 using System.Threading.Tasks;
@@ -69,7 +70,9 @@ namespace UI.UIPresenter.ViewModels
                 return;
 
             object[] values = (object[])param;
-            if (!FieldChecker(values))
+            var pass = (string)values[0];
+            var repeatPass = (string)values[1];
+            if (!FieldChecker(new string[] { pass, repeatPass}))
                 return;
 
 
@@ -78,12 +81,15 @@ namespace UI.UIPresenter.ViewModels
             {
                 SignUpIsRunning = true;
 
-                //TODO registration
+                var res = UnitOfWork.SignUp(new CommonLibs.Data.User(UserName, pass, Email, null));
 
+                if (res)
+                    //If all right open SignIn pag
+                    changePage("SignInPage");
 
-                //If all right open SignIn pag
-                changePage("SignInPage");
+                ErrorMessage = "Something went wrong";
             }
+            catch { }
             finally
             {
                 SignUpIsRunning = false;
@@ -94,26 +100,26 @@ namespace UI.UIPresenter.ViewModels
 
         #region Helpers
 
-        bool FieldChecker(object[] values)
+        bool FieldChecker(string[] values)
         {
             string temp;
 
             #region Check on emptyness
 
-            if((temp = ValidateUserData.VilidateUserName(UserName, true)) != null){
+            if((temp = ValidateUserData.ValidateUserName(UserName, true)) != null){
                 ErrorMessage = temp;
                 FieldState = ControlStates.UserNameError;
                 return false;
             }
             
-            if ((temp = ValidateUserData.VilidateEmail(Email, true)) != null)
+            if ((temp = ValidateUserData.ValidateEmail(Email, true)) != null)
             {
                 FieldState = ControlStates.EmailError;
                 ErrorMessage = temp;
                 return false;
             }
 
-            if ((temp = ValidateUserData.VilidatePassword((string[])values, true)) != null)
+            if ((temp = ValidateUserData.ValidatePassword(values, true)) != null)
             {
                 FieldState = ControlStates.PasswordError;
                 ErrorMessage = temp;

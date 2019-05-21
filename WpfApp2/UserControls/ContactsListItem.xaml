@@ -83,36 +83,69 @@
                                             Margin="10 0"
                                             Grid.Column="1">
 
-                                    <Button Name="DelateContact"
-                                        Tag="LightRedBrush"
-                                        Command="{x:Static commands:CommonCommands.DeleteFromContactList}"
-                                        CommandParameter="{Binding UserInfo}"
-                                        Content="" Margin="8 5"
-                                        Style="{StaticResource IconicButton}"
-                                        Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}}"
-                                        />
+                                    <Button Name="InviteToGroup"
+                                            Tag="OrangeBrush"
+                                            CommandParameter="{Binding UserInfo}"
+                                            ToolTip="Invite to the chat"
+                                            Command="{x:Static commands:CommonCommands.InviteUserToChat}"
+                                            Visibility="{Binding IsInviteList, Converter={converters:BoolToVisibilityConverter}}"
+                                            Content="" Margin="8 5"
+                                            Style="{StaticResource IconicButton}"
+                                            >
+                                    </Button>
 
-                                    <Button Name="AddContact"
-                                        Command="{x:Static commands:CommonCommands.AddToContactList}"
-                                        CommandParameter="{Binding UserInfo}"
-                                        Tag="OrangeBrush"
-                                        FontWeight="Bold"
-                                        Content=""
-                                        Margin="8 5"
-                                        Style="{StaticResource IconicButton}"
-                                        Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
-                                        />
+                                    <StackPanel Orientation="Horizontal"
+                                                Visibility="{Binding IsInviteList, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}">
+                                    
+                                        <Grid Visibility="{Binding IsGroupContactsList, Converter={converters:BoolToVisibilityConverter}}">
 
-                                    <Button Name="StartChat"
-                                        Command="{x:Static commands:CommonCommands.StartChat}"
-                                        CommandParameter="{Binding UserInfo}"
-                                        Tag="LightBlueBrush"
-                                        Content=""
-                                        FontWeight="Bold"
-                                        Margin="8 5"
-                                        Style="{StaticResource IconicButton}"
-                                        />
+                                            <Button Name="RemoveFromGroup"
+                                                    ToolTip="Remove from the chat"
+                                                    Tag="LightRedBrush"
+                                                    CommandParameter="{Binding UserInfo}"
+                                                    Visibility="{Binding AreYouAdmin, Converter={converters:BoolToVisibilityConverter}}"
+                                                    Command="{x:Static commands:CommonCommands.RemoveUserFromChat}"
+                                                    Content="" Margin="8 5"
+                                                    Style="{StaticResource IconicButton}"
+                                                    >
+                                            </Button>
 
+                                        </Grid>
+
+                                        <Button Name="DelateContact"
+                                                ToolTip="Remove from the contacts"
+                                                Tag="LightRedBrush"
+                                                Command="{x:Static commands:CommonCommands.DeleteFromContactList}"
+                                                CommandParameter="{Binding UserInfo}"
+                                                Content="" Margin="8 5"
+                                                Style="{StaticResource IconicButton}"
+                                                Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}}"
+                                                />
+
+                                        <Button Name="AddContact"
+                                                Command="{x:Static commands:CommonCommands.AddToContactList}"
+                                                CommandParameter="{Binding UserInfo}"
+                                                ToolTip="Add to the contacts"
+                                                Tag="OrangeBrush"
+                                                FontWeight="Bold"
+                                                Content=""
+                                                Margin="8 5"
+                                                Style="{StaticResource IconicButton}"
+                                                Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
+                                                />
+
+                                        <Button Name="StartChat"
+                                                Command="{x:Static commands:CommonCommands.StartChat}"
+                                                ToolTip="Start chat"
+                                                CommandParameter="{Binding UserInfo}"
+                                                Tag="LightBlueBrush"
+                                                Content=""
+                                                FontWeight="Bold"
+                                                Margin="8 5"
+                                                Style="{StaticResource IconicButton}"
+                                                />
+                                    
+                                    </StackPanel>
 
                                 </StackPanel>
 

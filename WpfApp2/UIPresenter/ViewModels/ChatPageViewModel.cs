@@ -14,6 +14,12 @@ namespace UI.UIPresenter.ViewModels
     public class ChatPageViewModel : BaseViewModel
     {
 
+        #region Private Members
+
+        string searchRequest;
+
+        #endregion
+
         #region Public Members
 
         /// <summary>
@@ -22,6 +28,20 @@ namespace UI.UIPresenter.ViewModels
         public ChatViewModel ChatViewModel { get; set; } = ApplicationService.GetChatViewModel;
 
         public ChatListViewModel ChatList { get; set; } = new ChatListViewModel();
+
+        /// <summary>
+        /// Text to search
+        /// </summary>
+        public string SearchRequest {
+            get { return searchRequest; }
+            set {
+                if (value != null)
+                {
+                    searchRequest = value;
+                    Search(value);
+                }
+            }
+        }
 
         #endregion
 
@@ -39,7 +59,7 @@ namespace UI.UIPresenter.ViewModels
 
             //TODO delete
             Task.Run(() => Check());
-            UnitOfWork.ContactsTableRepo.Add(new Contact("Vidzhel's friend", "someEmail@gmail.com", "there is very long text to check form working", null, "True", 1));
+            //UnitOfWork.ContactsTableRepo.Add(new Contact("Vidzhel's friend", "someEmail@gmail.com", "there is very long text to check form working", null, "True", 1));
         }
 
         #endregion
@@ -49,12 +69,41 @@ namespace UI.UIPresenter.ViewModels
         //TODO Delate
         async void Check()
         {
+
             await Task.Delay(10000);
 
-            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "It's not Mark", false, "", 3, new List<int>() { 1 }));
-            //UnitOfWork.MessagesTableRepo.Add(new Message(0, 4, DataType.Text, DateTime.Now, "Hi Mark, how do you do, i haven't seen you for ages", MessageStatus.Sended, 4));
+            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "It's not Mark", false, "", 3, new List<int>() { 1 }, new List<int>() { 0, 1 }));
+            //UnitOfWork.ContactsTableRepo.Add(new Contact("Second friend", "his email", "it bisd", null, "false", 2));
+            await Task.Delay(3000);
+            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0, 1, 2 }));
+
+            await Task.Delay(3000);
+
+            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0 }));
+            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0 }));
+            //new Message(0, 3, DataType.Text, DateTime.Now, "Hi Mark, how do you do, i haven't seen you for ages", MessageStatus.Sended, 4));
             //UnitOfWork.MessagesTableRepo.Add(new Message(1, 2, DataType.Text, DateTime.Now, "Hi new message", MessageStatus.Sended, 9));
             //UnitOfWork.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), "4");
+        }
+
+        void Search(string searchRequet)
+        {
+            if (searchRequest == null || searchRequest == "")
+                return;
+
+            //Make request
+            var res = UnitOfWork.Search(searchRequet);
+
+            //Get results
+            var users = (List<Contact>)((object[])res)[0];
+            var chats = (List<Group>)((object[])res)[1];
+
+            ApplicationService.UsersSearchResult = users;
+            ApplicationService.GroupsSearchResult = chats;
+
+            //Open Search page
+
+            ApplicationService.ChangeCurrentChatPage(ChatPages.SearchResults);
         }
 
         /// <summary>
@@ -73,11 +122,21 @@ namespace UI.UIPresenter.ViewModels
                     RemoveMesageFromChatList((List<Message>)args.Data);
                     break;
                 case RepositoryActions.Update:
-                    RemoveMesageFromChatList((List<Message>)args.Data);
+                    UpdateMesageFromChatList((List<Message>)args.Data);
                     break;
                 default:
                     break;
             }
+        }
+
+
+        /// <summary>
+        /// Remove message and set new one (if it's the last message of the group)
+        /// </summary>
+        /// <param name="data"></param>
+        private void UpdateMesageFromChatList(List<Message> data)
+        {
+
         }
 
         /// <summary>
@@ -95,6 +154,7 @@ namespace UI.UIPresenter.ViewModels
                 //Find the group to update last message
                 foreach (var group in ChatList.Items)
                 {
+
                     //If message from the group
                     if (group.GroupData.Id == data.Id)
 
@@ -173,8 +233,9 @@ namespace UI.UIPresenter.ViewModels
         /// Updates groups
         /// </summary>
         /// <param name="dataChanged"></param>
-        private void UpdateGroupInChatList(List<Group> dataChanged)
+        void UpdateGroupInChatList(List<Group> dataChanged)
         {
+            
             if (dataChanged == null)
                 return;
 
@@ -182,15 +243,15 @@ namespace UI.UIPresenter.ViewModels
             foreach (var data in dataChanged)
             {
                 //Find the group with same Id
-                foreach (var item in ChatList.Items)
+                for (int i = 0; i < ChatList.Items.Count; i++)
                 {
                     //And Replace
-                    if (item.GroupData.Id == data.Id)
+                    if (ChatList.Items[i].GroupData.Id == data.Id)
                     {
                         //Becouse Items is ObservableCollection we should update elements from the main thread
                         App.Current.Dispatcher.Invoke(() =>
                         {
-                            item.GroupData = data;
+                            ChatList.Items[i] = new ChatListItemViewModel(data, ChatList.Items[i].LastMessage);
                         });
 
                         break;

@@ -20,6 +20,22 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public bool IsYourContact => UnitOfWork.User.contactsIdList.Contains(UserInfo.Id);
 
+
+        /// <summary>
+        /// If true profide button to delate user from a group
+        /// </summary>
+        public bool IsGroupContactsList { get; set; }
+
+        /// <summary>
+        /// If true provide button to add user to a group
+        /// </summary>
+        public bool IsInviteList { get; set; }
+
+        /// <summary>
+        /// If true provide Remove from chat botton
+        /// </summary>
+        public bool AreYouAdmin { get; set; }
+
         /// <summary>
         /// Gets user status
         /// </summary>
@@ -39,8 +55,12 @@ namespace UI.UIPresenter.ViewModels
 
         #region Constructor
 
-        public ContactsListItemViewModel(Contact user)
+        public ContactsListItemViewModel(Contact user, bool isGroupContactsList = false, bool isInviteList = false, bool areYouAdmin = false)
         {
+            IsGroupContactsList = isGroupContactsList;
+            IsInviteList = isInviteList;
+            AreYouAdmin = areYouAdmin;
+
             UpdateUser(user);
         }
 

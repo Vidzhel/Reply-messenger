@@ -26,6 +26,7 @@ namespace ServerLibs.DataAccess
 
             //Start new thread for handling commands
             Thread answersHandler = new Thread(new ThreadStart(incomingCommandsHanddler));
+            answersHandler.IsBackground = true;
             answersHandler.Name = "Command Handler";
             answersHandler.Start();
         }

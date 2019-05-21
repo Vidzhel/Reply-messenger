@@ -1,4 +1,4 @@
-﻿
+﻿C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Release\GeneratedInternalTypeHelper.g.cs
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\App.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\MainWindow.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\ChatPage.xaml;;
@@ -6,6 +6,7 @@ FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\SignInPage.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\SignUpPage.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Buttons.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Fonts.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\RadioButtons.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\ScrollViews.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\TabControls.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Text.xaml;;
@@ -14,7 +15,9 @@ FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatInfoBarUserCont
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatList.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatListItem.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatUserControl.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\GroupsList.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ContactsList.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\GroupListItem.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ContactsListItem.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\InfoGroupControl.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\InfoUserPage.xaml;;

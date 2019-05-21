@@ -59,6 +59,7 @@
     <Compile Include="Connections\Repositories\Tables\MessagesTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\RemoteGroupsTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\RemoteMessagesTableFields.cs" />
+    <Compile Include="Connections\Repositories\Tables\RemoteUsersTableFields.cs" />
     <Compile Include="Connections\Repositories\Tables\Table.cs" />
     <Compile Include="Connections\Repositories\Tables\IBaseTable.cs" />
     <Compile Include="Connections\Repositories\Tables\UsersTableFields.cs" />

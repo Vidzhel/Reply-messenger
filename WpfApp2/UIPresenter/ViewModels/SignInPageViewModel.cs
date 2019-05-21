@@ -1,4 +1,6 @@
 ﻿using ClientLibs.Core;
+using ClientLibs.Core.DataAccess;
+using CommonLibs.Data;
 using Ninject;
 using PropertyChanged;
 using System;
@@ -71,11 +73,18 @@ namespace UI.UIPresenter.ViewModels
                 SignInIsRunning = true;
 
                 //TODO SignIn
-                //FieldState = ControlStates.Error;
-                //ShowErrorMessage("Invalid Email or Password");
+                var res = UnitOfWork.SighIn(new User(null, value, Email, null));
 
-                //If all right open chat page
-                changePage("ChatPage");
+                if (res == true)
+                {
+                    //If all right open chat page
+                    changePage("ChatPage");
+                }
+
+                //If data is wrong show erroro message
+                FieldState = ControlStates.Error;
+                ShowErrorMessage("Invalid Email or Password");
+
             }
             finally
             {
@@ -90,19 +99,21 @@ namespace UI.UIPresenter.ViewModels
         bool FieldChecker(object value)
         {
 
-            #region Check on emptyness
+            #region Check data
 
-            if (Email == String.Empty)
+            string temp;
+
+            if ((temp = ValidateUserData.ValidateEmail(Email, true)) != null)
             {
                 FieldState = ControlStates.EmailError;
-                ErrorMessage = "Email field is empty";
+                ErrorMessage = temp;
                 return false;
             }
 
-            if ((string)value == String.Empty)
+            if ((temp = ValidateUserData.ValidatePassword((string)value, true)) != null)
             {
                 FieldState = ControlStates.PasswordError;
-                ErrorMessage = "Password field is empty";
+                ErrorMessage = temp;
                 return false;
             }
 

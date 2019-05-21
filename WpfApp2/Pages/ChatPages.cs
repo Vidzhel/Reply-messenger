@@ -14,7 +14,7 @@ namespace UI.Pages
 
         Chat,
         ChatInfo,
-
+        SearchResults,
         //Sturtup page
         UserInfo
 

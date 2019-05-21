@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using UI.InversionOfControl;
+using UI.UIPresenter.ViewModels.Commands;
 using WpfApp2;
 
 namespace UI.UIPresenter.ViewModels
@@ -26,6 +27,16 @@ namespace UI.UIPresenter.ViewModels
         public ICommand SendMessage { set; get; }
 
         /// <summary>
+        /// Toggle invite list visibility
+        /// </summary>
+        public ICommand InviteListButton { set; get; }
+
+        /// <summary>
+        /// If true shows invite list
+        /// </summary>
+        public bool ShowInviteList{ get; set; }
+
+        /// <summary>
         /// Contain text of message from Typing Box
         /// </summary>
         public string MessageContent { get; set; }
@@ -34,6 +45,11 @@ namespace UI.UIPresenter.ViewModels
         /// List of all messages in the chat
         /// </summary>
         public MessageListViewModel MessageList { get; set; } = new MessageListViewModel();
+
+        /// <summary>
+        /// Invite list contacts
+        /// </summary>
+        public ContactsListViewModel ContactsInviteList { get; set; } = new ContactsListViewModel();
 
         /// <summary>
         /// Gets name of the group
@@ -46,14 +62,15 @@ namespace UI.UIPresenter.ViewModels
         public int UsersOnline => CurrentChat != null ? CurrentChat.UsersOnline - 1: 0;
 
         /// <summary>
-        /// Return true if in the chat are less or equal than 3 users
+        /// If true all users can send messages in the group
         /// </summary>
-        public bool IsChat => CurrentChat != null? CurrentChat.IsChat : false;
+        public bool IsChat => CurrentChat != null? !CurrentChat.isChannel: false;
+
 
         #endregion
 
         #region Public Methods
-        
+
         /// <summary>
         /// Changes current chat
         /// </summary>
@@ -85,6 +102,7 @@ namespace UI.UIPresenter.ViewModels
 
             //Set up commands
             SendMessage = new RelayCommand(() => sendMessage());
+            InviteListButton = new RelayCommand(() => inviteListButtonClick());
 
             //Set current chat
             ChangeChat(ApplicationService.GetCurrentChoosenChat);
@@ -94,31 +112,63 @@ namespace UI.UIPresenter.ViewModels
 
         #region Private Methods
 
+        /// <summary>
+        /// Togle visibility of invite list
+        /// </summary>
+        void inviteListButtonClick()
+        {
+
+            ShowInviteList = !ShowInviteList;
+
+            if(ShowInviteList)
+                //Load contacts
+                ContactsInviteList = new ContactsListViewModel(UnitOfWork.GetUsersInfo(new List<int>(UnitOfWork.User.contactsIdList)), false, true);
+        }
+
         void OnGroupsTableRepoChanged(object sender, DataChangedArgs<IEnumerable<Group>> args)
         {
             switch (args.Action)
             {
-                case RepositoryActions.Add:
-                    break;
                 case RepositoryActions.Update:
-                    UpdateGroup((List<Message>)args.Data);
+                    UpdateGroup((List<Group>)args.Data);
                     break;
                 case RepositoryActions.Remove:
-                    RemoveGroup((List<Message>)args.Data);
+                    RemoveGroup((List<Group>)args.Data);
                     break;
                 default:
                     break;
             }
         }
 
-        private void RemoveGroup(List<Message> dataChanged)
+        private void RemoveGroup(List<Group> dataChanged)
         {
-            throw new NotImplementedException();
+            foreach (var data in dataChanged)
+            {
+                //if deleted current chat
+                if(CurrentChat.Id == data.Id)
+                {
+                    //Open user info page
+                    CommonCommands.OpenUserInfo.Equals(UnitOfWork.User);
+                    return;
+                }
+
+            }
         }
 
-        private void UpdateGroup(List<Message> dataChanged)
+        private void UpdateGroup(List<Group> dataChanged)
         {
-            throw new NotImplementedException();
+            foreach (var data in dataChanged)
+                //If the group updated
+                if (data.Id == CurrentChat.Id)
+                {
+                    //Set new chat
+                    CurrentChat = data;
+
+                    //Update UI
+                    OnPropertyChanged("ChatName");
+                    OnPropertyChanged("UsersOnline");
+                    OnPropertyChanged("IsChat");
+                }
         }
 
         void OnMessagesTableRepoChanged(object sender, DataChangedArgs<IEnumerable<Message>> args)
@@ -221,7 +271,7 @@ namespace UI.UIPresenter.ViewModels
                     //Becouse Items is ObservableCollection we should update elements from the main thread
                     App.Current.Dispatcher.Invoke(() =>
                     {
-                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, CurrentChat.IsChat));
+                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, CurrentChat.IsPrivateChat));
                     });
 
                 }
@@ -235,7 +285,7 @@ namespace UI.UIPresenter.ViewModels
         void loadMessages()
         {
             //Get all messages whick match to the group Id
-            var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), CurrentChat.Id.ToString());
+            var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), CurrentChat?.Id.ToString());
 
             //Get all users data from server
             var users = UnitOfWork.GetUsersInfo(new List<int>(CurrentChat.MembersIdList));
@@ -246,18 +296,21 @@ namespace UI.UIPresenter.ViewModels
                     if(user.Id == message.SenderId)
                     {
                         //If it's chat and it's not you, than add to contact
-                        if (CurrentChat.IsChat)
+                        if (CurrentChat.IsPrivateChat)
                             if (UnitOfWork.User.Email != user.Email)
                                 Contact = user;
 
                         //Becouse Items is ObservableCollection we should update elements from the main thread
                         App.Current.Dispatcher.Invoke(() =>
                         {
-                            MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, CurrentChat.IsChat));
+                            MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, CurrentChat.IsPrivateChat));
                         });
                     }
         }
 
+        /// <summary>
+        /// Sends message
+        /// </summary>
         void sendMessage()
         {
             if (CurrentChat == null || this.MessageContent == null)

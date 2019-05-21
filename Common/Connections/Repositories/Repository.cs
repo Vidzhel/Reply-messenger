@@ -153,10 +153,6 @@ namespace CommonLibs.Connections.Repositories
         {
             DBBusy.WaitOne();
 
-            var dp = new DynamicParameters();
-
-            dp.Add(column, value);
-
             try
             {
 
@@ -165,11 +161,13 @@ namespace CommonLibs.Connections.Repositories
                 {
                     con.Open();
 
-                    var request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
-                    var query = con.Execute(request, dp);
+                    var request = $"update {table} SET { table.GetFieldsToUpdate() }  where {column} = {value}";
 
-                    request = "INSERT INTO " + table.ToString() + " ( " + table.GetFields() + " ) VALUES ( " + table.GetFieldsForQuery() + " )";
-                    con.Execute(request, data);
+                    //var request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
+                    var query = con.Execute(request, data);
+
+                    //request = "INSERT INTO " + table.ToString() + " ( " + table.GetFields() + " ) VALUES ( " + table.GetFieldsForQuery() + " )";
+                    //con.Execute(request, data);
                 }
 
             }
@@ -334,6 +332,38 @@ namespace CommonLibs.Connections.Repositories
                 return null;
             }
         }
+
+        /// <summary>
+        /// Return an Id of the row
+        /// </summary>
+        /// <param name="id">an id of row</param>
+        /// <returns></returns>
+        public override int GetId(string column, string value)
+        {
+            DBBusy.WaitOne();
+
+            try
+            {
+
+                using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+                {
+                    con.Open();
+
+                    var query = con.Query<int>("select Id from " + table.ToString() + " WHERE " + column + " = " + value, new DynamicParameters()).First();
+
+                    DBBusy.ReleaseMutex();
+                    return query;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                DBBusy.ReleaseMutex();
+                return -1;
+            }
+        }
+
 
         /// <summary>
         /// Gets all notes from table

@@ -72,6 +72,7 @@
 
                                     <Button Name="LeaveChat"
                                             Tag="LightRedBrush"
+                                            ToolTip="Leave Chat"
                                             Command="{x:Static commands:CommonCommands.LeaveChat}"
                                             CommandParameter="{Binding GroupInfo}"
                                             Content="" Margin="8 5"
@@ -81,23 +82,25 @@
                                         />
 
                                     <Button Name="JoinChat"
-                                        Command="{x:Static commands:CommonCommands.JoinChat}"
-                                        CommandParameter="{Binding GroupInfo}"
-                                        Tag="OrangeBrush"
-                                        FontWeight="Bold"
-                                        Content=""
-                                        Margin="8 5"
-                                        Style="{StaticResource IconicButton}"
-                                        Visibility="{Binding IsYourGroup, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
-                                        />
+                                            Command="{x:Static commands:CommonCommands.JoinChat}"
+                                            CommandParameter="{Binding GroupInfo}"
+                                            ToolTip="Join Chat"
+                                            Tag="OrangeBrush"
+                                            FontWeight="Bold"
+                                            Content=""
+                                            Margin="8 5"
+                                            Style="{StaticResource IconicButton}"
+                                            Visibility="{Binding IsYourGroup, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}"
+                                            />
 
                                     <Button Name="InviteContact"
-                                        Tag="LightBlueBrush"
-                                        Content=""
-                                        FontWeight="Bold"
-                                        Margin="8 5"
-                                        Style="{StaticResource IconicButton}"
-                                        />
+                                            Tag="LightBlueBrush"
+                                            ToolTip="Invite to Chat"
+                                            Content=""
+                                            FontWeight="Bold"
+                                            Margin="8 5"
+                                            Style="{StaticResource IconicButton}"
+                                            />
 
 
                                 </StackPanel>

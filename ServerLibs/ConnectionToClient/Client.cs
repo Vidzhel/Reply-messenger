@@ -52,6 +52,9 @@ namespace ServerLibs.ConnectionToClient
             //Deserealize data and get command
             var command = (Command)DataConverter.DeserializeData(BinReceivedData.ToArray());
 
+            //Clear buffer
+            BinReceivedData = new List<byte>();
+
             //copy user data
             if (command.UserData != null)
                 UserInfo = command.UserData;

@@ -55,6 +55,16 @@ namespace UI.UIPresenter.ViewModels.Commands
         /// </summary>
         public static ICommand JoinChat { get; set; }
 
+        /// <summary>
+        /// Deletes user from chat
+        /// </summary>
+        public static ICommand RemoveUserFromChat { get; set; }
+
+        /// <summary>
+        /// Invites user to the chat
+        /// </summary>
+        public static ICommand InviteUserToChat { get; set; }
+
         
 
         #endregion
@@ -73,6 +83,8 @@ namespace UI.UIPresenter.ViewModels.Commands
             OpenGroupInfo = new RelayCommandParametrized((args) => openGroupInfo(args));
             JoinChat = new RelayCommandParametrized((args) => joinChat(args));
             LeaveChat = new RelayCommandParametrized((args) => leaveChat(args));
+            RemoveUserFromChat = new RelayCommandParametrized((args) => removeUserFromChat(args));
+            InviteUserToChat = new RelayCommandParametrized((args) => inviteUserToChat(args));
 
         }
 
@@ -80,25 +92,78 @@ namespace UI.UIPresenter.ViewModels.Commands
 
         #region Private Methods
 
+        static void inviteUserToChat(object data)
+        {
+            Contact user = (Contact)data;
+            Group group = ApplicationService.GetCurrentChoosenChat;
+
+            //TODO invite
+        }
+
+        static void removeUserFromChat(object data)
+        {
+            //Get contact to remove
+            Contact user = (Contact)data;
+
+            //Get current open chat to remove from
+            var group = ApplicationService.GetCurrentChoosenChat;
+
+            //UnitOfWork.RemoveUserFromChat(group, user)
+
+            //Remove user from group
+            group.RemoveMember(user.Id);
+            group.RemoveAdmin(user.Id);
+
+            //Update db
+            UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+        }
+
         static void openGroupInfo(object group)
         {
             ApplicationService.ChangeCurrentChat((Group)group);
             ApplicationService.ChangeCurrentChatPage(ChatPages.ChatInfo);
+            ApplicationService.ChangeCurrentContact(null);
         }
 
         static void leaveChat(object group)
         {
+            var gr = (Group)group;
+
+            //If user hasn't joinde to the chat
+            if (!UnitOfWork.User.chatsIdList.Contains(gr.Id))
+                return;
+
             //Remove chat
-            UnitOfWork.User.RemoveChat((Group)group);
-            UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Group>() { (Group)group }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Remove));
+            UnitOfWork.User.RemoveChat(gr);
+            UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Group>() { gr }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Remove));
+
+            //Update group
+            gr.MembersIdList.Remove(UnitOfWork.User.Id);
+            gr.AdminsIdList.Remove(UnitOfWork.User.Id);
+            UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), gr.Id.ToString(), gr);
+
+            //Delete From db
+            UnitOfWork.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), gr.Id.ToString());
         }
 
         static void joinChat(object group)
         {
-            //Add chat
-            UnitOfWork.User.AddNewChat((Group)group);
-            UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Group>() { (Group)group }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Add));
+            var gr = (Group)group;
 
+            //If user has already joined the group
+            if (UnitOfWork.User.chatsIdList.Contains(gr.Id))
+                return;
+
+            //Add chat
+            UnitOfWork.User.AddNewChat(gr);
+
+            //Add Chat to db
+            UnitOfWork.GroupsTableRepo.Add(gr);
+
+
+            //Update group
+            gr.MembersIdList.Add(UnitOfWork.User.Id);
+            UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), gr.Id.ToString(), gr);
         }
 
         static void openChat(object group)
@@ -154,7 +219,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             ApplicationService.ChangeCurrentContact((Contact)contact);
             ApplicationService.ChangeCurrentChatPage(ChatPages.UserInfo);
         }
-       
+
         #endregion
 
     }

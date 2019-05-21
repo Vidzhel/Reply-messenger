@@ -84,3 +84,6 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\GroupListI
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\GroupListItem.baml
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\GroupsList.g.cs
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\GroupsList.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\Styles\RadioButtons.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\SearchResults.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\SearchResults.baml

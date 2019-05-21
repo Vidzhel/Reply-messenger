@@ -32,10 +32,10 @@
             <!--Error Message Box-->
             <Label Style="{StaticResource RegularText}" Foreground="{StaticResource LightRedBrush}" Content="{Binding ErrorMessage}" Margin="40 10 40 0"/>
 
-            <Button InputMethod.IsInputMethodEnabled="True" Command="{Binding SignUpCommand}" Name="SignUpButton" Margin="40 50 40 0" TabIndex="3" Style="{StaticResource RegularButton}" Content="SIGN UP">
+            <Button Command="{Binding SignUpCommand}" Name="SignUpButton" Margin="40 50 40 0" TabIndex="3" Style="{StaticResource RegularButton}" Content="SIGN UP">
                 <Button.CommandParameter>
                     <MultiBinding Converter="{converters:ParametersToArrayConverter}" >
-                        <Binding ElementName="SignInPassword" Path="Text"/>
+                        <Binding ElementName="SignUpPassword" Path="Text"/>
                         <Binding ElementName="SignUpRepeatPassword" Path="Text"/>
                     </MultiBinding>
                 </Button.CommandParameter>

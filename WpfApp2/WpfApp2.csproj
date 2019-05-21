@@ -86,6 +86,7 @@
     </Compile>
     <Compile Include="UIPresenter\Converters\Base\BaseMultiValueConverter.cs" />
     <Compile Include="UIPresenter\Converters\Base\BaseValueConverter.cs" />
+    <Compile Include="UIPresenter\Converters\BoolToChackedConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToColorConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToHorizontalAlignmentConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToVisibilityConverter.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListItemDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListItemDesignViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\SearchResultsViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\GroupsListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\GroupsListViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\InfoGroupControlViewModel.cs" />
@@ -164,6 +166,9 @@
     <Compile Include="UserControls\MessageListItem.xaml.cs">
       <DependentUpon>MessageListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SearchResults.xaml.cs">
+      <DependentUpon>SearchResults.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -197,6 +202,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\Fonts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\RadioButtons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -265,6 +274,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\MessageListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SearchResults.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

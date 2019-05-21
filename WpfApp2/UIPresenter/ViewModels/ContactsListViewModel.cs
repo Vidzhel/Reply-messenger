@@ -4,6 +4,7 @@ using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using WpfApp2;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -14,21 +15,45 @@ namespace UI.UIPresenter.ViewModels
 
         public ObservableCollection<ContactsListItemViewModel> Items { get; set; } = new ObservableCollection<ContactsListItemViewModel>();
 
+        public bool IsGroupContactsList { get; set; }
+
+        public bool IsInviteList { get; set; }
+
+        public bool AreYouAdmin { get; set; }
+
         #endregion
 
         #region Constructor
 
-        public ContactsListViewModel(List<Contact> contacts)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="contacts">contacts to add</param>
+        /// <param name="isGroupContactsList">If true provide button to remove user from a group</param>
+        /// <param name="isInviteList">If true provide button to invite user to a group</param>
+        public ContactsListViewModel(List<Contact> contacts, bool isGroupContactsList = false, bool isInviteList = false, bool areYouAdmin = false)
         {
+            IsGroupContactsList = isGroupContactsList;
+            IsInviteList = isInviteList;
+            AreYouAdmin = areYouAdmin;
+
             //Add event handler
             UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnContactsListChanged(sender, args));
 
             foreach (var contact in contacts)
-                Items.Add(new ContactsListItemViewModel(contact));
+                Items.Add(new ContactsListItemViewModel(contact, isGroupContactsList, isInviteList, areYouAdmin));
         }
 
-        public ContactsListViewModel()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isGroupContactsList">If true provide button to remove user from a group</param>
+        /// <param name="isInviteList">If true provide button to invite user to a group</param>
+        public ContactsListViewModel(bool isGroupContactsList = false, bool isInviteList = false, bool areYouAdmin = false)
         {
+            IsGroupContactsList = isGroupContactsList;
+            IsInviteList = isInviteList;
+            AreYouAdmin = areYouAdmin;
 
             //Add event handler
             UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnContactsListChanged(sender, args));
@@ -42,6 +67,7 @@ namespace UI.UIPresenter.ViewModels
 
         void OnContactsListChanged(object sender, DataChangedArgs<IEnumerable<object>> args)
         {
+            //Check specific action
             if(args.ExtraInfo == UsersTableFields.ContactsId.ToString())
                 switch (args.Action)
                 {
@@ -57,6 +83,13 @@ namespace UI.UIPresenter.ViewModels
                     default:
                         break;
                 }
+
+            //Else update yourself
+            else
+            {
+                UpdateContacts(new List<Contact>() { UnitOfWork.Contact });
+            }
+
         }
 
         public void AddContacts(List<Contact> contacts)
@@ -77,8 +110,12 @@ namespace UI.UIPresenter.ViewModels
                     }
                 }
 
-                if(add)
-                    Items.Add(new ContactsListItemViewModel(contact));
+                if (add)
+                    //Becouse Items is ObservableCollection we should update elements from the main thread
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        Items.Add(new ContactsListItemViewModel(contact, IsGroupContactsList, IsInviteList, AreYouAdmin));
+                    });
             }
         }
 
@@ -113,7 +150,11 @@ namespace UI.UIPresenter.ViewModels
                     if (item.UserInfo.Id == contact.Id)
                     {
                         //Delate contact
-                        Items.Remove(item);
+                        //Becouse Items is ObservableCollection we should update elements from the main thread
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            Items.Remove(item);
+                        });
                         break;
                     }
 

@@ -27,7 +27,7 @@ namespace UI.UIPresenter.Converters
                     return Application.Current.FindResource("LightRedBrush");
 
                 case ControlStates.UserNameError:
-                    if(fieldType != "User name" && fieldType != "Change Name")
+                    if(fieldType != "User name" && fieldType != "Change Name" && fieldType != "Group Name")
                         return Application.Current.FindResource("MiddleGrayBgBrush");
                     return Application.Current.FindResource("LightRedBrush");
 

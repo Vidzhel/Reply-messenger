@@ -19,6 +19,8 @@ namespace UI.UIPresenter.Converters
                     return new InfoUserControl();
                 case ChatPages.ChatInfo:
                     return new InfoGroupControl();
+                case ChatPages.SearchResults:
+                    return new SearchResults();
 
                 default:
                     Debugger.Break();
