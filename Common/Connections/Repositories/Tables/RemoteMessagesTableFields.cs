@@ -5,6 +5,8 @@ namespace CommonLibs.Connections.Repositories.Tables
     {
         SenderId,
         ReceiverId,
+        LastTimeUpdated,
+        Attachments,
         Data,
         DataType,
         Date,

@@ -14,6 +14,9 @@ namespace ClientLibs.Core
         PasswordError,
         UserNameError,
         EmailError,
+        AccessabilityError,
+        ChatType,
+        GroupName,
         Ok
     }
 }

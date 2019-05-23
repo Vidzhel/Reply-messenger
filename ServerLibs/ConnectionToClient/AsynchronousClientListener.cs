@@ -35,7 +35,9 @@ namespace ServerLibs.ConnectionToClient
         /// </summary>
         static public int Port { get; set; } = 11000;
 
-        static public List<Client> ConnectedClients { get; set; } = new List<Client>();
+        //Occur on user connected and disconected
+        static event Action<Client> UserConnected;
+        static event Action<Client> UserDiscconected;
 
         #endregion
 
@@ -50,6 +52,24 @@ namespace ServerLibs.ConnectionToClient
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Add handler on new user connected to the server
+        /// </summary>
+        /// <param name="handler"></param>
+        static public void OnUserConnected(Action<Client> handler)
+        {
+            UserConnected += handler;
+        }
+
+        /// <summary>
+        /// Add handler on user disconected from the server
+        /// </summary>
+        /// <param name="handler"></param>
+        static public void OnUserDisconnected(Action<Client> handler)
+        {
+            UserDiscconected += handler;
+        }
 
         /// <summary>
         /// Starts listening to clients
@@ -182,7 +202,7 @@ namespace ServerLibs.ConnectionToClient
             Client client = new Client(handler);
 
             //Add new client to list of connected clients
-            ConnectedClients.Add(client);
+            UserConnected?.Invoke(client);
 
             // Begin recieve data
             handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
@@ -209,7 +229,7 @@ namespace ServerLibs.ConnectionToClient
                 displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
 
                 //Remove from online clients
-                ConnectedClients.Remove(client);
+                UserDiscconected?.Invoke(client);
 
                 //Set user status to offline
                 client.HandleCommand(new Command(CommandType.SignOut, null, null));
@@ -253,7 +273,7 @@ namespace ServerLibs.ConnectionToClient
                         displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
 
                         //Remove from online clients
-                        ConnectedClients.Remove(client);
+                        UserDiscconected?.Invoke(client);
 
                         //Set user status to offline
                         client.HandleCommand(new Command(CommandType.SignOut, null, null));

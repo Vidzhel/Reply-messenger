@@ -12,6 +12,8 @@ namespace CommonLibs.Data
 
         DateTime online;
 
+        DateTime lastTimeUpdated;
+
         #endregion
 
         #region public Members
@@ -77,6 +79,39 @@ namespace CommonLibs.Data
             }
         }
 
+
+        /// <summary>
+        /// Get and set local last time updated DateTime
+        /// </summary>
+        public DateTime LocalLastTimeUpdated
+        {
+            get
+            {
+                return lastTimeUpdated;
+            }
+
+            set
+            {
+                lastTimeUpdated = value;
+            }
+        }
+
+        /// <summary>
+        /// Converted binary representation of universal time
+        /// </summary>
+        public string LastTimeUpdated
+        {
+            get
+            {
+                return lastTimeUpdated.ToUniversalTime().ToBinary().ToString();
+            }
+            set
+            {
+                lastTimeUpdated = DateTime.FromBinary((long)Convert.ToUInt64(value)).ToLocalTime();
+            }
+        }
+
+
         #endregion
 
         #region Constructor
@@ -89,6 +124,7 @@ namespace CommonLibs.Data
             Bio = bio;
             ProfilePhoto = profilePhoto;
             Online = online;
+            LocalLastTimeUpdated = DateTime.Now;
         }
 
         /// <summary>

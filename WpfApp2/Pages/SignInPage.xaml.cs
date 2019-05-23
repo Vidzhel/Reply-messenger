@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security;
 using System.Threading.Tasks;
 using UI.Animations;
 using UI.UIPresenter.ViewModels;
@@ -8,7 +9,7 @@ namespace UI.Pages
     /// <summary>
     /// Interaction logic for SignInPage.xaml
     /// </summary>
-    public partial class SignInPage : BasePage<SignInPageViewModel>
+    public partial class SignInPage : BasePage<SignInPageViewModel>, IHavePassword
     {
         public SignInPage()
         {
@@ -17,6 +18,8 @@ namespace UI.Pages
             //Starts all page animations
             startAnimationsAsync();
         }
+
+        public SecureString StringPassword => SignInPassword.SecurePassword;
 
         #region Animation Helpers
 

@@ -16,6 +16,10 @@ namespace UI.UIPresenter.Converters
             var IsFocused = (bool)values[0];
             var IsTextEmpty = (bool)values[1];
 
+            //reverce value parameter true
+            if (parameter != null &&((string)parameter).Equals("true", StringComparison.CurrentCultureIgnoreCase))
+                IsTextEmpty = !IsTextEmpty;
+
             if (IsFocused || !IsTextEmpty)
                 return true;
             return false;

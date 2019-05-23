@@ -9,6 +9,8 @@
              xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
              xmlns:commands="clr-namespace:UI.UIPresenter.ViewModels.Commands"
              
+             x:Name="Page"
+             
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="974">
     
@@ -37,6 +39,101 @@
                     Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}">
                     
                     <local:ContactsList DataContext="{Binding ContactsList}" />
+                </TabItem>
+
+                <!--Create group-->
+                <TabItem  
+                    Style="{StaticResource CustomTabPanel}"
+                    Header="Change profile info"
+                    Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}}">
+
+                    <StackPanel Margin="50 20">
+
+
+                        <TextBox Tag="Group Name"
+                                 Name="GroupName"
+                                 Width="300"
+                                 HorizontalAlignment="Left"
+                                 Margin="0 0 0 30"
+                                 Style="{StaticResource RegularTextBox}"/>
+
+                        <Label Content="Chat Accessability"
+                               Style="{StaticResource RegularText}"
+                               Foreground="{StaticResource LightGrayBgBrush}"
+                               FontSize="15"
+                               Margin="-8 10 0 10"
+                               FontWeight="Medium"/>
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <RadioButton Content="Private"
+                                         Name="IsPrivateChat"
+                                         Foreground="{Binding FieldState, Converter={converters:ControlStateToColorBrush}, ConverterParameter={Binding Name, RelativeSource={RelativeSource Mode=Self}}}"
+                                         Margin="0 0 30 0"
+                                         Style="{StaticResource RadioButtonRegular}"/>
+
+                            <RadioButton Content="Public"
+                                         Name="IsPublicChat"
+                                         Style="{StaticResource RadioButtonRegular}"/>
+
+                        </StackPanel>
+
+                        <Label Content="Chat Type"
+                               Style="{StaticResource RegularText}"
+                               Foreground="{StaticResource LightGrayBgBrush}"
+                               FontSize="15"
+                               Margin="-8 10 0 10"
+                               FontWeight="Medium"/>
+
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <RadioButton Content="Chat"
+                                         Name="IsChat"
+                                         Margin="0 0 30 0" Style="{StaticResource RadioButtonRegular}"/>
+
+                            <RadioButton Content="Channel"
+                                         Name="IsChannel"
+                                         Style="{StaticResource RadioButtonRegular}"/>
+
+                        </StackPanel>
+
+
+                        <Label Margin="0 10 0 20"
+                               Style="{StaticResource RegularText}"
+                               Foreground="{StaticResource LightRedBrush}"
+                               Content="{Binding ChangeGroupInfoErrorMessage}"/>
+
+                        <Button HorizontalAlignment="Right"
+                                Width="150"
+                                VerticalAlignment="Bottom"
+                                Margin="0 20 0 0"
+                                Command="{Binding CreateGroup}"
+                                Height="30"
+                                Style="{StaticResource RegularButton}"
+                                Content="Create Goup">
+
+                            <Button.CommandParameter>
+
+                                <MultiBinding Converter="{converters:ParametersToArrayConverter}">
+
+                                    <Binding ElementName="GroupName" Path="Text"/>
+                                    <Binding ElementName="IsPrivateChat" Path="IsChecked"/>
+                                    <Binding ElementName="IsPublicChat" Path="IsChecked"/>
+                                    <Binding ElementName="IsChat" Path="IsChecked"/>
+                                    <Binding ElementName="IsChannel" Path="IsChecked"/>
+
+                                </MultiBinding>
+
+                            </Button.CommandParameter>
+
+                        </Button>
+
+
+
+                    </StackPanel>
+
+
                 </TabItem>
 
                 <!--Change user info-->
@@ -124,26 +221,26 @@
                                 VerticalAlignment="Center">
 
                         <!--Change password Fields-->
-                        <TextBox Tag="Old Password"
+                        <PasswordBox Tag="Old Password"
                                  Name="OldPassField"
                                  Width="300"
                                  HorizontalAlignment="Left"
                                  Margin="0 0 0 30"
-                                 Style="{StaticResource RegularTextBox}"/>
+                                 Style="{StaticResource RegularPasswordBox}"/>
 
-                        <TextBox Tag="New Password"
+                        <PasswordBox Tag="New Password"
                                  Name="NewPassField"
                                  Width="300"
                                  HorizontalAlignment="Left"
                                  Margin="0 0 0 30"
-                                 Style="{StaticResource RegularTextBox}"/>
+                                 Style="{StaticResource RegularPasswordBox}"/>
 
-                        <TextBox Tag="Repeat New Password"
+                        <PasswordBox Tag="Repeat New Password"
                                  Name="RepeatPassField"
                                  HorizontalAlignment="Left"
                                  Width="300"
                                  Margin="0 0 0 10"
-                                 Style="{StaticResource RegularTextBox}"/>
+                                 Style="{StaticResource RegularPasswordBox}"/>
                         
                         <Label Margin="0 0 0 20"
                                Style="{StaticResource RegularText}"
@@ -154,24 +251,12 @@
                                 Width="150"
                                 VerticalAlignment="Bottom"
                                 Margin="0 30 0 0"
+                                CommandParameter="{Binding ElementName=Page}"
                                 Command="{Binding ChangeUserPass}"
                                 Height="30"
                                 Style="{StaticResource RegularButton}"
-                                Content="Change Password">
+                                Content="Change Password"/>
 
-                            <Button.CommandParameter>
-
-                                <MultiBinding Converter="{converters:ParametersToArrayConverter}">
-
-                                    <Binding ElementName="OldPassField" Path="Text"/>
-                                    <Binding ElementName="NewPassField" Path="Text"/>
-                                    <Binding ElementName="RepeatPassField" Path="Text"/>
-
-                                </MultiBinding>
-
-                            </Button.CommandParameter>
-
-                        </Button>
 
                     </StackPanel>
 

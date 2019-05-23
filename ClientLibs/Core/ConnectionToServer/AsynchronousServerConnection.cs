@@ -35,6 +35,8 @@ namespace ClientLibs.Core.ConnectionToServer
 
         static event EventHandler<bool> connectionChanged;
 
+        static IPEndPoint RemoteEndPoint;
+
         #endregion
 
 
@@ -49,6 +51,7 @@ namespace ClientLibs.Core.ConnectionToServer
         /// Specifies ip address or server name to connect with
         /// </summary>
         static public string ServerName { get; set; } = "localhost";
+
 
         /// <summary>
         /// Specifies server port
@@ -91,7 +94,7 @@ namespace ClientLibs.Core.ConnectionToServer
             IPAddress ipAddress = ipHost.AddressList[0];
 
             //Specify end remote point 
-            IPEndPoint RemoteEndPoint = new IPEndPoint(ipAddress, Port);
+            RemoteEndPoint = new IPEndPoint(ipAddress, Port);
 
 
             //Create new socket
@@ -248,6 +251,25 @@ namespace ClientLibs.Core.ConnectionToServer
 
         #region Private Methods
 
+        static void reconnectServer()
+        {
+            try
+            {
+                //Start connecting
+                var asyncResult = Socket.BeginConnect(RemoteEndPoint, null, null);
+
+                Socket.EndConnect(asyncResult);
+
+                ServerConnected = true;
+                //Notify connection changed
+                connectionChanged(null, ServerConnected);
+            }
+            catch (Exception e)
+            {
+                DisplayMessageOnScreen($"Error on starting connectiong, try again after {ReconectionTimeSeconds} seconds \n " + e.ToString());
+            }
+        }
+
         /// <summary>
         /// Check connection, notify connection lost
         /// </summary>
@@ -267,7 +289,7 @@ namespace ClientLibs.Core.ConnectionToServer
 
 
                     //Reconnect
-                    Start();
+                    reconnectServer();
                 }
                 
             } while (true);

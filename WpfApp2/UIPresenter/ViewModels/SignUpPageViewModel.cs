@@ -2,6 +2,7 @@
 using ClientLibs.Core.DataAccess;
 using PropertyChanged;
 using System;
+using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UI.InversionOfControl;
@@ -69,10 +70,11 @@ namespace UI.UIPresenter.ViewModels
             if (SignUpIsRunning)
                 return;
 
-            object[] values = (object[])param;
-            var pass = (string)values[0];
-            var repeatPass = (string)values[1];
-            if (!FieldChecker(new string[] { pass, repeatPass}))
+            //Get secure strings from passwrod boxes
+            var pass = (param as IHavePasswords).StringPassword;
+            var repeatPass = (param as IHavePasswords).RepeatStringPassword;
+
+            if (!FieldChecker(new SecureString[] { pass, repeatPass}))
                 return;
 
 
@@ -89,7 +91,9 @@ namespace UI.UIPresenter.ViewModels
 
                 ErrorMessage = "Something went wrong";
             }
-            catch { }
+            catch {
+                ErrorMessage = "Something went wrong";
+            }
             finally
             {
                 SignUpIsRunning = false;
@@ -100,11 +104,9 @@ namespace UI.UIPresenter.ViewModels
 
         #region Helpers
 
-        bool FieldChecker(string[] values)
+        bool FieldChecker(SecureString[] values)
         {
             string temp;
-
-            #region Check on emptyness
 
             if((temp = ValidateUserData.ValidateUserName(UserName, true)) != null){
                 ErrorMessage = temp;
@@ -125,8 +127,6 @@ namespace UI.UIPresenter.ViewModels
                 ErrorMessage = temp;
                 return false;
             }
-
-            #endregion
 
             ErrorMessage = "";
             FieldState = ControlStates.NormalGray;

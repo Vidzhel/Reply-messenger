@@ -11,8 +11,15 @@ namespace CommonLibs.Data
     public class Group
     {
 
+
+        #region Private Members
+
+        DateTime lastTimeUpdated;
+
+        #endregion
+
         #region Public Members
-        
+
         public bool isPrivate;
 
         public bool isChannel;
@@ -36,7 +43,7 @@ namespace CommonLibs.Data
 
             set
             {
-                AdminsIdList = DataConverter.StringToList(value);
+                AdminsIdList = DataConverter.StringToIntList(value);
             }
         }
 
@@ -52,7 +59,7 @@ namespace CommonLibs.Data
 
             set
             {
-                MembersIdList = DataConverter.StringToList(value);
+                MembersIdList = DataConverter.StringToIntList(value);
             }
         }
 
@@ -77,6 +84,39 @@ namespace CommonLibs.Data
 
         public string Image { get; set; }
 
+
+        /// <summary>
+        /// Get and set local last time updated DateTime
+        /// </summary>
+        public DateTime LocalLastTimeUpdated
+        {
+            get
+            {
+                return lastTimeUpdated;
+            }
+
+            set
+            {
+                lastTimeUpdated = value;
+            }
+        }
+
+        /// <summary>
+        /// Converted binary representation of universal time
+        /// </summary>
+        public string LastTimeUpdated
+        {
+            get
+            {
+                return lastTimeUpdated.ToUniversalTime().ToBinary().ToString();
+            }
+            set
+            {
+                lastTimeUpdated = DateTime.FromBinary((long)Convert.ToUInt64(value)).ToLocalTime();
+            }
+        }
+
+
         #endregion
 
         #region Constructor
@@ -88,6 +128,7 @@ namespace CommonLibs.Data
             MembersIdList = members ?? new List<int>();
             this.isPrivate = isPrivate;
             this.isChannel = isChannel;
+            LocalLastTimeUpdated = DateTime.Now;
             Name = name;
             UsersOnline = usersOnline;
             Image = image;

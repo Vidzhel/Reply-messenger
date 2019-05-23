@@ -21,6 +21,21 @@ namespace UI.UIPresenter.Converters
                         return Application.Current.FindResource("MiddleGrayBgBrush");
                     return Application.Current.FindResource("LightRedBrush");
 
+                case ControlStates.AccessabilityError:
+                    if(fieldType != "IsPrivateChat" && fieldType != "IsPublicChat")
+                        return Application.Current.FindResource("MiddleGrayBgBrush");
+                    return Application.Current.FindResource("LightRedBrush");
+
+                case ControlStates.ChatType:
+                    if(fieldType != "IsChat" && fieldType != "IsChannel")
+                        return Application.Current.FindResource("MiddleGrayBgBrush");
+                    return Application.Current.FindResource("LightRedBrush");
+
+                case ControlStates.GroupName:
+                    if(fieldType != "GroupName")
+                        return Application.Current.FindResource("MiddleGrayBgBrush");
+                    return Application.Current.FindResource("LightRedBrush");
+
                 case ControlStates.PasswordError:
                     if(fieldType != "Password" && fieldType != "Repeat Password" && fieldType != "Old Password" && fieldType != "New Password" && fieldType != "Repeat New Password")
                         return Application.Current.FindResource("MiddleGrayBgBrush");

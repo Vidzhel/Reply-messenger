@@ -8,6 +8,8 @@
       
       xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
       xmlns:viewModels="clr-namespace:UI.UIPresenter.ViewModels"
+          
+      x:Name="Page"
                 
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1024"
@@ -44,8 +46,7 @@
             
             <!--Fields-->
             <TextBox Tag="E-mail" Text="{Binding Email}" TabIndex="0" Style="{StaticResource DataField}" Name="SignInUserName" Margin="40 0 40 20"/>
-            <TextBox Tag="Password" TabIndex="1" Style="{StaticResource DataField}" Name="SignInPassword" Margin="40 0 40 0"/>
-
+            <PasswordBox Tag="Password" TabIndex="1" Style="{StaticResource DataPasswordField}" Name="SignInPassword" Margin="40 0 40 0"/>
 
             <!--Error Message Box-->
             <Label Style="{StaticResource RegularText}" Foreground="{StaticResource LightRedBrush}" Content="{Binding ErrorMessage}" Margin="40 10 40 0"/>
@@ -54,7 +55,7 @@
             <Label TabIndex="2" Style="{StaticResource Links}" Width="120" Margin="40 10 0 30" HorizontalAlignment="Left" Content="Forgot Password?"/>
 
             <!--Sign In button-->
-            <Button Command="{Binding SignInCommand}" CommandParameter="{Binding ElementName=SignInPassword, Path=Text}" InputMethod.IsInputMethodEnabled="True" Name="SignInButton" TabIndex="3" Style="{StaticResource RegularButton}" Content="SIGN IN"/>
+            <Button Command="{Binding SignInCommand}" CommandParameter="{Binding ElementName=Page}" InputMethod.IsInputMethodEnabled="True" Name="SignInButton" TabIndex="3" Style="{StaticResource RegularButton}" Content="SIGN IN"/>
             
             <!--Sign Up button-->
             <Button TabIndex="4" Command="{Binding OpenNextPageCommand}" CommandParameter="SignUpPage" Style="{StaticResource LinkButton}"  Name="SignUpLabel" Margin="45 10 0 20" HorizontalAlignment="Left"  Content="Sign Up"/>

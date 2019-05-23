@@ -7,6 +7,7 @@ namespace CommonLibs.Connections.Repositories.Tables
         UserName,
         //ProfilePhoto,
         Email,
+        LastTimeUpdated,
         Bio,
         Online
     }

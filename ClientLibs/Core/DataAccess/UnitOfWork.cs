@@ -27,8 +27,8 @@ namespace ClientLibs.Core.DataAccess
         public static BaseRepository<Contact> ContactsTableRepo = new Repository<Contact>(new Table(new ContactsTableFields(), "Contacts"), "LocalDB");
         public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new GroupsTableFields(), "Groups"), "LocalDB");
 
-        public static User User { get; private set; } = new User("Vidzhel", "MyPass", "MyEmail", "MyBio", "+2", "false", new List<int>() { 4, 2, 3, -1}, new List<int>(){1},0);
-        public static Contact Contact => new Contact(User.UserName, User.Email, User.Bio, User.ProfilePhoto, User.Online, User.Id);
+        public static User User { get; private set; }
+        public static Contact Contact => User;
 
         public static bool ServerConnected { get; set; }
 
@@ -69,7 +69,7 @@ namespace ClientLibs.Core.DataAccess
 
         public static void OnUserUpdated(object sender, DataChangedArgs<IEnumerable<object>> args)
         {
-            UserInfoUpdated.Invoke(sender, args);
+            UserInfoUpdated?.Invoke(sender, args);
         }
 
         /// <summary>
@@ -86,18 +86,68 @@ namespace ClientLibs.Core.DataAccess
         #region Server Requests
 
         /// <summary>
+        /// Make request to the server to update user info and return error message
+        /// or null if all ok
+        /// </summary>
+        /// <returns></returns>
+        public static string ChangePassword(string oldPassword, string newPassword)
+        {
+            if (ServerConnected)
+            {
+                var res = commandChain.MakeRequest(CommandType.UpdateUserInfo, new string[] { oldPassword, newPassword}, User);
+
+                //If user updated
+                if (res.RequestData == null)
+                {
+                    User.Password = newPassword;
+                }
+
+                return (string)res.RequestData;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Make request to the server to update user info and return error message
+        /// or null if all ok
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static string ChangeUserInfo(User user)
+        {
+            if (ServerConnected)
+            {
+                var res = commandChain.MakeRequest(CommandType.UpdateUserInfo, null, user);
+
+                //If user updated
+                if (res.RequestData == null)
+                {
+                    User = user;
+                    OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<User>() { user }, null, RepositoryActions.Update));
+                }
+
+                return (string)res.RequestData;
+            }
+
+            return "";
+        }
+
+        /// <summary>
         /// Sends command to leave a group
         /// </summary>
         /// <param name="group"></param>
         public static void LeaveGroup(Group group)
         {
-
-            var res = commandChain.MakeRequest(CommandType.LeaveGroup, group, User);
-
-            if ((bool)res.RequestData)
+            if (ServerConnected)
             {
-                //Delete group
-                GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                var res = commandChain.MakeRequest(CommandType.LeaveGroup, group, User);
+
+                if ((bool)res.RequestData)
+                {
+                    //Delete group
+                    GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                }
             }
         }
 
@@ -413,7 +463,27 @@ namespace ClientLibs.Core.DataAccess
         /// <param name="com">command to handle</param>
         static void OnServerCommand(object sender, Command com)
         {
-        
+            switch (com.CommandType)
+            {
+                case CommandType.UpdateUserInfo:
+                    updateContactList((List<Contact>)com.RequestData);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void updateContactList(List<Contact> data)
+        {
+            foreach (var contact in data)
+            {
+                //If it's you
+                if (contact.Id == User.Id)
+                    return;
+
+                //Update contact
+                ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), contact.Id.ToString(), contact);
+            }
         }
 
         #region Messages table Changed
@@ -497,9 +567,7 @@ namespace ClientLibs.Core.DataAccess
         {
             commandChain.SendCommand(CommandType.UpdateGroup, data, User);
         }
-        
 
-        #endregion
 
         /// <summary>
         /// Do some stuff on contacts table data changed
@@ -510,6 +578,9 @@ namespace ClientLibs.Core.DataAccess
         {
 
         }
+
+        #endregion
+
         #endregion
     }
 }

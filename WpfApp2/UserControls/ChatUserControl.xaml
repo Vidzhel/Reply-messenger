@@ -102,7 +102,7 @@
             </Grid>
 
             <!--MessageList-->
-            <local:MessageList x:Name="ScrollMessagesList" Grid.Row="1" Margin="40,4.667" DataContext="{Binding MessageList}"/>
+            <local:MessageList x:Name="ScrollMessagesList" Grid.Row="1" Margin="40 0" DataContext="{Binding MessageList}"/>
 
             <!--Invite list-->
             <Border Grid.Row="1"

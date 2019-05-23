@@ -161,7 +161,8 @@ namespace CommonLibs.Connections.Repositories
                 {
                     con.Open();
 
-                    var request = $"update {table} SET { table.GetFieldsToUpdate() }  where {column} = {value}";
+
+                    var request = $"update {table} SET {table.GetFieldsToUpdate()}  where {column} = '{value}'";
 
                     //var request = $"DELETE FROM {table.ToString()} WHERE {column} = @{column}";
                     var query = con.Execute(request, data);

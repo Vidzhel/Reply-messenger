@@ -1,4 +1,5 @@
-﻿using CommonLibs.Connections.Repositories;
+﻿using Common.Data.Security;
+using CommonLibs.Connections.Repositories;
 using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using ServerLibs.ConnectionToClient;
@@ -18,7 +19,7 @@ namespace ServerLibs.DataAccess
         public static BaseRepository<User> UsersTableRepo = new Repository<User>(new Table(new RemoteUsersTableFields(), "Users"), "LocalDB");
         public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new RemoteGroupsTableFields(), "Groups"), "LocalDB");
 
-        public static List<Client> OnlineClients;
+        public static List<Client> OnlineClients = new List<Client>();
 
         public static ServerCommandChain CommandChain = new ServerCommandChain();
 
@@ -31,6 +32,10 @@ namespace ServerLibs.DataAccess
             UsersTableRepo.AddDataChangedHandler( (sender, args) => OnUsersTableChanged(sender, args));
             GroupsTableRepo.AddDataChangedHandler( (sender, args) => OnGroupsTableChanged(sender, args));
 
+            //Add handlers on client connected and disconnected from the server
+            AsynchronousClientListener.OnUserConnected(OnUserConnected);
+            AsynchronousClientListener.OnUserDisconnected(OnUserDisconnected);
+
             //Add handler on new server command received e.g. new message
             CommandChain.OnNewClientCommand((sender, args) => OnClientCommand(sender, args));
         }
@@ -38,6 +43,16 @@ namespace ServerLibs.DataAccess
         #endregion
 
         #region Event Hendlers
+
+        static void OnUserDisconnected(Client client)
+        {
+            OnlineClients.Remove(client);
+        }
+
+        static void OnUserConnected(Client client)
+        {
+            OnlineClients.Add(client);
+        }
 
         /// <summary>
         /// Hande commands from server e.g. new message
@@ -91,7 +106,10 @@ namespace ServerLibs.DataAccess
                     CommandChain.SendResponseCommand(new ClientCommand(signUp(com.Command), com.Client));
                     break;
                 case CommandType.UpdateUserInfo:
-                    CommandChain.SendResponseCommand(new ClientCommand(signUp(com.Command), com.Client));
+                    CommandChain.SendResponseCommand(new ClientCommand(updateUserInfo(com.Command), com.Client));
+                    break;
+                case CommandType.UpdateUserPassword:
+                    CommandChain.SendResponseCommand(new ClientCommand(updateUserPassword(com.Command), com.Client));
                     break;
                 case CommandType.SendMesssage:
                     CommandChain.SendResponseCommand(new ClientCommand( sendMessage(com.Command), com.Client));
@@ -113,7 +131,53 @@ namespace ServerLibs.DataAccess
         /// <param name="args"></param>
         static void OnMessagesTableChanged(object sender, DataChangedArgs<IEnumerable<Message>> args)
         {
+            switch (args.Action)
+            {
+                case RepositoryActions.Add:
+                    OnMessageAdded((List<Message>)args.Data);
+                    break;
+                case RepositoryActions.Update:
+                    OnMessageUpdated((List<Message>)args.Data);
+                    break;
+                case RepositoryActions.Remove:
+                    break;
+                default:
+                    break;
+            }
+        }
 
+        private static void OnMessageUpdated(List<Message> data)
+        {
+            //Notify online users
+            foreach (var client in OnlineClients)
+            {
+                foreach (var message in data)
+                {
+                    //If user have the group
+                    if (client.UserInfo.chatsIdList.Contains(message.ReceiverId))
+                    {
+                        //Send command
+                        CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.UpdateMessage, message, null), client));
+                    }
+                }
+            }
+        }
+
+        private static void OnMessageAdded(List<Message> data)
+        {
+            //Notify online users
+            foreach (var client in OnlineClients)
+            {
+                foreach (var message in data)
+                {
+                    //If user have the group
+                    if (client.UserInfo.chatsIdList.Contains(message.ReceiverId))
+                    {
+                        //Send command
+                        CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.SendMesssage, message, null), client));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -123,7 +187,52 @@ namespace ServerLibs.DataAccess
         /// <param name="args"></param>
         static void OnUsersTableChanged(object sender, DataChangedArgs<IEnumerable<User>> args)
         {
+            switch (args.Action)
+            {
+                case RepositoryActions.Update:
+                    OnUserUpdated((List<User>)args.Data);
+                    break;
+                case RepositoryActions.Remove:
+                    OnUserRemoved((List<User>)args.Data);
+                    break;
+                default:
+                    break;
+            }
+        }
 
+        private static void OnUserRemoved(List<User> data)
+        {
+            //Notify online users
+            foreach (var client in OnlineClients)
+            {
+                foreach (var user in data)
+                {
+                    //If user have the contact
+                    if (client.UserInfo.contactsIdList.Contains(user.Id))
+                    {
+                        //Send command
+                        CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.DeleteUser, user, null), client));
+                    }
+                }
+            }
+        }
+
+        private static void OnUserUpdated(List<User> data)
+        {
+
+            //Notify online users
+            foreach (var client in OnlineClients)
+            {
+                foreach (var user in data)
+                {
+                    //If user have the contact
+                    if (client.UserInfo.contactsIdList.Contains(user.Id))
+                    {
+                        //Send command
+                        CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.UpdateUserInfo, user, null), client));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -133,12 +242,112 @@ namespace ServerLibs.DataAccess
         /// <param name="args"></param>
         static void OnGroupsTableChanged(object sender, DataChangedArgs<IEnumerable<Group>> args)
         {
+            switch (args.Action)
+            {
+                case RepositoryActions.Update:
+                    OnGroupUpdated((List<Group>)args.Data);
+                    break;
+                case RepositoryActions.Remove:
+                    OnGroupRemoved((List<Group>)args.Data);
+                    break;
+                default:
+                    break;
+            }
+        }
 
+        private static void OnGroupRemoved(List<Group> data)
+        {
+            //Notify online users
+            foreach (var client in OnlineClients)
+            {
+                foreach (var group in data)
+                {
+                    //If user have the group
+                    if (client.UserInfo.chatsIdList.Contains(group.Id))
+                    {
+                        //Send command
+                        CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.RemoveGroup, group, null), client));
+                    }
+                }
+            }
+        }
+
+        private static void OnGroupUpdated(List<Group> data)
+        {
+            //Notify online users
+            foreach (var client in OnlineClients)
+            {
+                foreach (var group in data)
+                {
+                    //If user have the group
+                    if (client.UserInfo.chatsIdList.Contains(group.Id))
+                    {
+                        //Send command
+                        CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.UpdateGroup, group, null), client));
+                    }
+                }
+            }
         }
 
         #endregion
 
         #region Command Helpers
+
+        /// <summary>
+        /// Updates user and return request
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        private static Command updateUserInfo(Command command)
+        {
+            var user = command.UserData;
+
+            //Get old user info
+            var oldUserInfo = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
+
+            //Check if new email doesn't exist in the table
+            if (oldUserInfo.Email != user.Email)
+                if (UsersTableRepo.IsExists(RemoteUsersTableFields.Email.ToString(), user.Email)) 
+                    return new Command(CommandType.Answer, "A User with same email already exist", null);
+
+            var updated = UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+
+            if (updated)
+                return new Command(CommandType.Answer, null, null);
+
+            return new Command(CommandType.Answer, "Something went wrong", null);
+        }
+
+        /// <summary>
+        /// Updates user and return request
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        private static Command updateUserPassword(Command command)
+        {
+            var user = command.UserData;
+            var passwords = (string[])command.RequestData;
+
+            var oldPass = passwords[0];
+            var newPass = passwords[1];
+
+
+            //Get old user info
+            var oldUserInfo = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
+
+            //If old password doesn't match
+            if (oldUserInfo.Password != oldPass)
+                return new Command(CommandType.Answer, "Wrong old password", null);
+
+            user.Password = newPass;
+
+            var updated = UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+
+            if (updated)
+                return new Command(CommandType.Answer, null, null);
+
+            return new Command(CommandType.Answer, "Something went wrong", null);
+        }
 
         /// <summary>
         /// Get required groups from db
@@ -204,7 +413,7 @@ namespace ServerLibs.DataAccess
             var groups = new List<Group>();
 
             //If there isn't any chat 
-            if(user.chatsIdList == null)
+            if(user == null || user.chatsIdList == null)
                 return new Command(CommandType.Answer, groups, null);
 
             //Get all required groups
@@ -349,12 +558,17 @@ namespace ServerLibs.DataAccess
             //Find user with same email
             var findUser = UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email);
 
+            //If the user doesn't exist
+            if (findUser == null)
+                return new Command(CommandType.Answer, false, null);
+
             //Check Passwords
             if (user.Password == findUser.Password)
             {
                 //Update user status to Online
                 //TODO check update
-                var updated = UsersTableRepo.Update(UsersTableFields.Online.ToString(), "true", user);
+                findUser.Online = "true";
+                var updated = UsersTableRepo.Update(UsersTableFields.Email.ToString(), findUser.Email, findUser);
 
                 if(updated)
                     return new Command(CommandType.Answer, true, findUser);
@@ -363,6 +577,35 @@ namespace ServerLibs.DataAccess
             }
             else
                 return new Command(CommandType.Answer, false, null);
+        }
+
+        static Command Synchronize(User user)
+        {
+            return null;
+            //Get all user groups and contacts
+            //var userGroups = user.chatsIdList;
+            //var userContacts = user.contactsIdList;
+
+            //var groupsInfo = new List<Group>();
+            //var contactsInfo = new List<Contact>();
+
+            ////get groups info
+            //foreach (var groupId in userGroups)
+            //{
+            //    var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), groupId.ToString());
+
+            //    if (group != null)
+            //        groupsInfo.Add(group);
+            //}
+
+            ////get contacts info
+            //foreach (var userId in userContacts)
+            //{
+            //    var contact = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), userId.ToString());
+
+            //    if (contact != null)
+            //        contactsInfo.Add(contact);
+            //}
         }
 
         /// <summary>

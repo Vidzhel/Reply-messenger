@@ -8,6 +8,7 @@
         Bio,
         Online,
         ChatsId,
+        LastTimeUpdated,
         ContactsId,
         ProfilePhoto
     }

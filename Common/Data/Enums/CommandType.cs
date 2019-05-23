@@ -15,6 +15,7 @@ namespace CommonLibs.Data
         SignUp,
         SignIn,
         SignOut,
+        Synchronize,
 
         SearchRequest,
 
@@ -36,6 +37,7 @@ namespace CommonLibs.Data
         SendMesssage,
 
         UpdateUserInfo,
+        UpdateUserPassword,
         DeleteUser,
 
         Answer

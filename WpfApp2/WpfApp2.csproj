@@ -84,6 +84,8 @@
     <Compile Include="Pages\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIPresenter\Attachment Properties\Base\BaseAttachmentProperty.cs" />
+    <Compile Include="UIPresenter\Attachment Properties\PasswordBoxAttachedProperties.cs" />
     <Compile Include="UIPresenter\Converters\Base\BaseMultiValueConverter.cs" />
     <Compile Include="UIPresenter\Converters\Base\BaseValueConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToChackedConverter.cs" />
@@ -117,6 +119,9 @@
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListItemDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListDesignViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\MessageListItemDesignViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\Interfaces\IHavePassword.cs" />
+    <Compile Include="UIPresenter\ViewModels\Interfaces\IHavePasswords.cs" />
+    <Compile Include="UIPresenter\ViewModels\Interfaces\IHaveThreePasswords.cs" />
     <Compile Include="UIPresenter\ViewModels\SearchResultsViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\GroupsListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\GroupsListViewModel.cs" />

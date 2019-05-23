@@ -77,6 +77,7 @@
     <Compile Include="Data\Enums\MessageStatus.cs" />
     <Compile Include="Data\Enums\MonthsOfYear.cs" />
     <Compile Include="Data\Main\User.cs" />
+    <Compile Include="Data\Security\SecureStringHalper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

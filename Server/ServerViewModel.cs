@@ -1,5 +1,5 @@
 ﻿using ServerLibs.ConnectionToClient;
-
+using ServerLibs.DataAccess;
 
 namespace Server
 {
@@ -8,7 +8,7 @@ namespace Server
 
         #region Public Members
 
-        public string Online => AsynchronousClientListener.ConnectedClients.Count.ToString();
+        public string Online => UnitOfWork.OnlineClients.Count.ToString();
 
         #endregion
 

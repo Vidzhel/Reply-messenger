@@ -1,9 +1,10 @@
 ﻿using ClientLibs.Core;
 using ClientLibs.Core.DataAccess;
+using Common.Data.Security;
 using CommonLibs.Data;
-using Ninject;
 using PropertyChanged;
 using System;
+using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UI.InversionOfControl;
@@ -58,11 +59,15 @@ namespace UI.UIPresenter.ViewModels
 
         async Task signInAsync(object parameter)
         {
+            if (parameter == null)
+                return;
+
             //If user few times chicks Sign Up, but the server does not response yet
             if (SignInIsRunning)
                 return;
 
-            string value = (string)parameter;
+            var value = (parameter as IHavePassword).StringPassword;
+
             if (!FieldChecker(value))
                 return;
 
@@ -71,8 +76,7 @@ namespace UI.UIPresenter.ViewModels
             try
             {
                 SignInIsRunning = true;
-
-                //TODO SignIn
+                
                 var res = UnitOfWork.SighIn(new User(null, value, Email, null));
 
                 if (res == true)
@@ -110,7 +114,7 @@ namespace UI.UIPresenter.ViewModels
                 return false;
             }
 
-            if ((temp = ValidateUserData.ValidatePassword((string)value, true)) != null)
+            if ((temp = ValidateUserData.ValidatePassword((SecureString)value, true)) != null)
             {
                 FieldState = ControlStates.PasswordError;
                 ErrorMessage = temp;

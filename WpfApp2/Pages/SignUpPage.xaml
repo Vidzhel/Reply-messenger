@@ -7,7 +7,9 @@
       xmlns:local="clr-namespace:UI.Pages"
       xmlns:viewModels="clr-namespace:UI.UIPresenter.ViewModels"
       xmlns:converters="clr-namespace:UI.UIPresenter.Converters"
-                     
+            
+      x:Name="Page"
+                
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1024"
       Title="SignUpPage">
@@ -26,20 +28,13 @@
             <!--Fields-->
             <TextBox Tag="User name" TabIndex="0" Text="{Binding UserName}" Style="{StaticResource DataField}" Name="SignUpUserName" Margin="40 0 40 20"/>
             <TextBox Tag="E-mail" TabIndex="0" Text="{Binding Email}" Style="{StaticResource DataField}" Name="SignUpEmail" Margin="40 0 40 20"/>
-            <TextBox Tag="Password" TabIndex="1" Style="{StaticResource DataField}" Name="SignUpPassword" Margin="40 0 40 20"/>
-            <TextBox Tag="Repeat Password" TabIndex="1" Style="{StaticResource DataField}" Name="SignUpRepeatPassword" Margin="40 0 40 0"/>
+            <PasswordBox Tag="Password" TabIndex="1" Style="{StaticResource DataPasswordField}" Name="SignUpPassword" Margin="40 0 40 20"/>
+            <PasswordBox Tag="Repeat Password" TabIndex="1" Style="{StaticResource DataPasswordField}" Name="SignUpRepeatPassword" Margin="40 0 40 0"/>
 
             <!--Error Message Box-->
             <Label Style="{StaticResource RegularText}" Foreground="{StaticResource LightRedBrush}" Content="{Binding ErrorMessage}" Margin="40 10 40 0"/>
 
-            <Button Command="{Binding SignUpCommand}" Name="SignUpButton" Margin="40 50 40 0" TabIndex="3" Style="{StaticResource RegularButton}" Content="SIGN UP">
-                <Button.CommandParameter>
-                    <MultiBinding Converter="{converters:ParametersToArrayConverter}" >
-                        <Binding ElementName="SignUpPassword" Path="Text"/>
-                        <Binding ElementName="SignUpRepeatPassword" Path="Text"/>
-                    </MultiBinding>
-                </Button.CommandParameter>
-            </Button>
+            <Button Command="{Binding SignUpCommand}" Name="SignUpButton" Margin="40 50 40 0" TabIndex="3" Style="{StaticResource RegularButton}" CommandParameter="{Binding ElementName=Page}" Content="SIGN UP"/>
 
             <Button TabIndex="4" Name="SignUpLabel" Command="{Binding OpenNextPageCommand}" CommandParameter="SignInPage"  HorizontalAlignment="Left" Style="{StaticResource  LinkButton}"  Margin="45 10 0 20"  Content="Sign In"/>
 

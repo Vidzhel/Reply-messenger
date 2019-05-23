@@ -17,7 +17,7 @@ namespace CommonLibs.Data
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public static string ListToString(List<int> list)
+        public static string ListToString<T>(List<T> list)
         {
             if (list == null || list.Count == 0)
                 return "";
@@ -37,16 +37,33 @@ namespace CommonLibs.Data
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static List<int> StringToList(string value)
+        public static List<int> StringToIntList(string value)
         {
             var strArray = value.Split(new char[] { ' ' });
-            var intArray = new List<int>();
+            var intList = new List<int>();
 
             for (int i = 0; i < strArray.Length; i++)
                 if (strArray[i] != "")
-                    intArray.Add(Convert.ToInt32(strArray[i]));
+                    intList.Add(Convert.ToInt32(strArray[i]));
                         
-            return intArray;
+            return intList;
+        }
+
+        /// <summary>
+        /// Get list of string values from string(space separated)
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static List<string> StringToStrList(string value)
+        {
+            var strArray = value.Split(new char[] { ' ' });
+            var strList = new List<string>();
+
+            for (int i = 0; i < strArray.Length; i++)
+                if (strArray[i] != "")
+                    strList.Add(strArray[i]);
+
+            return strList;
         }
 
         /// <summary>

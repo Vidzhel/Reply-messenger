@@ -108,14 +108,14 @@ namespace UI.UIPresenter.ViewModels.Commands
             //Get current open chat to remove from
             var group = ApplicationService.GetCurrentChoosenChat;
 
-            //UnitOfWork.RemoveUserFromChat(group, user)
+            UnitOfWork.RemoveUserFromChat(group, user);
 
-            //Remove user from group
-            group.RemoveMember(user.Id);
-            group.RemoveAdmin(user.Id);
+            ////Remove user from group
+            //group.RemoveMember(user.Id);
+            //group.RemoveAdmin(user.Id);
 
-            //Update db
-            UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+            ////Update db
+            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
         }
 
         static void openGroupInfo(object group)
@@ -133,17 +133,19 @@ namespace UI.UIPresenter.ViewModels.Commands
             if (!UnitOfWork.User.chatsIdList.Contains(gr.Id))
                 return;
 
-            //Remove chat
-            UnitOfWork.User.RemoveChat(gr);
-            UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Group>() { gr }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Remove));
+            UnitOfWork.LeaveGroup(gr);
 
-            //Update group
-            gr.MembersIdList.Remove(UnitOfWork.User.Id);
-            gr.AdminsIdList.Remove(UnitOfWork.User.Id);
-            UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), gr.Id.ToString(), gr);
+            ////Remove chat
+            //UnitOfWork.User.RemoveChat(gr);
+            //UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Group>() { gr }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Remove));
 
-            //Delete From db
-            UnitOfWork.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), gr.Id.ToString());
+            ////Update group
+            //gr.MembersIdList.Remove(UnitOfWork.User.Id);
+            //gr.AdminsIdList.Remove(UnitOfWork.User.Id);
+            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), gr.Id.ToString(), gr);
+
+            ////Delete From db
+            //UnitOfWork.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), gr.Id.ToString());
         }
 
         static void joinChat(object group)

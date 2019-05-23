@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Common.Data.Security;
+using System;
+using System.Security;
 using System.Text.RegularExpressions;
 
 namespace ClientLibs.Core
@@ -55,19 +57,20 @@ namespace ClientLibs.Core
             return null;
         }
 
-        public static string ValidatePassword(string pass, bool checkEmptiness)
+        public static string ValidatePassword(SecureString pass, bool checkEmptiness)
         {
             if (checkEmptiness)
             {
-                if (pass == String.Empty)
+                //TODO check password on emtiness
+                if (pass.Unsecure() == String.Empty)
                     return "Password field is empty";
             }
 
 
             //Check data
-            if (!passwordRegex.IsMatch(pass))
+            if (!passwordRegex.IsMatch(pass.Unsecure()))
                 return "Password should have at less 8 symbols";
-            
+
             return null;
         }
 
@@ -77,23 +80,23 @@ namespace ClientLibs.Core
         /// <param name="pass">user passwords to validate</param>
         /// <param name="checkEmptiness">check on emtiness</param>
         /// <returns></returns>
-        public static string ValidatePassword(string[] pass, bool checkEmptiness)
+        public static string ValidatePassword(SecureString[] pass, bool checkEmptiness)
         {
             if (checkEmptiness)
             {
-                if (pass[0] == String.Empty)
+                if (pass[0].Unsecure() == String.Empty)
                     return "Password field is empty";
-                if (pass[0] == String.Empty)
+                if (pass[1].Unsecure() == String.Empty)
                     return "Repeat password field is empty";
             }
 
 
             //Check data
-            if (!passwordRegex.IsMatch(pass[0]))
+            if (!passwordRegex.IsMatch(pass[0].Unsecure()))
                 return "Password should have at less 8 symbols";
 
 
-            if (pass[0] != pass[1])
+            if (pass[0].Unsecure() != pass[1].Unsecure())
                 return "Paswords don't match";
 
             return null;

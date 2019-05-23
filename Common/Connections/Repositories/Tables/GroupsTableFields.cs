@@ -8,6 +8,7 @@ namespace CommonLibs.Connections.Repositories.Tables
         AdminsId,
         MembersId,
         UsersOnline,
+        LastTimeUpdated,
         IsPrivate,
         IsChannel,
         Image

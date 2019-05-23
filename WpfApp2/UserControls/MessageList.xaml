@@ -9,7 +9,9 @@
              d:DesignHeight="600" d:DesignWidth="974">
     
     <Grid d:DataContext="{x:Static viewModels:MessageListDesignViewModel.Instance}">
-        <ScrollViewer Padding="30 0 30 0"  VerticalScrollBarVisibility="Auto" VerticalAlignment="Bottom">
+        <ScrollViewer Padding="30 0 30 0"
+                      VerticalScrollBarVisibility="Auto" VerticalAlignment="Bottom">
+            
             <ItemsControl ItemsSource="{Binding Items}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -17,6 +19,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            
         </ScrollViewer>
     </Grid>
 </UserControl>

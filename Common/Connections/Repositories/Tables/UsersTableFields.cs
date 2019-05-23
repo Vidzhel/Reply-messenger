@@ -6,6 +6,7 @@
         UserName,
         Password,
         Email,
+        LastTimeUpdated,
         Bio,
         Online,
         ChatsId,

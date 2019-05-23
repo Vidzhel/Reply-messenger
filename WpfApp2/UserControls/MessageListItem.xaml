@@ -31,11 +31,12 @@
 
                             </Grid.ColumnDefinitions>-->
                             
-                            <!--Message Buble-->
+                        <!--Message Buble-->
                         <Grid x:Name="MessageContainer">
 
                             <Border Background="{Binding IsYourMessage, Converter={converters:BoolToColorBrushConverter}}"
                                     CornerRadius="10"
+                                    MaxWidth="450"
                                     Margin="0 2 0 2"
                                     MinHeight="10"
                                     HorizontalAlignment="{Binding IsYourMessage, Converter={converters:BoolToHorizontalAlignmentConverter}, ConverterParameter=false}">
