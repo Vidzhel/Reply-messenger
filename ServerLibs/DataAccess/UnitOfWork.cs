@@ -117,6 +117,9 @@ namespace ServerLibs.DataAccess
                 case CommandType.DeleteUser:
                     CommandChain.SendResponseCommand(new ClientCommand( deleteUser(com.Command), com.Client));
                     break;
+                case CommandType.SignOut:
+                    signOut(com.Command);
+                    break;
                 case CommandType.Answer:
                     break;
                 default:
@@ -428,7 +431,6 @@ namespace ServerLibs.DataAccess
             return new Command(CommandType.Answer, groups, null);
         }
 
-
         /// <summary>
         /// Find all groups and users which mutch a search request
         /// </summary>
@@ -468,8 +470,6 @@ namespace ServerLibs.DataAccess
             //Update group
             GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
 
-            //Notify online members
-            NotifyOnlineMembers(group, CommandType.UpdateGroup);
         }
 
         /// <summary>
@@ -489,9 +489,6 @@ namespace ServerLibs.DataAccess
             if (updated)
             {
 
-                //Notify online members
-                NotifyOnlineMembers(group, CommandType.UpdateGroup);
-
                 return new Command(CommandType.Answer, true, null);
             }
 
@@ -509,12 +506,6 @@ namespace ServerLibs.DataAccess
 
             //Make private
             group.isPrivate = true;
-
-            //Send to all online members command to delete group
-            foreach (var client in OnlineClients)
-            {
-                NotifyOnlineMembers(group, CommandType.RemoveGroup);
-            }
 
             //Delete all admins and members
             group.AdminsId = "";
@@ -624,6 +615,9 @@ namespace ServerLibs.DataAccess
             {
                 //Update user
                 var user = com.UserData;
+
+                //Get new id of the group
+                group = GroupsTableRepo.GetLast();
                 user.AddNewChat(group);
                 UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
@@ -659,9 +653,6 @@ namespace ServerLibs.DataAccess
                 user.AddNewChat(group);
                 UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
-                //Send update command to online members
-                NotifyOnlineMembers(group, CommandType.UpdateGroup);
-
                 //return response
                 return new Command(CommandType.Answer, true, user);
             }
@@ -684,18 +675,16 @@ namespace ServerLibs.DataAccess
 
             //Remove user
             group.RemoveMember(user.Id);
+            group.RemoveAdmin(user.Id);
 
             //Update table
-            var updated = GroupsTableRepo.Update(GroupsTableFields.MembersId.ToString(), group.MembersId, group);
+            var updated = GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
 
             if (updated)
             {
                 //Update user
                 user.RemoveChat(group);
                 UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
-
-                //Notify online members
-                NotifyOnlineMembers(group, CommandType.UpdateGroup);
 
                 return new Command(CommandType.Answer, true, null);
             }
@@ -730,9 +719,6 @@ namespace ServerLibs.DataAccess
 
                 //Update user data
                 UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
-
-                //Notify online members
-                NotifyOnlineMembers(group, CommandType.UpdateGroup);
             }
         }
 
@@ -765,25 +751,15 @@ namespace ServerLibs.DataAccess
         {
             return null;
         }
-        #endregion
-
-        #region Command Helpers
-
-        /// <summary>
-        /// Sends command to online group members
-        /// </summary>
-        /// <param name="group"></param>
-        /// <param name="commandType"></param>
-        static void NotifyOnlineMembers(Group group, CommandType commandType)
+        
+        static void signOut(Command com)
         {
-            //Send command to online members
-            foreach (var client in OnlineClients)
-            {
-                if (group.MembersIdList.Contains(client.UserInfo.Id))
-                    CommandChain.SendResponseCommand(new ClientCommand(new Command(commandType, group, null), client));
-            }
-        }
+            var user = com.UserData;
 
+            //Change user status to offline
+            user.Online = "false";
+            UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+        }
         #endregion
     }
 }

@@ -29,7 +29,7 @@
             
             <!--Online-->
             <Label Margin="20 0 0 0" Style="{StaticResource RegularText}" VerticalContentAlignment="Center" Content="Online:"/>
-            <Label Name="txtOnline" Style="{StaticResource RegularText}" VerticalContentAlignment="Center" Content=""/>
+            <Label Name="txtOnline" Style="{StaticResource RegularText}" VerticalContentAlignment="Center" Content="{Binding Online}"/>
 
         </StackPanel>
     </Grid>

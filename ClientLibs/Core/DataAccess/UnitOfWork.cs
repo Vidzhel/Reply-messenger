@@ -42,9 +42,6 @@ namespace ClientLibs.Core.DataAccess
         static UnitOfWork()
         {
 
-            //Setup event data changed handler for tables
-            MessagesTableRepo.AddDataChangedHandler((sender, args) => OnMessagesTableChanged(sender, args));
-            ContactsTableRepo.AddDataChangedHandler((sender, args) => OnContactsTableChanged(sender, args));
 
             //Setup handler on connection changed
             AsynchronousServerConnection.AddConnectionChanged((sender, args) => OnServerConnectionChanged(sender, args));
@@ -86,6 +83,16 @@ namespace ClientLibs.Core.DataAccess
         #region Server Requests
 
         /// <summary>
+        /// Make request to the server to change group info
+        /// </summary>
+        /// <param name="group"></param>
+        public static void ChangeGroupInfo(Group group)
+        {
+            if(ServerConnected)
+                commandChain.SendCommand(CommandType.UpdateGroup, group, User);
+        }
+
+        /// <summary>
         /// Make request to the server to update user info and return error message
         /// or null if all ok
         /// </summary>
@@ -94,7 +101,7 @@ namespace ClientLibs.Core.DataAccess
         {
             if (ServerConnected)
             {
-                var res = commandChain.MakeRequest(CommandType.UpdateUserInfo, new string[] { oldPassword, newPassword}, User);
+                var res = commandChain.MakeRequest(CommandType.UpdateUserPassword, new string[] { oldPassword, newPassword}, User);
 
                 //If user updated
                 if (res.RequestData == null)
@@ -177,14 +184,14 @@ namespace ClientLibs.Core.DataAccess
         {
             if (ServerConnected)
             {
-                //Join the group
-                group.AddNewMember(User.Id);
-
                 //send update group command
                 var res = commandChain.MakeRequest(CommandType.UpdateGroup, group, User);
 
                 if((bool)res.RequestData == true)
                 {
+                    //Join the group
+                    group.AddNewMember(User.Id);
+
                     //Add group to db
                     GroupsTableRepo.Add(group);
 
@@ -206,8 +213,12 @@ namespace ClientLibs.Core.DataAccess
                 //If group created, add to local repo
                 if (res.RequestData != null)
                 {
+                    //Add group to db
                     GroupsTableRepo.Add((Group)res.RequestData);
 
+                    //Update user
+                    User = res.UserData;
+                    OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<object>() { ((Group)res.RequestData).Id }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Add));
                 }
 
             }
@@ -223,6 +234,11 @@ namespace ClientLibs.Core.DataAccess
                 commandChain.SendCommand(CommandType.RemoveGroup, group, User);
         }
 
+        /// <summary>
+        /// Removes user from chat
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="user"></param>
         public static void RemoveUserFromChat(Group group, Contact user)
         {
             if (ServerConnected)
@@ -465,121 +481,75 @@ namespace ClientLibs.Core.DataAccess
         {
             switch (com.CommandType)
             {
+                case CommandType.UpdateMessage:
+                    updateMessages((Message)com.RequestData);
+                    break;
+                case CommandType.SendMesssage:
+                    getMessages((Message)com.RequestData);
+                    break;
+                case CommandType.RemoveMessage:
+                    removeMessages((Message)com.RequestData);
+                    break;
+                case CommandType.RemoveGroup:
+                    removeGroups((Group)com.RequestData);
+                    break;
                 case CommandType.UpdateUserInfo:
-                    updateContactList((List<Contact>)com.RequestData);
+                    updateContactsList((Contact)com.RequestData);
+                    break;
+                case CommandType.DeleteUser:
+                    removeContact((Contact)com.RequestData);
+                    break;
+                case CommandType.UpdateGroup:
+                    updateGroupsList((Group)com.RequestData);
                     break;
                 default:
                     break;
             }
         }
 
-        private static void updateContactList(List<Contact> data)
+        private static void removeContact(Contact data)
         {
-            foreach (var contact in data)
-            {
+        }
+
+        private static void removeGroups(Group data)
+        {
+                //Remove from your accaunt
+                LeaveGroup(data);
+        }
+
+        private static void removeMessages(Message data)
+        {
+                //Delete from db
+                MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), data.Id.ToString());
+        }
+
+        private static void getMessages(Message data)
+        {
+                //Add to db
+                MessagesTableRepo.Add(data);
+        }
+
+        private static void updateMessages(Message data)
+        {
+                //Update db
+                MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), data.Id.ToString(), data);
+        }
+
+        private static void updateGroupsList(Group data)
+        {
+                //Update db
+                GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), data.Id.ToString(), data);
+        }
+
+        private static void updateContactsList(Contact data)
+        {
                 //If it's you
-                if (contact.Id == User.Id)
+                if (data.Id == User.Id)
                     return;
 
                 //Update contact
-                ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), contact.Id.ToString(), contact);
-            }
+                ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), data.Id.ToString(), data);
         }
-
-        #region Messages table Changed
-
-        /// <summary>
-        /// Do some stuff on message table data changed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        static void OnMessagesTableChanged(object sender, DataChangedArgs<IEnumerable<Message>> args)
-        {
-            switch (args.Action)
-            {
-                case RepositoryActions.Add:
-                    OnNewMessageAdded((List<Message>)args.Data);
-                    break;
-                case RepositoryActions.Update:
-                    OnMessageUpdated((List<Message>)args.Data);
-                    break;
-                case RepositoryActions.Remove:
-                    OnMessageRemoved((List<Message>)args.Data);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Sends remove message commad to the server
-        /// </summary>
-        /// <param name="data"></param>
-        private static void OnMessageRemoved(List<Message> data)
-        {
-            commandChain.SendCommand(CommandType.RemoveMessage, data, User);
-        }
-
-        /// <summary>
-        /// Sends update message command to the server
-        /// </summary>
-        /// <param name="data"></param>
-        private static void OnMessageUpdated(List<Message> data)
-        {
-            commandChain.SendCommand(CommandType.UpdateMessage, data, User);
-        }
-
-        /// <summary>
-        /// Sends mesages to the server
-        /// </summary>
-        /// <param name="data"></param>
-        private static void OnNewMessageAdded(List<Message> data)
-        {
-            commandChain.SendCommand(CommandType.SendMesssage, data, User);
-        }
-
-        #endregion
-
-        #region Groups table Changed
-
-        /// <summary>
-        /// Do some stuff on groups table data changed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        static void OnGroupTableChanged(object sender, DataChangedArgs<IEnumerable<Contact>> args)
-        {
-            switch (args.Action)
-            {
-                case RepositoryActions.Update:
-                    OnGroupUpdated((List<Group>)args.Data);
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-        /// <summary>
-        /// Sends command to update the group
-        /// </summary>
-        /// <param name="data"></param>
-        private static void OnGroupUpdated(List<Group> data)
-        {
-            commandChain.SendCommand(CommandType.UpdateGroup, data, User);
-        }
-
-
-        /// <summary>
-        /// Do some stuff on contacts table data changed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        static void OnContactsTableChanged(object sender, DataChangedArgs<IEnumerable<Contact>> args)
-        {
-
-        }
-
-        #endregion
 
         #endregion
     }

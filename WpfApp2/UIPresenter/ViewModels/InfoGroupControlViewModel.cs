@@ -20,8 +20,7 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public ICommand ChangeGroupInfo { get; set; }
 
-        public Group GroupInfo { get;
-            set; }
+        public Group GroupInfo { get; set; }
 
         /// <summary>
         /// Group members list
@@ -116,34 +115,32 @@ namespace UI.UIPresenter.ViewModels
 
             //Validate data
 
-            if(ValidateUserData.ValidateUserName(groupName, false) != null)
+            if (ValidateUserData.ValidateUserName(groupName, false) != null)
             {
                 ChangeGroupInfoErrorMessage = "Wrong group name";
                 FieldState = ControlStates.UserNameError;
                 return;
             }
             else
-                if(groupName != null)
+            {
+                if (groupName == null)
+                {
+                    groupName = GroupInfo.Name;
+                }
+                else
                 {
                     update = true;
-                    GroupInfo.Name = groupName;
                 }
-
-            if(IsPrivate != isPrivate)
-            {
-                update = true;
-                GroupInfo.IsPrivate = isPrivate.ToString();
             }
 
-            if(IsChat != IsChat)
-            {
+            if (IsPrivate != isPrivate)
                 update = true;
-                GroupInfo.IsPrivate = IsChat.ToString();
-            }
 
-            //Update db
+            if(IsChat != isChat)
+                update = true;
+
             if(update)
-                UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), GroupInfo.Id.ToString(), GroupInfo);
+                UnitOfWork.ChangeGroupInfo(new Group(isPrivate, groupName, !isChat, GroupInfo.Image, GroupInfo.Id, GroupInfo.AdminsIdList, GroupInfo.MembersIdList, GroupInfo.UsersOnline));
 
             ChangeGroupInfoErrorMessage = "";
             FieldState = ControlStates.NormalGray;

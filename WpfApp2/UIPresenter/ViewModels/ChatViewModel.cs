@@ -79,6 +79,10 @@ namespace UI.UIPresenter.ViewModels
         public Contact CurrentUserInfo {
             get
             {
+                if(currentContactInfo != null)
+                    return currentContactInfo;
+
+                currentContactInfo = UnitOfWork.User;
                 return currentContactInfo;
             }
             set

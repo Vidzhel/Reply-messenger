@@ -14,6 +14,9 @@ namespace Server
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new ServerViewModel();
+
             StopServer.IsEnabled = false;
         }
 

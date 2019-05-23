@@ -110,12 +110,6 @@ namespace UI.UIPresenter.ViewModels.Commands
 
             UnitOfWork.RemoveUserFromChat(group, user);
 
-            ////Remove user from group
-            //group.RemoveMember(user.Id);
-            //group.RemoveAdmin(user.Id);
-
-            ////Update db
-            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
         }
 
         static void openGroupInfo(object group)
@@ -129,43 +123,15 @@ namespace UI.UIPresenter.ViewModels.Commands
         {
             var gr = (Group)group;
 
-            //If user hasn't joinde to the chat
-            if (!UnitOfWork.User.chatsIdList.Contains(gr.Id))
-                return;
-
             UnitOfWork.LeaveGroup(gr);
 
-            ////Remove chat
-            //UnitOfWork.User.RemoveChat(gr);
-            //UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Group>() { gr }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Remove));
-
-            ////Update group
-            //gr.MembersIdList.Remove(UnitOfWork.User.Id);
-            //gr.AdminsIdList.Remove(UnitOfWork.User.Id);
-            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), gr.Id.ToString(), gr);
-
-            ////Delete From db
-            //UnitOfWork.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), gr.Id.ToString());
         }
 
         static void joinChat(object group)
         {
             var gr = (Group)group;
 
-            //If user has already joined the group
-            if (UnitOfWork.User.chatsIdList.Contains(gr.Id))
-                return;
-
-            //Add chat
-            UnitOfWork.User.AddNewChat(gr);
-
-            //Add Chat to db
-            UnitOfWork.GroupsTableRepo.Add(gr);
-
-
-            //Update group
-            gr.MembersIdList.Add(UnitOfWork.User.Id);
-            UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), gr.Id.ToString(), gr);
+            UnitOfWork.JoinGroup(gr);
         }
 
         static void openChat(object group)
@@ -176,10 +142,9 @@ namespace UI.UIPresenter.ViewModels.Commands
 
         static void addToContactList(object contact)
         {
-            //Add to contact list
             UnitOfWork.User.AddNewContact((Contact)contact);
             UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Add));
-
+            UnitOfWork.ChangeUserInfo(UnitOfWork.User);
         }
 
         static void deleteFromContactsList(object contact)
@@ -187,7 +152,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             //Remove contact
             UnitOfWork.User.RemoveContact((Contact)contact);
             UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Remove));
-
+            UnitOfWork.ChangeUserInfo(UnitOfWork.User);
         }
 
         static void startChat(object contact)
@@ -211,7 +176,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             }
 
             //Create chat and open it
-            UnitOfWork.GroupsTableRepo.Add(new Group(true, user.UserName, false, user.ProfilePhoto, -1, null, new List<int>() { UnitOfWork.User.Id, user.Id }));
+            UnitOfWork.CreateGroup(new Group(true, user.UserName + " " + UnitOfWork.User.UserName + " Chat", false, user.ProfilePhoto, 0, new List<int>(), new List<int>() { user.Id, UnitOfWork.User.Id }, user.Online == "true" ? 2 : 1));
             ApplicationService.ChangeCurrentChatPage(ChatPages.Chat);
             ApplicationService.ChangeCurrentChat(UnitOfWork.GroupsTableRepo.FindLast(GroupsTableFields.Id.ToString(), "-1"));
         }

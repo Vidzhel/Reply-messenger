@@ -46,6 +46,8 @@
                 <!--Change group info-->
                 <TabItem Visibility="{Binding AreYouAdmin, Converter={converters:BoolToVisibilityConverter}}" Style="{StaticResource CustomTabPanel}" Header="Change Chat Info">
 
+                    
+                    
                     <StackPanel Margin="50 20">
 
                         
@@ -240,6 +242,18 @@
                                 Margin="8"
                                 FontSize="14"
                                 Tag="LightBlueBrush"
+                                Style="{StaticResource IconicButton}"
+                                />
+
+                        <Button Content=""
+                                FontWeight="Black"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ToolTip="Delete group"
+                                Margin="8"
+                                FontSize="14"
+                                Visibility="{Binding AreYouAdmin, Converter={converters:BoolToVisibilityConverter}}"
+                                Tag="LightRedBrush"
                                 Style="{StaticResource IconicButton}"
                                 />
 

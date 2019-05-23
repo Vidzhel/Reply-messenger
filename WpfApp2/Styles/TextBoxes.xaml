@@ -418,7 +418,7 @@
 
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="TextBox">
+                <ControlTemplate TargetType="PasswordBox">
 
                     <Grid>
 
@@ -427,17 +427,17 @@
                             <Border.BorderBrush>
                                 <MultiBinding Converter="{converters:ControlStateToColorBrush}">
                                     <Binding Path="FieldState"/>
-                                    <Binding Path="Tag" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=TextBox}"/>
+                                    <Binding Path="Tag" RelativeSource="{RelativeSource Mode=Self}"/>
                                 </MultiBinding>
                             </Border.BorderBrush>
                             <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                         </Border>
 
-                        <!--Search icon-->
+                        <!--icon-->
                         <Label Margin="5 0 0 0" FontWeight="Bold" FontSize="15" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource Sumbol}" Content="{Binding ElementName=Placeholder, Path=Content, Converter={converters:TextToIcon}}" VerticalAlignment="Center"/>
                         
                         <!--Placeholder-->
-                        <Label Name="Placeholder" Margin="35 0 0 0" FontSize="14" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource RegularText}" Content="{Binding Path=Tag, RelativeSource={RelativeSource AncestorType=TextBox, Mode=FindAncestor}}" VerticalAlignment="Center"/>
+                        <Label Name="Placeholder" Margin="35 0 0 0" FontSize="14" Foreground="{Binding ElementName=border, Path=BorderBrush}" Style="{StaticResource RegularText}" Content="{Binding Path=Tag, RelativeSource={RelativeSource AncestorType=PasswordBox, Mode=FindAncestor}}" VerticalAlignment="Center"/>
 
                     </Grid>
                     
@@ -455,9 +455,9 @@
 
                         <DataTrigger Value="True">
                             <DataTrigger.Binding>
-                                <MultiBinding Converter="{converters:FieldPlaceholder}">
+                                <MultiBinding Converter="{converters:FieldPlaceholder}" ConverterParameter="true">
                                     <Binding Path="IsFocused" RelativeSource="{RelativeSource Mode=Self}"/>
-                                    <Binding Path="(attachProperties:HasTextProperty.Value)" RelativeSource="{RelativeSource  Mode=FindAncestor, AncestorType=PasswordBox}"/>
+                                    <Binding Path="(attachProperties:HasTextProperty.Value)" RelativeSource="{RelativeSource Mode=Self}"/>
                                 </MultiBinding>
                             </DataTrigger.Binding>
                             <Setter Property="Visibility" TargetName="Placeholder" Value="Collapsed"/>

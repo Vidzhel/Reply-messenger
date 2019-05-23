@@ -320,7 +320,7 @@ namespace UI.UIPresenter.ViewModels
             var text = System.Text.RegularExpressions.Regex.Replace(MessageContent, @"^(\s*)(\S*)(\s*)$", "$2");
 
             //Add message to repository
-            UnitOfWork.MessagesTableRepo.Add(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text));
+            UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text));
 
             MessageContent = "";
         }

@@ -232,7 +232,7 @@ namespace ServerLibs.ConnectionToClient
                 UserDiscconected?.Invoke(client);
 
                 //Set user status to offline
-                client.HandleCommand(new Command(CommandType.SignOut, null, null));
+                client.HandleCommand(new Command(CommandType.SignOut, null, client.UserInfo));
 
                 return;
             }
@@ -276,7 +276,7 @@ namespace ServerLibs.ConnectionToClient
                         UserDiscconected?.Invoke(client);
 
                         //Set user status to offline
-                        client.HandleCommand(new Command(CommandType.SignOut, null, null));
+                        client.HandleCommand(new Command(CommandType.SignOut, null, client.UserInfo));
 
                         return;
                     }
