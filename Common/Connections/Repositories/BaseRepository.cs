@@ -36,6 +36,7 @@ namespace CommonLibs.Connections.Repositories
         /// <returns></returns>
         public abstract int GetId(string column, string value);
         public abstract T GetLast();
+        public abstract T GetFirst();
 
         /// <summary>
         /// Finding all the matches in table
@@ -77,13 +78,6 @@ namespace CommonLibs.Connections.Repositories
         /// <param name="values">Values to search</param>
         /// <returns></returns>
         public abstract bool Remove(string column, string value);
-        /// <summary>
-        /// Remove rows from db
-        /// </summary>
-        /// <param name="column">Column to search and replace data</param>
-        /// <param name="value">Value to search</param>
-        /// <returns></returns>
-        public abstract bool RemoveRange(string column, IEnumerable<string> values);
 
         /// <summary>
         /// Update data 

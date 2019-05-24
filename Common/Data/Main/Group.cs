@@ -75,7 +75,7 @@ namespace CommonLibs.Data
             set => isChannel = Convert.ToBoolean(value);
         }
 
-        public int UsersOnline { get; private set; }
+        public int UsersOnline { get; set; }
 
         /// <summary>
         /// If a chat is privat, only with 2 members and without admins 

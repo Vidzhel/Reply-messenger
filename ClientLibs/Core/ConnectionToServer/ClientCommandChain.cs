@@ -66,11 +66,16 @@ namespace ClientLibs.Core.ConnectionToServer
             //Adding command to the queue 
             addCommand(new Command(comType, data, user));
 
-            //Wait for a signal
+            //Wait for a signal, if we don't recieve any response, go further
+            //TODO set request time again
             answerReady.WaitOne();
             answerReady.Reset();
 
-            return answer;
+            //Clear last command
+            var com = answer;
+            answer = null;
+
+            return com;
         }
 
         /// <summary>

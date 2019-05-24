@@ -83,7 +83,7 @@ namespace UI.UIPresenter.ViewModels
             {
                 SignUpIsRunning = true;
 
-                var res = UnitOfWork.SignUp(new CommonLibs.Data.User(UserName, pass, Email, null));
+                var res = await UnitOfWork.SignUp(new CommonLibs.Data.User(UserName, pass, Email, null));
 
                 if (res)
                     //If all right open SignIn pag

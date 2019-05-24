@@ -250,10 +250,13 @@ namespace CommonLibs.Connections.Repositories
                     con.Open();
 
                     string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
-                    var query = con.Query<T>(request, dp).First<T>();
+                    var query = con.Query<T>(request, dp);
 
                     DBBusy.ReleaseMutex();
-                    return query;
+
+                    if (query.Count() == 0)
+                        return null;
+                    return query.First<T>();
                 }
 
             }
@@ -287,10 +290,12 @@ namespace CommonLibs.Connections.Repositories
                     con.Open();
 
                     string request = "select * from " + table.ToString() + " WHERE " + column + " =@" + column;
-                    var query = con.Query<T>(request, dp).Last<T>();
+                    var query = con.Query<T>(request, dp);
 
                     DBBusy.ReleaseMutex();
-                    return query;
+                    if (query.Count() == 0)
+                        return null;
+                    return query.Last<T>();
                 }
 
             }
@@ -398,9 +403,14 @@ namespace CommonLibs.Connections.Repositories
 
         public override T GetLast()
         {
-            return GetAll().First();
+            return GetAll().Last();
         }
 
+
+        public override T GetFirst()
+        {
+            return GetAll().First();
+        }
 
         /// <summary>
         /// Remove row from db
@@ -439,30 +449,6 @@ namespace CommonLibs.Connections.Repositories
 
             //Fires INotifyDataChanged event
             DataChanged?.Invoke(this, new DataChangedArgs<IEnumerable<T>>(data, table.ToString(), RepositoryActions.Remove));
-            DBBusy.ReleaseMutex();
-            return true;
-        }
-
-        /// <summary>
-        /// Remove row from db
-        /// </summary>
-        /// <param name="column">Column to search and replace data</param>
-        /// <param name="values">Values to search</param>
-        /// <returns></returns>
-        public override bool RemoveRange(string column, IEnumerable<string> values)
-        {
-            DBBusy.WaitOne();
-
-            foreach (var value in values)
-            {
-                if (!Remove(column, value))
-                {
-                    DBBusy.ReleaseMutex();
-
-                    return false;
-                }
-            }
-
             DBBusy.ReleaseMutex();
             return true;
         }

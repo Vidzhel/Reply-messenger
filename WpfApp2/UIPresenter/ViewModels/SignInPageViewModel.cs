@@ -44,7 +44,7 @@ namespace UI.UIPresenter.ViewModels
         public SignInPageViewModel()
         {
 
-            SignInCommand = new RelayCommandParametrized(async (parametr) => await signInAsync(parametr));
+            SignInCommand = new RelayCommandParametrized(async (parametr) => await Task.Run(() => signInAsync(parametr)));
             OpenNextPageCommand = new RelayCommandParametrized((parametr) => changePage(parametr));
         }
 
@@ -77,7 +77,7 @@ namespace UI.UIPresenter.ViewModels
             {
                 SignInIsRunning = true;
                 
-                var res = UnitOfWork.SighIn(new User(null, value, Email, null));
+                var res = await UnitOfWork.SighIn(new User(null, value, Email, null));
 
                 if (res == true)
                 {

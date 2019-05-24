@@ -21,6 +21,8 @@ namespace UI.UIPresenter.ViewModels
 
         public bool AreYouAdmin { get; set; }
 
+        public bool IsYourContactsList { get; set; }
+
         #endregion
 
         #region Constructor
@@ -31,11 +33,12 @@ namespace UI.UIPresenter.ViewModels
         /// <param name="contacts">contacts to add</param>
         /// <param name="isGroupContactsList">If true provide button to remove user from a group</param>
         /// <param name="isInviteList">If true provide button to invite user to a group</param>
-        public ContactsListViewModel(List<Contact> contacts, bool isGroupContactsList = false, bool isInviteList = false, bool areYouAdmin = false)
+        public ContactsListViewModel(List<Contact> contacts, bool isGroupContactsList = false, bool isInviteList = false, bool areYouAdmin = false, bool isYourContactsList = false)
         {
             IsGroupContactsList = isGroupContactsList;
             IsInviteList = isInviteList;
             AreYouAdmin = areYouAdmin;
+            IsYourContactsList = isYourContactsList;
 
             //Add event handler
             UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnContactsListChanged(sender, args));
@@ -49,11 +52,12 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         /// <param name="isGroupContactsList">If true provide button to remove user from a group</param>
         /// <param name="isInviteList">If true provide button to invite user to a group</param>
-        public ContactsListViewModel(bool isGroupContactsList = false, bool isInviteList = false, bool areYouAdmin = false)
+        public ContactsListViewModel(bool isGroupContactsList = false, bool isInviteList = false, bool areYouAdmin = false, bool isYourContactsList = false)
         {
             IsGroupContactsList = isGroupContactsList;
             IsInviteList = isInviteList;
             AreYouAdmin = areYouAdmin;
+            IsYourContactsList = isYourContactsList;
 
             //Add event handler
             UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnContactsListChanged(sender, args));
@@ -141,6 +145,13 @@ namespace UI.UIPresenter.ViewModels
         
         public void RemoveContacts(List<Contact> contacts)
         {
+            //If it's not your contact list, than just update list
+            if (!IsYourContactsList)
+            { 
+                UpdateContacts(contacts);
+                return;
+            }
+
             foreach (var contact in contacts)
             {
                 //Search for the contact

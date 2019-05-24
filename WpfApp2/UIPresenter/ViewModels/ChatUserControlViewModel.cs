@@ -115,14 +115,14 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// Togle visibility of invite list
         /// </summary>
-        void inviteListButtonClick()
+        async void inviteListButtonClick()
         {
 
             ShowInviteList = !ShowInviteList;
 
             if(ShowInviteList)
                 //Load contacts
-                ContactsInviteList = new ContactsListViewModel(UnitOfWork.GetUsersInfo(new List<int>(UnitOfWork.User.contactsIdList)), false, true);
+                ContactsInviteList = new ContactsListViewModel(await UnitOfWork.GetUsersInfo(new List<int>(UnitOfWork.User.contactsIdList)), false, true);
         }
 
         void OnGroupsTableRepoChanged(object sender, DataChangedArgs<IEnumerable<Group>> args)
@@ -256,7 +256,7 @@ namespace UI.UIPresenter.ViewModels
         /// Adds messages if they from the chat 
         /// </summary>
         /// <param name="dataChanged"></param>
-        private void AddMessagesToMessagesList(List<Message> dataChanged)
+        private async void AddMessagesToMessagesList(List<Message> dataChanged)
         {
             if (dataChanged == null)
                 return;
@@ -266,7 +266,7 @@ namespace UI.UIPresenter.ViewModels
                 if (CurrentChat.Id == data.ReceiverId)
                 {
                     //get user info
-                    var user = UnitOfWork.GetUsersInfo(new List<int>() { data.SenderId });
+                    var user = await UnitOfWork.GetUsersInfo(new List<int>() { data.SenderId });
 
                     //Becouse Items is ObservableCollection we should update elements from the main thread
                     App.Current.Dispatcher.Invoke(() =>
@@ -282,13 +282,13 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// Loads all messages from the data base
         /// </summary>
-        void loadMessages()
+        async void loadMessages()
         {
             //Get all messages whick match to the group Id
             var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), CurrentChat?.Id.ToString());
 
             //Get all users data from server
-            var users = UnitOfWork.GetUsersInfo(new List<int>(CurrentChat.MembersIdList));
+            var users = await UnitOfWork.GetUsersInfo(new List<int>(CurrentChat.MembersIdList));
 
 
             foreach (var message in messages)
@@ -311,7 +311,7 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// Sends message
         /// </summary>
-        void sendMessage()
+        async void sendMessage()
         {
             if (CurrentChat == null || this.MessageContent == null)
                 return;
@@ -320,7 +320,7 @@ namespace UI.UIPresenter.ViewModels
             var text = System.Text.RegularExpressions.Regex.Replace(MessageContent, @"^(\s*)(\S*)(\s*)$", "$2");
 
             //Add message to repository
-            UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text));
+            await UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text));
 
             MessageContent = "";
         }

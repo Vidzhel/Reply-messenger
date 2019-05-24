@@ -116,7 +116,7 @@ namespace UI.UIPresenter.ViewModels
 
         #region Private Methods
 
-        void changeUserInfo(object objects)
+        async void changeUserInfo(object objects)
         {
             var data = (object[])objects;
             var name = (string)data[0];
@@ -161,7 +161,7 @@ namespace UI.UIPresenter.ViewModels
                 bio = UnitOfWork.User.Bio;
 
             //Make request to server
-            var errorMess = UnitOfWork.ChangeUserInfo(new User(name, UnitOfWork.User.Password, email, bio, UnitOfWork.User.ProfilePhoto, "true", UnitOfWork.User.chatsIdList, UnitOfWork.User.contactsIdList, UnitOfWork.User.Id));
+            var errorMess = await UnitOfWork.ChangeUserInfo(new User(name, UnitOfWork.User.Password, email, bio, UnitOfWork.User.ProfilePhoto, "true", UnitOfWork.User.chatsIdList, UnitOfWork.User.contactsIdList, UnitOfWork.User.Id));
 
             if(errorMess != null)
                 ChangeUserInfoErrorMessage = errorMess;
@@ -170,7 +170,7 @@ namespace UI.UIPresenter.ViewModels
             ChangeUserInfoErrorMessage = "";
         }
 
-        void createGroup(object objects)
+        async void createGroup(object objects)
         {
             var groupName = (string)((object[])objects)[0];
             var isPrivate = (bool)((object[])objects)[1];
@@ -203,13 +203,13 @@ namespace UI.UIPresenter.ViewModels
                 return;
             }
 
-            UnitOfWork.CreateGroup(new Group(isPrivate, groupName, isChannel, "", 0, new List<int>() { UnitOfWork.User.Id }, new List<int>() { UnitOfWork.User.Id }, 1));
+            await UnitOfWork.CreateGroup(new Group(isPrivate, groupName, isChannel, "", 0, new List<int>() { UnitOfWork.User.Id }, new List<int>() { UnitOfWork.User.Id }, 1));
 
             CreateGroupErrorMessage = "";
             FieldState = ControlStates.NormalGray;
         }
 
-        void changeUserPass(object objects)
+        async void changeUserPass(object objects)
         {
             var oldPass = (objects as IHaveThreePasswords).OldStringPassword;
             var newPass = (objects as IHaveThreePasswords).StringPassword;
@@ -224,7 +224,7 @@ namespace UI.UIPresenter.ViewModels
                 return;
             }
 
-            var errorMess = UnitOfWork.ChangePassword(oldPass.GetHash(), newPass.GetHash());
+            var errorMess = await UnitOfWork.ChangePassword(oldPass.GetHash(), newPass.GetHash());
 
             if (errorMess != null)
             {
@@ -293,7 +293,7 @@ namespace UI.UIPresenter.ViewModels
 
         }
 
-        void loadInfo(Contact contact)
+        async void loadInfo(Contact contact)
         {
             if (contact == null)
                 return;
@@ -308,17 +308,17 @@ namespace UI.UIPresenter.ViewModels
                 UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnUserUpdates(sender, args));
 
                 //Load contacts info 
-                var contactsList = UnitOfWork.GetUsersInfo(new List<int>(UnitOfWork.User.contactsIdList));
+                var contactsList = await UnitOfWork.GetUsersInfo(new List<int>(UnitOfWork.User.contactsIdList));
 
                 if (contactsList != null)
-                    ContactsList = new ContactsListViewModel(contactsList);
+                    ContactsList = new ContactsListViewModel(contactsList, false, false, false, true);
             }
 
             //If it's not your account, add groups list
             else
             {
                 //Make request to the server and get groups list
-                GroupsList = new GroupsListViewModel(UnitOfWork.GetUserGroupsInfo(UserInfo));
+                GroupsList = new GroupsListViewModel(await UnitOfWork.GetUserGroupsInfo(UserInfo));
 
             }
 

@@ -151,7 +151,7 @@ namespace UI.UIPresenter.ViewModels
 
         }
 
-        void OnGroupUpdates(object sender, DataChangedArgs<IEnumerable<Group>> args)
+        async void OnGroupUpdates(object sender, DataChangedArgs<IEnumerable<Group>> args)
         {
             //Check specific action 
             if (args.Action == RepositoryActions.Update)
@@ -166,8 +166,8 @@ namespace UI.UIPresenter.ViewModels
                         var addedUsers = group.MembersIdList.Except(GroupInfo.MembersIdList).ToList();
                         var deletedUsers = GroupInfo.MembersIdList.Except(group.MembersIdList).ToList();
 
-                        ContactsList.AddContacts(UnitOfWork.GetUsersInfo(addedUsers));
-                        ContactsList.RemoveContacts(UnitOfWork.GetUsersInfo(deletedUsers));
+                        ContactsList.AddContacts(await UnitOfWork.GetUsersInfo(addedUsers));
+                        ContactsList.RemoveContacts(await UnitOfWork.GetUsersInfo(deletedUsers));
 
                         GroupInfo = group;
 
@@ -192,7 +192,7 @@ namespace UI.UIPresenter.ViewModels
 
         }
 
-        void loadInfo(Group group)
+        async void loadInfo(Group group)
         {
             //Set group info
             GroupInfo = group;
@@ -200,7 +200,7 @@ namespace UI.UIPresenter.ViewModels
             //add contacts to contact list all members list
             if (GroupInfo.MembersIdList != null)
             {
-                var membersInfo = UnitOfWork.GetUsersInfo(new List<int>(GroupInfo.MembersIdList));
+                var membersInfo = await UnitOfWork.GetUsersInfo(new List<int>(GroupInfo.MembersIdList));
 
                 ContactsList = new ContactsListViewModel(membersInfo, true, false, AreYouAdmin);
             }

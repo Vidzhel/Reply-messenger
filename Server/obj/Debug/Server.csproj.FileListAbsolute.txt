@@ -1,12 +1,12 @@
-C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Server.exe.config
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Server.exe
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Server.pdb
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Common.dll
-C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Dapper.dll
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\ServerLibs.dll
-C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\System.Data.SQLite.dll
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Common.pdb
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\ServerLibs.pdb
+C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Server.exe.config
+C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Dapper.dll
+C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\System.Data.SQLite.dll
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\Dapper.xml
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\System.Data.SQLite.xml
 C:\work\Visual studio\C#\OOP\Messenger\Server\bin\Debug\System.Data.SQLite.dll.config

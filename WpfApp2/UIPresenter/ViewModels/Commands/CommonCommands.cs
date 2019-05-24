@@ -4,6 +4,7 @@ using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using UI.InversionOfControl;
 using UI.Pages;
@@ -100,7 +101,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             //TODO invite
         }
 
-        static void removeUserFromChat(object data)
+        static async void removeUserFromChat(object data)
         {
             //Get contact to remove
             Contact user = (Contact)data;
@@ -108,7 +109,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             //Get current open chat to remove from
             var group = ApplicationService.GetCurrentChoosenChat;
 
-            UnitOfWork.RemoveUserFromChat(group, user);
+            await UnitOfWork.RemoveUserFromChat(group, user);
 
         }
 
@@ -119,19 +120,19 @@ namespace UI.UIPresenter.ViewModels.Commands
             ApplicationService.ChangeCurrentContact(null);
         }
 
-        static void leaveChat(object group)
+        static async void leaveChat(object group)
         {
             var gr = (Group)group;
 
-            UnitOfWork.LeaveGroup(gr);
+            await UnitOfWork.LeaveGroup(gr);
 
         }
 
-        static void joinChat(object group)
+        static async void joinChat(object group)
         {
             var gr = (Group)group;
 
-            UnitOfWork.JoinGroup(gr);
+            await UnitOfWork.JoinGroup(gr);
         }
 
         static void openChat(object group)
@@ -140,27 +141,48 @@ namespace UI.UIPresenter.ViewModels.Commands
             ApplicationService.ChangeCurrentChatPage(ChatPages.Chat);
         }
 
-        static void addToContactList(object contact)
+        static async void addToContactList(object contact)
         {
+            var error = await UnitOfWork.ChangeUserInfo(UnitOfWork.User);
+
+            //If there is no error
+            if(error == null)
+            {
+
             UnitOfWork.User.AddNewContact((Contact)contact);
             UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Add));
-            UnitOfWork.ChangeUserInfo(UnitOfWork.User);
+
+            //Save contact to db
+            UnitOfWork.ContactsTableRepo.Add((Contact)contact);
+
+            }
+
         }
 
-        static void deleteFromContactsList(object contact)
+        static async void deleteFromContactsList(object contact)
         {
-            //Remove contact
-            UnitOfWork.User.RemoveContact((Contact)contact);
-            UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Remove));
-            UnitOfWork.ChangeUserInfo(UnitOfWork.User);
+
+            var error = await UnitOfWork.ChangeUserInfo(UnitOfWork.User);
+
+            //If there is no error
+            if (error == null)
+            {
+
+                //Remove contact
+                UnitOfWork.User.RemoveContact((Contact)contact);
+                UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Remove));
+
+                //Delete from db
+                UnitOfWork.ContactsTableRepo.Remove(ContactsTableFields.Id.ToString(), (contact as Contact).Id.ToString());
+            }
         }
 
-        static void startChat(object contact)
+        static async void startChat(object contact)
         {
             var user = (Contact)contact;
 
             //Get all private groups
-            var groups = UnitOfWork.GroupsTableRepo.Find(GroupsTableFields.IsPrivate.ToString(), "True");
+            var groups = UnitOfWork.GroupsTableRepo.Find(GroupsTableFields.IsPrivate.ToString(), "true");
 
             //Find group with 2 users
             foreach (var group in groups)
@@ -176,9 +198,9 @@ namespace UI.UIPresenter.ViewModels.Commands
             }
 
             //Create chat and open it
-            UnitOfWork.CreateGroup(new Group(true, user.UserName + " " + UnitOfWork.User.UserName + " Chat", false, user.ProfilePhoto, 0, new List<int>(), new List<int>() { user.Id, UnitOfWork.User.Id }, user.Online == "true" ? 2 : 1));
+            await UnitOfWork.CreateGroup(new Group(true, user.UserName + " " + UnitOfWork.User.UserName + " Chat", false, user.ProfilePhoto, 0, new List<int>(), new List<int>() { user.Id, UnitOfWork.User.Id }, user.Online == "true" ? 2 : 1));
+            ApplicationService.ChangeCurrentChat(UnitOfWork.GroupsTableRepo.GetLast());
             ApplicationService.ChangeCurrentChatPage(ChatPages.Chat);
-            ApplicationService.ChangeCurrentChat(UnitOfWork.GroupsTableRepo.FindLast(GroupsTableFields.Id.ToString(), "-1"));
         }
 
         static void openUserInfo(object contact)

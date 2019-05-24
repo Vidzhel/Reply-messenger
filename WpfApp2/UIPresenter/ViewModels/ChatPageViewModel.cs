@@ -86,13 +86,13 @@ namespace UI.UIPresenter.ViewModels
             //UnitOfWork.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), "4");
         }
 
-        void Search(string searchRequet)
+        async void Search(string searchRequet)
         {
             if (searchRequest == null || searchRequest == "")
                 return;
 
             //Make request
-            var res = UnitOfWork.Search(searchRequet);
+            var res = await UnitOfWork.Search(searchRequet);
 
             //Get results
             var users = (List<Contact>)((object[])res)[0];
