@@ -16,7 +16,7 @@ namespace UI.UIPresenter.ViewModels
     /// <summary>
     /// View model for msin window
     /// </summary>
-    class WindowViewModel :  BaseViewModel
+    class WindowViewModel : BaseViewModel
     {
         #region private Members
 

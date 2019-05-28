@@ -115,9 +115,10 @@ namespace CommonLibs.Data
 
         #region Constructor
         
-        public Message(int senderId, int recieverId, DataType dataType, string UTCBin, string data, MessageStatus status = MessageStatus.SendingInProgress, int id = 0)
+        public Message(int senderId, int recieverId, DataType dataType, string UTCBin, string data,  MessageStatus status = MessageStatus.SendingInProgress, List<string> attachments = null, int id = 0)
         {
             Id = id;
+            AttachmentsList = attachments;
             SenderId = senderId;
             ReceiverId = recieverId;
             DataType = dataType;
@@ -127,9 +128,10 @@ namespace CommonLibs.Data
             Data = data;
         }
         
-        public Message(int senderId, int recieverId, DataType dataType, DateTime localTime, string data, MessageStatus status = MessageStatus.SendingInProgress, int id = 0)
+        public Message(int senderId, int recieverId, DataType dataType, DateTime localTime, string data, MessageStatus status = MessageStatus.SendingInProgress, List<string> attachments = null, int id = 0)
         {
             Id = id;
+            AttachmentsList = attachments;
             SenderId = senderId;
             ReceiverId = recieverId;
             DataType = dataType;

@@ -8,7 +8,7 @@ namespace CommonLibs.Connections.Repositories
     /// Provide basic commands for repo
     /// </summary>
     /// <typeparam name="T">Return value type</typeparam>
-    public abstract class BaseRepository<T> : INotifyDataChanged<T> where T : class 
+    public abstract class BaseRepository<T> : INotifyDataChanged<T>, ConnectionStringProvider where T : class 
     {
 
         /// <summary>
@@ -91,9 +91,15 @@ namespace CommonLibs.Connections.Repositories
         /// <summary>
         /// Check db, return true if data exists
         /// </summary>
-        /// <param name="column">column to search where</param>
+        /// <param name="column">column to search</param>
         /// <param name="value">value to search</param>
         /// <returns></returns>
         public abstract bool IsExists(string column, string value);
+
+        /// <summary>
+        /// Loads connecion string to a databesa from App.config
+        /// </summary>
+        /// <returns></returns>
+        public abstract string LoadConnectionString();
     }
 }

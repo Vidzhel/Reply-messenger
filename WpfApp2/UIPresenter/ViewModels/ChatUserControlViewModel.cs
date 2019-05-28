@@ -5,6 +5,7 @@ using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Input;
 using UI.InversionOfControl;
 using UI.UIPresenter.ViewModels.Commands;
@@ -22,6 +23,11 @@ namespace UI.UIPresenter.ViewModels
         public Group CurrentChat { get; set; }
 
         /// <summary>
+        /// Currently chosen attachments
+        /// </summary>
+        public List<string> Attachments { get; set; }
+
+        /// <summary>
         /// Command for send message button
         /// </summary>
         public ICommand SendMessage { set; get; }
@@ -32,6 +38,11 @@ namespace UI.UIPresenter.ViewModels
         public ICommand InviteListButton { set; get; }
 
         /// <summary>
+        /// Attaches file to a message
+        /// </summary>
+        public ICommand AttachFile { set; get; }
+
+        /// <summary>
         /// If true shows invite list
         /// </summary>
         public bool ShowInviteList{ get; set; }
@@ -39,7 +50,7 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// Contain text of message from Typing Box
         /// </summary>
-        public string MessageContent { get; set; }
+        public string MessageContent { get; set; } = String.Empty;
 
         /// <summary>
         /// List of all messages in the chat
@@ -93,24 +104,35 @@ namespace UI.UIPresenter.ViewModels
 
         #region Constructor
 
+
         public ChatUserControlViewModel()
         {
             //Set up handelrs
             ApplicationService.GetChatViewModel.OnCurrentChatChanged((sender, args) => ChangeChat(args));
-            UnitOfWork.MessagesTableRepo.AddDataChangedHandler((sender, args) => OnMessagesTableRepoChanged(sender, args));
-            UnitOfWork.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupsTableRepoChanged(sender, args));
+            UnitOfWork.Database.MessagesTableRepo.AddDataChangedHandler((sender, args) => OnMessagesTableRepoChanged(sender, args));
+            UnitOfWork.Database.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupsTableRepoChanged(sender, args));
 
             //Set up commands
             SendMessage = new RelayCommand(() => sendMessage());
             InviteListButton = new RelayCommand(() => inviteListButtonClick());
+            AttachFile = new RelayCommand(() => attachFile());
+
 
             //Set current chat
             ChangeChat(ApplicationService.GetCurrentChoosenChat);
+
+            Attachments = new List<string>();
         }
 
         #endregion
 
         #region Private Methods
+
+        void attachFile()
+        {
+            var filePath = FileManager.OpenFileDialogForm("All fiels (*.*)|*.*");
+            Attachments.Add(filePath);
+        }
 
         /// <summary>
         /// Togle visibility of invite list
@@ -285,7 +307,7 @@ namespace UI.UIPresenter.ViewModels
         async void loadMessages()
         {
             //Get all messages whick match to the group Id
-            var messages = UnitOfWork.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), CurrentChat?.Id.ToString());
+            var messages = UnitOfWork.Database.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), CurrentChat?.Id.ToString());
 
             //Get all users data from server
             var users = await UnitOfWork.GetUsersInfo(new List<int>(CurrentChat.MembersIdList));
@@ -313,16 +335,17 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         async void sendMessage()
         {
-            if (CurrentChat == null || this.MessageContent == null)
+            if (CurrentChat == null || (this.MessageContent == null && Attachments.Count == 0))
                 return;
 
             //Delete unnecessary spaces
             var text = System.Text.RegularExpressions.Regex.Replace(MessageContent, @"^(\s*)(\S*)(\s*)$", "$2");
 
             //Add message to repository
-            await UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text));
+            await UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text, MessageStatus.SendingInProgress,Attachments));
 
             MessageContent = "";
+            Attachments = new List<string>();
         }
 
         #endregion

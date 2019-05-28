@@ -37,6 +37,7 @@ namespace UI.UIPresenter.ViewModels
             }
         }
 
+        public string Attachment { get; set; } = @"C:\Users\Oleg\Desktop\Staff\ролик ФІКТ фото\емблема ФІКТ.png";
 
         /// <summary>
         /// Return message text

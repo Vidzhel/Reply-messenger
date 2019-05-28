@@ -29,22 +29,6 @@ namespace WpfApp2
             InitializeComponent();
             this.DataContext = new WindowViewModel(this);
             
-            ////Create an UIControl service and make request
-            //var service = ServiceFactory.Create(ServiceType.UIControl);
-            //var isConnected = service.MakeRequest(Target.Remote, Request.Connect);
-            //if (!(bool)isConnected)
-            //    return;
-            ////TODO add code
-
-            ////Meke ruquest to local data to get user info
-            //var user = service.MakeRequest(Target.Local, Request.GetUserData);
-
-            ////Trying to aytorizate user
-            //if (user)
-            //    var isAutorizated = service.MakeRequest(Target.Remote, Request.Authorization, User);
-
-            //if ((bool)isAutorizated) ;
-            //    //TODO Open Chat Window
         }
 
     }

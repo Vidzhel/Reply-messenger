@@ -21,7 +21,7 @@ namespace UI.UIPresenter.ViewModels
         public GroupsListViewModel(List<Group> contacts)
         {
             //Add event handler
-            UnitOfWork.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupsListChanged(sender, args));
+            UnitOfWork.Database.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupsListChanged(sender, args));
 
             if(contacts != null)
                 foreach (var contact in contacts)
@@ -32,7 +32,7 @@ namespace UI.UIPresenter.ViewModels
         {
 
             //Add event handler
-            UnitOfWork.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupsListChanged(sender, args));
+            UnitOfWork.Database.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupsListChanged(sender, args));
 
         }
 

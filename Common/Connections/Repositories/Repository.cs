@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -32,6 +33,7 @@ namespace CommonLibs.Connections.Repositories
 
 
         Mutex DBBusy = new Mutex();
+        private string mainMessengerDir;
 
         /// <summary>
         /// Connection string of data base (App.config)
@@ -493,14 +495,15 @@ namespace CommonLibs.Connections.Repositories
         #region Helpers
 
         /// <summary>
-        /// Load connection string from App.config
+        /// Loads connection string from App.config and creates database if it's not exist
         /// </summary>
         /// <returns></returns>
-        public string LoadConnectionString()
+        public override string LoadConnectionString()
         {
-            //TODO delete comments
-            return ConfigurationManager.ConnectionStrings[connectionString].ConnectionString;
-            //return @"Data Source=..\..\SQLiteRemoteDB.db; Version=3";
+            //Get connection string
+            var connString = ConfigurationManager.ConnectionStrings[connectionString].ConnectionString;
+
+            return connString;
         }
 
         #endregion

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CommonLibs.Data
 {
@@ -11,6 +13,42 @@ namespace CommonLibs.Data
     /// </summary>
     public class DataConverter
     {
+
+        /// <summary>
+        /// Gets file path and returns computed checksum of it
+        /// </summary>
+        /// <param name="filePath">full path to a file</param>
+        /// <returns>hash string</returns>
+        public static string CalculateChecksum(string filePath)
+        {
+            if (!System.IO.File.Exists(filePath))
+                throw new ArgumentException("File doesn't exist");
+
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = System.IO.File.OpenRead(filePath))
+                {
+                    return Encoding.Default.GetString(md5.ComputeHash(stream));
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Gets file content and returns computed checksum of it
+        /// </summary>
+        /// <param name="content">Content of a file</param>
+        /// <returns>hash string</returns>
+        public static string CalculateChecksum(byte[] content)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = new MemoryStream(content))
+                {
+                    return Encoding.Default.GetString(md5.ComputeHash(stream));
+                }
+            }
+        }
 
         /// <summary>
         /// Get string representation of list

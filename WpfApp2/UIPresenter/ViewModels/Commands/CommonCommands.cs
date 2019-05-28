@@ -153,7 +153,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Add));
 
             //Save contact to db
-            UnitOfWork.ContactsTableRepo.Add((Contact)contact);
+            UnitOfWork.Database.ContactsTableRepo.Add((Contact)contact);
 
             }
 
@@ -173,7 +173,7 @@ namespace UI.UIPresenter.ViewModels.Commands
                 UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Remove));
 
                 //Delete from db
-                UnitOfWork.ContactsTableRepo.Remove(ContactsTableFields.Id.ToString(), (contact as Contact).Id.ToString());
+                UnitOfWork.Database.ContactsTableRepo.Remove(ContactsTableFields.Id.ToString(), (contact as Contact).Id.ToString());
             }
         }
 
@@ -182,7 +182,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             var user = (Contact)contact;
 
             //Get all private groups
-            var groups = UnitOfWork.GroupsTableRepo.Find(GroupsTableFields.IsPrivate.ToString(), "true");
+            var groups = UnitOfWork.Database.GroupsTableRepo.Find(GroupsTableFields.IsPrivate.ToString(), "true");
 
             //Find group with 2 users
             foreach (var group in groups)
@@ -199,7 +199,7 @@ namespace UI.UIPresenter.ViewModels.Commands
 
             //Create chat and open it
             await UnitOfWork.CreateGroup(new Group(true, user.UserName + " " + UnitOfWork.User.UserName + " Chat", false, user.ProfilePhoto, 0, new List<int>(), new List<int>() { user.Id, UnitOfWork.User.Id }, user.Online == "true" ? 2 : 1));
-            ApplicationService.ChangeCurrentChat(UnitOfWork.GroupsTableRepo.GetLast());
+            ApplicationService.ChangeCurrentChat(UnitOfWork.Database.GroupsTableRepo.GetLast());
             ApplicationService.ChangeCurrentChatPage(ChatPages.Chat);
         }
 

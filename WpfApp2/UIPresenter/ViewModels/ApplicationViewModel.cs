@@ -25,7 +25,7 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public ApplicationViewModel()
         {
-            ApplicationCurrentPage = ApplicationPages.SignInPage;
+            ApplicationCurrentPage = ApplicationPages.ChatPage;
         }
 
     }

@@ -51,15 +51,15 @@ namespace UI.UIPresenter.ViewModels
         {
             
             //Add all groups from the Groups repository and add them to chat list
-            AddGroupToChatList((List<Group>)UnitOfWork.GroupsTableRepo.GetAll());
+            AddGroupToChatList((List<Group>)UnitOfWork.Database.GroupsTableRepo.GetAll());
 
             //Add Handlers
-            UnitOfWork.GroupsTableRepo.DataChanged += GroupRepoChangedHandler;
-            UnitOfWork.MessagesTableRepo.DataChanged += MessageRepoChangedHandler;
+            UnitOfWork.Database.GroupsTableRepo.DataChanged += GroupRepoChangedHandler;
+            UnitOfWork.Database.MessagesTableRepo.DataChanged += MessageRepoChangedHandler;
 
             //TODO delete
             Task.Run(() => Check());
-            //UnitOfWork.ContactsTableRepo.Add(new Contact("Vidzhel's friend", "someEmail@gmail.com", "there is very long text to check form working", null, "True", 1));
+            //UnitOfWork.Database.ContactsTableRepo.Add(new Contact("Vidzhel's friend", "someEmail@gmail.com", "there is very long text to check form working", null, "True", 1));
         }
 
         #endregion
@@ -72,18 +72,18 @@ namespace UI.UIPresenter.ViewModels
 
             await Task.Delay(10000);
 
-            //UnitOfWork.GroupsTableRepo.Add(new Group(false, "It's not Mark", false, "", 3, new List<int>() { 1 }, new List<int>() { 0, 1 }));
-            //UnitOfWork.ContactsTableRepo.Add(new Contact("Second friend", "his email", "it bisd", null, "false", 2));
+            //UnitOfWork.Database.GroupsTableRepo.Add(new Group(false, "It's not Mark", false, "", 3, new List<int>() { 1 }, new List<int>() { 0, 1 }));
+            //UnitOfWork.Database.ContactsTableRepo.Add(new Contact("Second friend", "his email", "it bisd", null, "false", 2));
             await Task.Delay(3000);
-            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0, 1, 2 }));
+            //UnitOfWork.Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0, 1, 2 }));
 
             await Task.Delay(3000);
 
-            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0 }));
-            //UnitOfWork.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0 }));
+            //UnitOfWork.Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0 }));
+            //UnitOfWork.Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), "3", new Group(false, "V Chatt", false, "", 3, new List<int>() { 0 }, new List<int>() { 0 }));
             //new Message(0, 3, DataType.Text, DateTime.Now, "Hi Mark, how do you do, i haven't seen you for ages", MessageStatus.Sended, 4));
-            //UnitOfWork.MessagesTableRepo.Add(new Message(1, 2, DataType.Text, DateTime.Now, "Hi new message", MessageStatus.Sended, 9));
-            //UnitOfWork.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), "4");
+            //UnitOfWork.Database.MessagesTableRepo.Add(new Message(1, 2, DataType.Text, DateTime.Now, "Hi new message", MessageStatus.Sended, 9));
+            //UnitOfWork.Database.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), "4");
         }
 
         async void Search(string searchRequet)
@@ -162,7 +162,7 @@ namespace UI.UIPresenter.ViewModels
                         if (group.LastMessage.Id == data.Id)
                         {
                             //Get last message
-                            group.LastMessage = UnitOfWork.MessagesTableRepo.FindLast(MessagesTableFields.ReceiverId.ToString(), data.ReceiverId.ToString()); ;
+                            group.LastMessage = UnitOfWork.Database.MessagesTableRepo.FindLast(MessagesTableFields.ReceiverId.ToString(), data.ReceiverId.ToString()); ;
                         }
 
                 }
@@ -184,7 +184,7 @@ namespace UI.UIPresenter.ViewModels
             foreach (var data in dataChanged)
             {
                 //Check if it's the last message of the group
-                var lastMess = UnitOfWork.MessagesTableRepo.FindLast(MessagesTableFields.ReceiverId.ToString(), data.ReceiverId.ToString());
+                var lastMess = UnitOfWork.Database.MessagesTableRepo.FindLast(MessagesTableFields.ReceiverId.ToString(), data.ReceiverId.ToString());
                 if(lastMess.Id == data.Id)
                 {
 
@@ -305,7 +305,7 @@ namespace UI.UIPresenter.ViewModels
             foreach (var group in dataChanged)
             {
                 //Get last message from dataBase
-                var lastMess = UnitOfWork.MessagesTableRepo.FindLast(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
+                var lastMess = UnitOfWork.Database.MessagesTableRepo.FindLast(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
 
                 //Becouse Items is ObservableCollection we should remove elements from the main thread
                 App.Current.Dispatcher.Invoke(() =>

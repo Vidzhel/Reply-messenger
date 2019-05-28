@@ -18,16 +18,6 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            int i = 0;
-            while (i != 10)
-            {
-                i++;
-                //var response = UnitOfWork.SignUp(new User("Vidzhel", "HardPass", "MyEmail", "MyBio", "+2"));
-
-
-
-            }
-
             Console.ReadKey();
         }
     }

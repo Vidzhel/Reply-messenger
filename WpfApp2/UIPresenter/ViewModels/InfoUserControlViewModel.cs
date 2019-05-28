@@ -6,6 +6,7 @@ using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security;
 using System.Windows.Input;
 using UI.InversionOfControl;
@@ -26,6 +27,12 @@ namespace UI.UIPresenter.ViewModels
         /// Changes user password
         /// </summary>
         public ICommand ChangeUserPass { get; set; }
+
+
+        /// <summary>
+        /// Changes profile photo
+        /// </summary>
+        public ICommand ChangeProfilePhoto { get; set; }
 
         /// <summary>
         /// Creates new group
@@ -62,6 +69,8 @@ namespace UI.UIPresenter.ViewModels
         /// True if this is your accaunt info page
         /// </summary>
         public bool IsYourAccaunt => UnitOfWork.User.Id == UserInfo?.Id;
+
+        public string ProfilePhoto => UnitOfWork.User?.ProfilePhoto;
 
         /// <summary>
         /// Gets user name
@@ -102,9 +111,10 @@ namespace UI.UIPresenter.ViewModels
             ChangeUserInfo = new RelayCommandParametrized((objects) => changeUserInfo(objects));
             ChangeUserPass = new RelayCommandParametrized((objects) => changeUserPass(objects));
             CreateGroup = new RelayCommandParametrized((objects) => createGroup(objects));
+            ChangeProfilePhoto = new RelayCommand(changeProfilePhoto);
 
             //Setup handlers
-            UnitOfWork.ContactsTableRepo.AddDataChangedHandler((sender, args) => OnContactsUpdate(sender, args));
+            UnitOfWork.Database.ContactsTableRepo.AddDataChangedHandler((sender, args) => OnContactsUpdate(sender, args));
             ApplicationService.GetChatViewModel.OnCurrentContactInfoChanged((sender, args) => loadInfo(args));
 
             //Load data
@@ -115,6 +125,23 @@ namespace UI.UIPresenter.ViewModels
         #endregion
 
         #region Private Methods
+
+        void changeProfilePhoto()
+        {
+            var photoPath = FileManager.OpenFileDialogForm("Image files(*.png;*jpg) | *.png;*jpg");
+
+            if (photoPath == String.Empty)
+                return;
+
+            //Copy photo to
+            var newImageDest = Directory.GetCurrentDirectory() + @"\Reply Messenger\User Files\" + "ProfilePhoto.png";
+            if (!System.IO.File.Exists(newImageDest))
+                System.IO.File.Copy(photoPath, newImageDest);
+            else
+                System.IO.File.Replace(photoPath, newImageDest, newImageDest + ".bac");
+
+            OnPropertyChanged("ProfilePhoto");
+        }
 
         async void changeUserInfo(object objects)
         {

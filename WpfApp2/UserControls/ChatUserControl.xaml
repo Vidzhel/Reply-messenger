@@ -14,6 +14,64 @@
 
         <Grid>
 
+            <!--Drag and Drop effect-->
+            <Border AllowDrop="True" Padding="10" Background="{StaticResource  GrayBGHoverBrush}" Panel.ZIndex="0" Opacity="0"
+                    BorderThickness="2"
+                    CornerRadius="10"
+                    BorderBrush="{StaticResource OrangeBrush}">
+
+                <Border.Triggers>
+
+                    <EventTrigger RoutedEvent="DragOver">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <Int32Animation Duration="0:0:0.05" Storyboard.TargetProperty="ZIndex" To="2"/>
+                                <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="Opacity" To="1"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    
+                    <EventTrigger RoutedEvent="DragLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.05" Storyboard.TargetProperty="Opacity" To="0"/>
+                                <Int32Animation Duration="0:0:0.05" Storyboard.TargetProperty="ZIndex" To="0"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+
+                </Border.Triggers>
+                
+                <!--Text-->
+                <Border CornerRadius="10" Background="{StaticResource DarkBgBrush}">
+
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="0" BlurRadius="10" Opacity="0.5"/>
+                    </Border.Effect>
+                    
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                        <TextBlock Text="Drop Fi Hare"
+                               FontSize="26"
+                               HorizontalAlignment="Center"
+                               Margin="0 10"
+                               Foreground="{StaticResource OrangeBrush}"
+                               FontWeight="DemiBold"
+                               FontFamily="OpenSans"/>
+
+                        <TextBlock Text="To send them as a file"
+                               Foreground="{StaticResource OrangeBrush}"
+                               FontSize="26"
+                               FontFamily="OpenSans"/>
+
+
+                    </StackPanel>
+
+                </Border>
+            </Border>
+
+            <!--Content-->
+            <Grid>
             <Grid.RowDefinitions>
 
                 <!--Chat info bar-->
@@ -150,12 +208,13 @@
 
                         <!--Attachments-->
                         <Button Margin="20 10 0 10"
-                            VerticalAlignment="Bottom"
-                            Content=""
-                            Tag="LightBlueBrush"
-                            FontSize="20"
-                            Style="{StaticResource IconicButton}"
-                            />
+                                VerticalAlignment="Bottom"
+                                Content=""
+                                Tag="LightBlueBrush"
+                                Command="{Binding AttachFile}"
+                                FontSize="20"
+                                Style="{StaticResource IconicButton}"
+                                />
 
                         <!--Typing box-->
                         <TextBox Grid.Column="1"
@@ -187,6 +246,9 @@
 
             </Grid>
        
+        </Grid>
+
+
         </Grid>
 
     </Border>

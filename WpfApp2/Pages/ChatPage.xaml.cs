@@ -13,7 +13,7 @@ namespace UI.Pages
         public ChatPage()
         {
             InitializeComponent();
-
+            
             //Start all page anmations
             startAnimationsAsync();
         }

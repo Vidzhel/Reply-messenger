@@ -301,12 +301,32 @@
                     </Border>
                 
                     <!--Profile Photo-->
-                    <Border Width="100"
-                            Height="100"
+                    <Border 
                             Margin="0 20 0 0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            x:Name="ProfilePhotoMask"
                             CornerRadius="50"
-                            Background="{StaticResource GrayBGBrush}"
-                            />
+                            BorderThickness="5"
+                            BorderBrush="{StaticResource GrayBGBrush}"
+                            >
+
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding ChangeProfilePhoto}"/>
+                        </Border.InputBindings>
+                        <Grid VerticalAlignment="Center"
+                              Width="100"
+                              Height="100"
+                              HorizontalAlignment="Center">
+                            <Grid.Clip>
+                                <EllipseGeometry Center="50,50" RadiusX="50" RadiusY="50"/>
+                            </Grid.Clip>
+                            <Image Source="{Binding ProfilePhoto}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                            
+                        </Grid>
+                    </Border>
 
                     <!--User name-->
                     <Label Style="{StaticResource RegularText}"

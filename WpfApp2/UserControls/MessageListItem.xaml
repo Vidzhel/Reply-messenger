@@ -48,8 +48,11 @@
                                         <!--User name-->
                                         <RowDefinition Height="auto"/>
 
-                                        <!--Text-->
+                                        <!--Attachments-->
                                         <RowDefinition Height="*"/>
+                                        
+                                        <!--Text-->
+                                        <RowDefinition Height="auto"/>
 
                                         <!--Date and is read info-->
                                         <RowDefinition Height="auto"/>
@@ -62,14 +65,20 @@
                                        FontSize="15"
                                        Visibility="{Binding DisplayUserName, Converter={converters:BoolToVisibilityConverter}}"/>
 
+                                    <!--Attachments-->
+                                    <Grid Grid.Row="1" VerticalAlignment="Center"
+                                          HorizontalAlignment="Center">
+                                        <Image Source="{Binding Attachment}" MaxWidth="200"/>
+                                    </Grid>
+                                    
                                     <!--Text-->
-                                    <TextBlock Grid.Row="1"
+                                    <TextBlock Grid.Row="2"
                                            TextWrapping="Wrap"
                                            Text="{Binding MessageText}"
                                            Foreground="{StaticResource LightGrayBgBrush}"/>
 
                                     <!--Time and message status-->
-                                    <StackPanel Grid.Row="2"
+                                    <StackPanel Grid.Row="3"
                                             Orientation="Horizontal"
                                             HorizontalAlignment="{Binding IsYourMessage, Converter={converters:BoolToHorizontalAlignmentConverter}, ConverterParameter=true}">
 

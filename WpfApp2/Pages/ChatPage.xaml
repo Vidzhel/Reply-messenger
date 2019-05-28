@@ -16,7 +16,7 @@
       d:DesignHeight="600" d:DesignWidth="1024"
       Title="ChatPage">
 
-    <Grid Background="{StaticResource GrayBGBrush}">
+    <Grid Background="{StaticResource DarkBgBrush}">
         <Grid.ColumnDefinitions>
 
             <!--Chats list-->

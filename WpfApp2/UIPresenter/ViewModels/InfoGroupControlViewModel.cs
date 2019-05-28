@@ -89,8 +89,8 @@ namespace UI.UIPresenter.ViewModels
         public InfoGroupControlViewModel()
         {
             //Setup handlers
-            UnitOfWork.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupUpdates(sender, args));
-            UnitOfWork.MessagesTableRepo.AddDataChangedHandler((sender, args) => OnMessageUpdates(sender, args));
+            UnitOfWork.Database.GroupsTableRepo.AddDataChangedHandler((sender, args) => OnGroupUpdates(sender, args));
+            UnitOfWork.Database.MessagesTableRepo.AddDataChangedHandler((sender, args) => OnMessageUpdates(sender, args));
             UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnPropertyChanged("IsYourGroup"));
             ApplicationService.GetChatViewModel.OnCurrentChatChanged((sender, args) => loadInfo(args));
 

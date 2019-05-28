@@ -6,6 +6,7 @@ using ClientLibs.Core.ConnectionToServer;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ClientLibs.Core.DataAccess
 {
@@ -20,15 +21,32 @@ namespace ClientLibs.Core.DataAccess
 
         static event EventHandler<DataChangedArgs<IEnumerable<object>>> UserInfoUpdated;
 
+        static DBRepositoryLocal database;
+
         #endregion
 
         #region Public Members
 
-        public static BaseRepository<Message> MessagesTableRepo = new Repository<Message>(new Table(new MessagesTableFields(), "Messages"), "LocalDB");
-        public static BaseRepository<Contact> ContactsTableRepo = new Repository<Contact>(new Table(new ContactsTableFields(), "Contacts"), "LocalDB");
-        public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new GroupsTableFields(), "Groups"), "LocalDB");
+        /// <summary>
+        /// Provide fields to get access to tables of the database
+        /// </summary>
+        public static DBRepositoryLocal Database
+        {
+            get
+            {
+                if (database == null)
+                {
+                    database = new DBRepositoryLocal();
 
-        public static User User { get; private set; }
+                    //Check database file integrity
+                    FileManager.DatabaseIntegrityCheck(database.ContactsTableRepo.LoadConnectionString());
+                }
+
+                return database;
+            }
+        }
+
+        public static User User { get; private set; } = new User("Me", "asdsa", "email", "kek", Directory.GetCurrentDirectory() + @"\Reply Messenger\User Files\" + "ProfilePhoto.png");
         public static Contact Contact => User;
 
         public static bool ServerConnected { get; set; }
@@ -188,10 +206,10 @@ namespace ClientLibs.Core.DataAccess
                         OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<object>() { group.Id }, UsersTableFields.ChatsId.ToString(), RepositoryActions.Remove));
 
                         //Delete group
-                        GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                        Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
 
                         //Find and delete all messages from the group
-                        MessagesTableRepo.Remove(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
+                        Database.MessagesTableRepo.Remove(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
                     }
                 });
             }
@@ -279,7 +297,7 @@ namespace ClientLibs.Core.DataAccess
                     if (res.RequestData != null)
                     {
                         //Add group to db
-                        GroupsTableRepo.Add((Group)res.RequestData);
+                        Database.GroupsTableRepo.Add((Group)res.RequestData);
 
                         //Update user
                         User = res.UserData;
@@ -335,7 +353,7 @@ namespace ClientLibs.Core.DataAccess
                 var groups = new List<Group>();
 
                 //Get all contacts and search there
-                foreach (var item in ContactsTableRepo.GetAll())
+                foreach (var item in Database.ContactsTableRepo.GetAll())
                 {
                     //If user name or email contains searchRequest, than add
                     if (item.UserName.Contains(searchRequest) || item.Email.Contains(searchRequest))
@@ -343,7 +361,7 @@ namespace ClientLibs.Core.DataAccess
                 }
 
                 //Get all groups and search there
-                foreach (var item in GroupsTableRepo.GetAll())
+                foreach (var item in Database.GroupsTableRepo.GetAll())
                 {
                     //If group name contanis searchRequest, than add
                     if (item.Name.Contains(searchRequest))
@@ -407,7 +425,7 @@ namespace ClientLibs.Core.DataAccess
                 for (int i = 0; i < id.Count; i++)
                 {
                     //Try to find users in local data base
-                    temp = ContactsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), id[i].ToString());
+                    temp = Database.ContactsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), id[i].ToString());
 
 
                     //If we found user, than remove from id list and add to user list
@@ -462,7 +480,7 @@ namespace ClientLibs.Core.DataAccess
                 for (int i = 0; i < id.Count; i++)
                 {
                     //Try to find users in local data base
-                    temp = GroupsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), id[i].ToString());
+                    temp = Database.GroupsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), id[i].ToString());
 
 
                     //If we found user, than remove from id list and add to user list
@@ -528,6 +546,43 @@ namespace ClientLibs.Core.DataAccess
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name">name of file from Reply messenger\saved files</param>
+        /// <returns></returns>
+        public static async Task SendFile(string name)
+        {
+            if (!ServerConnected)
+                return;
+
+            //Return if file doesn't exist in saved files
+            if (!System.IO.File.Exists(Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name))
+                return;
+
+            await Task.Run(() =>
+            {
+                // Load file meta data with FileInfo
+                FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name);
+
+                // The byte[] to save the data in
+                byte[] data = new byte[fileInfo.Length];
+
+                // Load a filestream and put its content into the byte[]
+
+                using (var fs = fileInfo.OpenRead())
+                {
+
+                    fs.Read(data, 0, data.Length);
+
+                    commandChain.SendCommand(CommandType.SendFile, new object[] { name, data }, User);
+
+                }
+
+
+            });
+        }
+
+        /// <summary>
         /// Make Log In request to the server, return true if all ok
         /// </summary>
         /// <param name="userData"></param>
@@ -577,65 +632,84 @@ namespace ClientLibs.Core.DataAccess
             //Find differences in Last Time Update and update if necessary
             foreach (var group in groupsInfo)
             {
-                var foundGroup = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                var foundGroup = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), group.Id.ToString());
 
                 if(foundGroup == null)
                 {
-                    GroupsTableRepo.Add(foundGroup);
-                    break;
+                    Database.GroupsTableRepo.Add(group);
+                    continue;
                 }
 
 
                 if (foundGroup.LastTimeUpdated != group.LastTimeUpdated)
-                    GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+                    Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
             }
 
             foreach (var contact in contactsInfo)
             {
-                var foundContact = ContactsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), contact.Id.ToString());
+                var foundContact = Database.ContactsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), contact.Id.ToString());
 
                 if (foundContact == null)
                 {
-                    ContactsTableRepo.Add(foundContact);
-                    break;
+                    Database.ContactsTableRepo.Add(contact);
+                    continue;
                 }
 
                 if (foundContact.LastTimeUpdated != contact.LastTimeUpdated)
-                    ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), contact.Id.ToString(), contact);
+                    Database.ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), contact.Id.ToString(), contact);
             }
 
             foreach (var message in messagesInfo)
             {
-                var foundMessage = MessagesTableRepo.FindFirst(MessagesTableFields.Id.ToString(), message.Id.ToString());
+                var foundMessage = Database.MessagesTableRepo.FindFirst(MessagesTableFields.Id.ToString(), message.Id.ToString());
 
                 if (foundMessage == null)
                 {
-                    MessagesTableRepo.Add(foundMessage);
-                    break;
+                    Database.MessagesTableRepo.Add(message);
+                    continue;
                 }
 
                 if (foundMessage.LastTimeUpdated != message.LastTimeUpdated)
-                    MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), message.Id.ToString(), message);
+                    Database.MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), message.Id.ToString(), message);
             }
 
+            #region Create custom comparers
+
+            //Create comparers
+            var groupsComparer = EqualityComparerFactory.Create<Group>(
+                    (Group a) => a.Id.GetHashCode(),
+                    (Group a, Group b) => a.Id == b.Id
+                );
+
+            var contactsComparer = EqualityComparerFactory.Create<Contact>(
+                    (Contact a) => a.Id.GetHashCode(),
+                    (Contact a, Contact b) => a.Id == b.Id
+                );
+            var messagesComparer = EqualityComparerFactory.Create<Message>(
+                    (Message a) => a.Id.GetHashCode(),
+                    (Message a, Message b) => a.Id == b.Id
+                );
+
+            #endregion
+
             //Delete 
-            var deletedGroups = GroupsTableRepo.GetAll().Except(groupsInfo);
-            var deletedContacts = ContactsTableRepo.GetAll().Except(contactsInfo);
-            var deletedMessages = MessagesTableRepo.GetAll().Except(messagesInfo);
+            var deletedGroups = Database.GroupsTableRepo.GetAll().Except(groupsInfo, groupsComparer);
+            var deletedContacts = Database.ContactsTableRepo.GetAll().ToList().Except(contactsInfo, contactsComparer);
+            var deletedMessages = Database.MessagesTableRepo.GetAll().ToList().Except(messagesInfo, messagesComparer);
 
             foreach (var group in deletedGroups)
             {
-                GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
             }
 
             foreach (var contact in deletedContacts)
             {
-                ContactsTableRepo.Remove(GroupsTableFields.Id.ToString(), contact.Id.ToString());
+                Database.ContactsTableRepo.Remove(GroupsTableFields.Id.ToString(), contact.Id.ToString());
             }
 
             foreach (var message in deletedMessages)
             {
-                MessagesTableRepo.Remove(GroupsTableFields.Id.ToString(), message.Id.ToString());
+                Database.MessagesTableRepo.Remove(GroupsTableFields.Id.ToString(), message.Id.ToString());
             }
         }
 
@@ -679,8 +753,8 @@ namespace ClientLibs.Core.DataAccess
         public static async Task SendMessage(Message mess)
         {
             //Add message
-            //MessagesTableRepo.Add(mess);
-            await Task.Run(() =>
+            //Database.MessagesTableRepo.Add(mess);
+            await Task.Run(async () =>
             {
 
                 if (!ServerConnected)
@@ -688,15 +762,31 @@ namespace ClientLibs.Core.DataAccess
 
                 var res = commandChain.MakeRequest(CommandType.SendMesssage, mess, User);
 
+
                 //If response time is out
                 if (res == null)
                     return;
 
                 if (res.RequestData != null)
                 {
+
+                    if (mess.AttachmentsList.Count != 0)
+                    {
+                        //Load all attachments to saved files
+                        FileManager.CheckClientRequiredFolders();
+
+                        var savedFiles = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files";
+
+                        foreach (var item in mess.AttachmentsList)
+                        {
+                            System.IO.File.Copy(item, savedFiles + @"\" + Path.GetFileName(item));
+                            await SendFile(Path.GetFileName(item));
+                        }
+                    }
+
                     //Update the last message we sent
-                    //MessagesTableRepo.Update(MessagesTableFields.Status.ToString(), MessageStatus.SendingInProgress.ToString(), (Message)res.RequestData);
-                    MessagesTableRepo.Add((Message)res.RequestData);
+                    //Database.MessagesTableRepo.Update(MessagesTableFields.Status.ToString(), MessageStatus.SendingInProgress.ToString(), (Message)res.RequestData);
+                    Database.MessagesTableRepo.Add((Message)res.RequestData);
                 }
             });
         }
@@ -764,32 +854,32 @@ namespace ClientLibs.Core.DataAccess
         private static void removeMessages(Message data)
         {
                 //Delete from db
-                MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), data.Id.ToString());
+                Database.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), data.Id.ToString());
         }
 
         private static void getMessages(Message data)
         {
                 //Add to db
-                MessagesTableRepo.Add(data);
+                Database.MessagesTableRepo.Add(data);
         }
 
         private static void updateMessages(Message data)
         {
                 //Update db
-                MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), data.Id.ToString(), data);
+                Database.MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), data.Id.ToString(), data);
         }
 
         private static void updateGroupsList(Group data)
         {
             //If the group doesn't exist, than add to db
-            if (!GroupsTableRepo.IsExists(GroupsTableFields.Id.ToString(), data.Id.ToString()))
+            if (!Database.GroupsTableRepo.IsExists(GroupsTableFields.Id.ToString(), data.Id.ToString()))
             {
-                GroupsTableRepo.Add(data);
+                Database.GroupsTableRepo.Add(data);
                 return;
             }
 
             //Update db
-            GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), data.Id.ToString(), data);
+            Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), data.Id.ToString(), data);
         }
 
         private static void updateContactsList(Contact data)
@@ -799,7 +889,7 @@ namespace ClientLibs.Core.DataAccess
                     return;
 
                 //Update contact
-                ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), data.Id.ToString(), data);
+                Database.ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), data.Id.ToString(), data);
         }
 
         #endregion

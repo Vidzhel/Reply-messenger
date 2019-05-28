@@ -5,6 +5,8 @@ using CommonLibs.Data;
 using ServerLibs.ConnectionToClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace ServerLibs.DataAccess
 {
@@ -14,10 +16,7 @@ namespace ServerLibs.DataAccess
     /// </summary>
     public static class UnitOfWork
     {
-
-        public static BaseRepository<Message> MessagesTableRepo = new Repository<Message>(new Table(new RemoteMessagesTableFields(), "Messages"), "LocalDB");
-        public static BaseRepository<User> UsersTableRepo = new Repository<User>(new Table(new RemoteUsersTableFields(), "Users"), "LocalDB");
-        public static BaseRepository<Group> GroupsTableRepo = new Repository<Group>(new Table(new RemoteGroupsTableFields(), "Groups"), "LocalDB");
+        public static DBRepositoryRemote Database = new DBRepositoryRemote();
 
         public static List<Client> OnlineClients = new List<Client>();
 
@@ -28,9 +27,9 @@ namespace ServerLibs.DataAccess
         static UnitOfWork()
         {
             //Set up event data changed handler for tables
-            MessagesTableRepo.AddDataChangedHandler( (sender, args) => OnMessagesTableChanged(sender, args));
-            UsersTableRepo.AddDataChangedHandler( (sender, args) => OnUsersTableChanged(sender, args));
-            GroupsTableRepo.AddDataChangedHandler( (sender, args) => OnGroupsTableChanged(sender, args));
+            Database.MessagesTableRepo.AddDataChangedHandler( (sender, args) => OnMessagesTableChanged(sender, args));
+            Database.UsersTableRepo.AddDataChangedHandler( (sender, args) => OnUsersTableChanged(sender, args));
+            Database.GroupsTableRepo.AddDataChangedHandler( (sender, args) => OnGroupsTableChanged(sender, args));
 
             //Add handlers on client connected and disconnected from the server
             AsynchronousClientListener.OnUserConnected(OnUserConnected);
@@ -107,6 +106,9 @@ namespace ServerLibs.DataAccess
                     break;
                 case CommandType.RemoveMessage:
                     deleteMessage(com.Command);
+                    break;
+                case CommandType.SendFile:
+                    sendFile(com.Command);
                     break;
                 case CommandType.UpdateUserInfo:
                     CommandChain.SendResponseCommand(new ClientCommand(updateUserInfo(com.Command), com.Client));
@@ -306,6 +308,35 @@ namespace ServerLibs.DataAccess
         #region Command Helpers
 
         /// <summary>
+        /// Creates file Saved Files in folder and adds to database
+        /// </summary>
+        /// <param name="command"></param>
+        static void sendFile(Command command)
+        {
+            var fileName = (string)((object[])command.RequestData)[0];
+            var fileContent = (byte[])((object[])command.RequestData)[1];
+            var fileChecksum = DataConverter.CalculateChecksum(fileContent);
+
+            //Dont create file if it alrady exist
+            if (Database.FilesTableRepo.IsExists(FilesTableFields.Checksum.ToString(), fileChecksum))
+                Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, fileChecksum));
+
+            //Check folders
+            FileManager.CheckServerRequiredFolders();
+
+            //Create file
+            var filePath = Directory.GetCurrentDirectory() + @"\Reply Messenger Server\Saved Files" + fileChecksum;
+            System.IO.File.Create(filePath);
+
+            //Write data into the file
+            var fs = new FileInfo(filePath).OpenWrite();
+            fs.Write(fileContent, 0, fileContent.Length);
+
+            //Add to database
+            Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, fileChecksum));
+        }
+
+        /// <summary>
         /// Updates user and return request
         /// </summary>
         /// <param name="command"></param>
@@ -315,14 +346,14 @@ namespace ServerLibs.DataAccess
             var user = command.UserData;
 
             //Get old user info
-            var oldUserInfo = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
+            var oldUserInfo = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
 
             //Check if new email doesn't exist in the table
             if (oldUserInfo.Email != user.Email)
-                if (UsersTableRepo.IsExists(RemoteUsersTableFields.Email.ToString(), user.Email)) 
+                if (Database.UsersTableRepo.IsExists(RemoteUsersTableFields.Email.ToString(), user.Email)) 
                     return new Command(CommandType.Answer, "A User with same email already exist", null);
 
-            var updated = UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+            var updated = Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
             if (updated)
                 return new Command(CommandType.Answer, null, null);
@@ -345,7 +376,7 @@ namespace ServerLibs.DataAccess
 
 
             //Get old user info
-            var oldUserInfo = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
+            var oldUserInfo = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
 
             //If old password doesn't match
             if (oldUserInfo.Password != oldPass)
@@ -353,7 +384,7 @@ namespace ServerLibs.DataAccess
 
             user.Password = newPass;
 
-            var updated = UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+            var updated = Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
             if (updated)
                 return new Command(CommandType.Answer, null, null);
@@ -376,7 +407,7 @@ namespace ServerLibs.DataAccess
             //Get all required groups
             foreach (var id in groupsId)
             {
-                var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
+                var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
 
                 if (group != null)
                     groups.Add(group);
@@ -400,7 +431,7 @@ namespace ServerLibs.DataAccess
             //Get all required groups
             foreach (var id in usersId)
             {
-                var user = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), id.ToString());
+                var user = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), id.ToString());
 
                 if (user != null)
                     users.Add(user);
@@ -420,7 +451,7 @@ namespace ServerLibs.DataAccess
             var contact = (Contact)command.RequestData;
 
             //Find full user info
-            var user = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), contact.Id.ToString());
+            var user = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), contact.Id.ToString());
 
             var groups = new List<Group>();
 
@@ -431,7 +462,7 @@ namespace ServerLibs.DataAccess
             //Get all required groups
             foreach (var id in user.chatsIdList)
             {
-                var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
+                var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
 
                 if (group != null)
                     groups.Add(group);
@@ -452,8 +483,8 @@ namespace ServerLibs.DataAccess
             var matchGroups = new List<Group>();
 
             //Get all groups and users
-            var groups = GroupsTableRepo.GetAll();
-            var users = UsersTableRepo.GetAll();
+            var groups = Database.GroupsTableRepo.GetAll();
+            var users = Database.UsersTableRepo.GetAll();
 
             //If name of group contains seaarch request string, than add to match groups
             foreach (var group in groups)
@@ -477,7 +508,7 @@ namespace ServerLibs.DataAccess
             var group = (Group)command.RequestData;
 
             //Update group
-            GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+            Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
 
         }
 
@@ -497,7 +528,7 @@ namespace ServerLibs.DataAccess
 
             //Update group
             group.AddNewAdmin(userToAdd.Id);
-            var updated = GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+            var updated = Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
 
             if (updated)
             {
@@ -525,7 +556,7 @@ namespace ServerLibs.DataAccess
             group.MembersId = "";
 
             //Update db
-            GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+            Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
         }
 
         /// <summary>
@@ -537,12 +568,12 @@ namespace ServerLibs.DataAccess
             User user = com.UserData;
 
             //Check if the user with same email already exist
-            if (!UsersTableRepo.IsExists(UsersTableFields.Email.ToString(), user.Email))
+            if (!Database.UsersTableRepo.IsExists(UsersTableFields.Email.ToString(), user.Email))
             {
                 //Add to table
-                var added = UsersTableRepo.Add(user);
+                var added = Database.UsersTableRepo.Add(user);
                 if(added)
-                    return new Command(CommandType.Answer, true, UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email));
+                    return new Command(CommandType.Answer, true, Database.UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email));
             }
 
             //else return error answer
@@ -560,11 +591,11 @@ namespace ServerLibs.DataAccess
             var user = com.UserData;
 
             //Find user with same email
-            var findUser = UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email);
+            var findUser = Database.UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email);
 
             //If the user doesn't exist
             if (findUser == null)
-                return new Command(CommandType.Answer, false, null);
+                return new Command(CommandType.Answer, null, null);
 
             //Check Passwords
             if (user.Password == findUser.Password)
@@ -575,17 +606,17 @@ namespace ServerLibs.DataAccess
 
                 findUser.Online = "true";
                 findUser.LocalLastTimeUpdated = DateTime.Now;
-                var updated = UsersTableRepo.Update(UsersTableFields.Email.ToString(), findUser.Email, findUser);
+                var updated = Database.UsersTableRepo.Update(UsersTableFields.Email.ToString(), findUser.Email, findUser);
 
                 var groupsId = findUser.chatsIdList;
 
                 //update groups
                 foreach (var id in groupsId)
                 {
-                    var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
+                    var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
                     group.UsersOnline += 1;
                     group.LocalLastTimeUpdated = DateTime.Now;
-                    GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), id.ToString(), group);
+                    Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), id.ToString(), group);
                 }
 
                 if (updated)
@@ -610,8 +641,8 @@ namespace ServerLibs.DataAccess
             //get groups info
             foreach (var groupId in userGroups)
             {
-                var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), groupId.ToString());
-                var messages = MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), groupId.ToString());
+                var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), groupId.ToString());
+                var messages = Database.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), groupId.ToString());
 
                 if (group != null)
                     groupsInfo.Add(group);
@@ -623,7 +654,7 @@ namespace ServerLibs.DataAccess
             //get contacts info
             foreach (var userId in userContacts)
             {
-                var contact = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), userId.ToString());
+                var contact = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), userId.ToString());
 
                 if (contact != null)
                     contactsInfo.Add(contact);
@@ -641,7 +672,7 @@ namespace ServerLibs.DataAccess
         {
             var group = (Group)com.RequestData;
 
-            var added = GroupsTableRepo.Add(group);
+            var added = Database.GroupsTableRepo.Add(group);
 
             //If added, return command with group data to client(with group Id)
             if (added)
@@ -650,11 +681,11 @@ namespace ServerLibs.DataAccess
                 var user = com.UserData;
 
                 //Get new id of the group
-                group = GroupsTableRepo.GetLast();
+                group = Database.GroupsTableRepo.GetLast();
                 user.AddNewChat(group);
-                UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+                Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
-                var newGroup = GroupsTableRepo.FindLast(GroupsTableFields.Name.ToString(), group.Name);
+                var newGroup = Database.GroupsTableRepo.FindLast(GroupsTableFields.Name.ToString(), group.Name);
                 return new Command(CommandType.Answer, newGroup, user);
             }
 
@@ -675,7 +706,7 @@ namespace ServerLibs.DataAccess
             var user = com.UserData;
 
             //Get the latest version of the group and update
-            group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), group.Id.ToString());
+            group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), group.Id.ToString());
             group.AddNewMember(user.Id);
             group.UsersOnline += 1;
 
@@ -685,11 +716,11 @@ namespace ServerLibs.DataAccess
 
             //Update user
             user.AddNewChat(group);
-            UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+            Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
 
             //update table
-            var updated = GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+            var updated = Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
 
             if (updated)
             {
@@ -723,7 +754,7 @@ namespace ServerLibs.DataAccess
             
             //Update user
             user.RemoveChat(group);
-            UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+            Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
 
             //If in group no more users or this is a chat with no admins delete it, else update
@@ -731,7 +762,7 @@ namespace ServerLibs.DataAccess
             {
 
                 //Update table
-                var updated = GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
+                var updated = Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
 
                 if (updated)
                     return new Command(CommandType.Answer, true, user);
@@ -740,10 +771,10 @@ namespace ServerLibs.DataAccess
             }
             else
             {
-                var removed = GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                var removed = Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
 
                 //Delete all messages
-                MessagesTableRepo.Remove(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
+                Database.MessagesTableRepo.Remove(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
 
                 if(removed)
 
@@ -781,17 +812,17 @@ namespace ServerLibs.DataAccess
             group.LocalLastTimeUpdated = DateTime.Now;
 
             //Update group
-            var updated = GroupsTableRepo.Update(UsersTableFields.Id.ToString(), group.Id.ToString(), group);
+            var updated = Database.GroupsTableRepo.Update(UsersTableFields.Id.ToString(), group.Id.ToString(), group);
 
 
             if (updated)
             {
                 //Get user info
-                var user = UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), userToDelate.Id.ToString());
+                var user = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), userToDelate.Id.ToString());
                 user.RemoveChat(group);
 
                 //Update user data
-                UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+                Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
             }
         }
 
@@ -802,12 +833,12 @@ namespace ServerLibs.DataAccess
             //Update message status
             message.Status = MessageStatus.Sended;
 
-            var added = MessagesTableRepo.Add(message);
+            var added = Database.MessagesTableRepo.Add(message);
 
             if (added)
             {
                 //Get group
-                var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), message.ReceiverId.ToString());
+                var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), message.ReceiverId.ToString());
 
 
                 return new Command(CommandType.Answer, message, null);
@@ -825,7 +856,7 @@ namespace ServerLibs.DataAccess
 
             foreach (var id in groupsId)
             {
-                var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
+                var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
 
                 group.RemoveMember(user.Id);
                 group.RemoveAdmin(user.Id);
@@ -833,16 +864,16 @@ namespace ServerLibs.DataAccess
                 //If group is chat and there isn't any admin or in the group no one member, than delete group and all messages
                 if((!group.isChannel && group.AdminsIdList.Count == 0) || group.MembersIdList.Count == 0)
                 {
-                    GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
-                    MessagesTableRepo.Remove(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
+                    Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                    Database.MessagesTableRepo.Remove(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
                 }
 
                 //Otherwise update
                 else
-                    GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), id.ToString(), group);
+                    Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), id.ToString(), group);
             }
 
-            var res = UsersTableRepo.Remove(UsersTableFields.Id.ToString(), user.Id.ToString());
+            var res = Database.UsersTableRepo.Remove(UsersTableFields.Id.ToString(), user.Id.ToString());
 
             if (res)
                 return new Command(CommandType.Answer, true, null);
@@ -855,14 +886,14 @@ namespace ServerLibs.DataAccess
 
             mess.LocalLastTimeUpdated = DateTime.Now;
 
-            MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), mess.Id.ToString(), mess);
+            Database.MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), mess.Id.ToString(), mess);
         }
 
         static void deleteMessage(Command com)
         {
             var mess = (Message)com.RequestData;
 
-            MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), mess.Id.ToString());
+            Database.MessagesTableRepo.Remove(MessagesTableFields.Id.ToString(), mess.Id.ToString());
         }
         
         static void signOut(Command com)
@@ -877,16 +908,16 @@ namespace ServerLibs.DataAccess
 
             foreach (var id in groupsId)
             {
-                var group = GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
+                var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
                 group.UsersOnline -= 1;
 
                 group.LocalLastTimeUpdated = DateTime.Now;
-                GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), id.ToString(), group);
+                Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), id.ToString(), group);
             }
 
             //Change user status to offline
             user.Online = "false";
-            UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+            Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
         }
         #endregion
     }
