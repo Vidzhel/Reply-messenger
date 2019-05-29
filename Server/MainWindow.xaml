@@ -20,10 +20,10 @@
         <StackPanel Margin="20 0 20 0" Grid.Row="1" Orientation="Horizontal">
             
             <!--Starts Server Button-->
-            <Button Name="StartServer" Content="Start Server" Padding="10 5 10 5" Height="30" Click="StartServer_Click"/>
+            <Button Name="StartServer" IsEnabled="{Binding ServerOffline}" Command="{Binding StartServer}" Content="Start Server" Padding="10 5 10 5" Height="30"/>
             
             <!--Stops Server-->
-            <Button Name="StopServer" Content="Stop Server" Margin="20 0 20 0" Padding="10 5 10 5" Height="30" Click="StopServer_Click"/>
+            <Button Name="StopServer" IsEnabled="{Binding ServerOnline}" Command="{Binding StopServer}" Content="Stop Server" Margin="20 0 20 0" Padding="10 5 10 5" Height="30"/>
 
             <!--Info-->
             

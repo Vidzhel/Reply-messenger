@@ -43,6 +43,8 @@ namespace ServerLibs.ConnectionToClient
 
         #region Private Members
 
+        static List<Client> connectedClients = new List<Client>();
+
         //main socket
         static Socket socket;
 
@@ -118,7 +120,7 @@ namespace ServerLibs.ConnectionToClient
             }
             catch (Exception e)
             {
-                displayMessageOnScreen("Error on starting listening " + e.ToString());
+                displayMessageOnScreen("Error on starting listening ");
             }
 
             displayMessageOnScreen("End listening");
@@ -130,8 +132,19 @@ namespace ServerLibs.ConnectionToClient
         /// <param name="reuseSocket">reuse socket in the future</param>
         static public void Disconect(bool reuseSocket)
         {
-            //socket?.Shutdown(SocketShutdown.Both);
-            //socket?.Close();
+            if(socket.Connected)
+                socket?.Shutdown(SocketShutdown.Both);
+
+            foreach (var client in connectedClients)
+            {
+                client.HandledSocket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+                UserDiscconected?.Invoke(client);
+            }
+
+            connectedClients = new List<Client>();
+
+            socket?.Close();
         }
         
         static public void SendData(Client client, object dataToSend)
@@ -195,17 +208,28 @@ namespace ServerLibs.ConnectionToClient
 
             displayMessageOnScreen("New connection");
 
-            // Get socket that handles current client request
-            Socket handler = socket.EndAccept(ar);
+            try
+            {
 
-            // Create client object that will provide command handler
-            Client client = new Client(handler);
+                // Get socket that handles current client request
+                Socket handler = socket.EndAccept(ar);
 
-            //Add new client to list of connected clients
-            UserConnected?.Invoke(client);
+                // Create client object that will provide command handler
+                Client client = new Client(handler);
 
-            // Begin recieve data
-            handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
+                connectedClients.Add(client);
+
+                //Add new client to list of connected clients
+                UserConnected?.Invoke(client);
+
+                // Begin recieve data
+                handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
+
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         static private void ReadCallback(IAsyncResult ar)
@@ -228,8 +252,11 @@ namespace ServerLibs.ConnectionToClient
             {
                 displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
 
+                connectedClients.Remove(client);
+
                 //Remove from online clients
                 UserDiscconected?.Invoke(client);
+
 
                 //Set user status to offline
                 client.HandleCommand(new Command(CommandType.SignOut, null, client.UserInfo));
@@ -271,6 +298,8 @@ namespace ServerLibs.ConnectionToClient
                     catch (Exception)
                     {
                         displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
+
+                        connectedClients.Remove(client);
 
                         //Remove from online clients
                         UserDiscconected?.Invoke(client);

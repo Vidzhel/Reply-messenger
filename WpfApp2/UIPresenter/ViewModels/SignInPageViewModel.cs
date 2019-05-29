@@ -77,12 +77,13 @@ namespace UI.UIPresenter.ViewModels
             {
                 SignInIsRunning = true;
                 
-                var res = await UnitOfWork.SighIn(new User(null, value, Email, null));
+                var res = await UnitOfWork.SignIn(new User(null, value, Email, null));
 
                 if (res == true)
                 {
                     //If all right open chat page
                     changePage("ChatPage");
+                    await UnitOfWork.SyncData();
                 }
 
                 //If data is wrong show erroro message

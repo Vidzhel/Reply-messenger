@@ -16,7 +16,23 @@ namespace ServerLibs.DataAccess
     /// </summary>
     public static class UnitOfWork
     {
-        public static DBRepositoryRemote Database = new DBRepositoryRemote();
+        static DBRepositoryRemote database;
+
+        public static DBRepositoryRemote Database
+        {
+            get
+            {
+                if (database == null)
+                {
+                    database = new DBRepositoryRemote();
+
+                    //Check database file integrity
+                    FileManager.ServerDatabaseIntegrityCheck(database.MessagesTableRepo.LoadConnectionString());
+                }
+
+                return database;
+            }
+        }
 
         public static List<Client> OnlineClients = new List<Client>();
 
@@ -88,6 +104,9 @@ namespace ServerLibs.DataAccess
                     break;
                 case CommandType.SearchRequest:
                     CommandChain.SendResponseCommand( new ClientCommand(searchRequest(com.Command), com.Client));
+                    break;
+                case CommandType.Synchronize:
+                    CommandChain.SendResponseCommand( new ClientCommand(synchronize(com.Command), com.Client));
                     break;
                 case CommandType.UpdateGroup:
                     updateGroup(com.Command);
@@ -185,6 +204,31 @@ namespace ServerLibs.DataAccess
                     //If user have the group
                     if (client.UserInfo.chatsIdList.Contains(message.ReceiverId))
                     {
+                        foreach (var fileName in message.AttachmentsList)
+                        {
+                            //Get name of file on server
+                            var serverFileName = Database.FilesTableRepo.FindFirst(FilesTableFields.FileName.ToString(), fileName).FileNameOnServer;
+
+                            // Load file meta data with FileInfo
+                            FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + @"\Reply Messenger Server\Saved Files\" + serverFileName);
+
+                            // The byte[] to save the data in
+                            byte[] fileData = new byte[fileInfo.Length];
+
+                            // Load a filestream and put its content into the byte[]
+
+                            using (var fs = fileInfo.OpenRead())
+                            {
+
+                                fs.Read(fileData, 0, fileData.Length);
+
+                                CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.SendFile, new object[] { fileName, fileData }, null), client));
+
+                            }
+
+                            CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.SendFile, message, null), client));
+                        }
+
                         //Send command
                         CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.SendMesssage, message, null), client));
                     }
@@ -270,6 +314,8 @@ namespace ServerLibs.DataAccess
             }
         }
 
+        
+
         private static void OnGroupRemoved(List<Group> data)
         {
             //Notify online users
@@ -317,23 +363,23 @@ namespace ServerLibs.DataAccess
             var fileContent = (byte[])((object[])command.RequestData)[1];
             var fileChecksum = DataConverter.CalculateChecksum(fileContent);
 
+            //Define path on the server
+            var filePathOnServer = FileManager.CheckOnUniqueness(Directory.GetCurrentDirectory() + @"\Reply Messenger Server\Saved Files\" + fileName);
+
+
             //Dont create file if it alrady exist
             if (Database.FilesTableRepo.IsExists(FilesTableFields.Checksum.ToString(), fileChecksum))
-                Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, fileChecksum));
+                Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, Path.GetFileName(filePathOnServer), fileChecksum));
 
             //Check folders
             FileManager.CheckServerRequiredFolders();
 
-            //Create file
-            var filePath = Directory.GetCurrentDirectory() + @"\Reply Messenger Server\Saved Files" + fileChecksum;
-            System.IO.File.Create(filePath);
-
             //Write data into the file
-            var fs = new FileInfo(filePath).OpenWrite();
+            var fs = new FileInfo(filePathOnServer).OpenWrite();
             fs.Write(fileContent, 0, fileContent.Length);
 
             //Add to database
-            Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, fileChecksum));
+            Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, Path.GetFileName(filePathOnServer), fileChecksum));
         }
 
         /// <summary>
@@ -595,14 +641,13 @@ namespace ServerLibs.DataAccess
 
             //If the user doesn't exist
             if (findUser == null)
-                return new Command(CommandType.Answer, null, null);
+                return new Command(CommandType.Answer, false, null);
 
             //Check Passwords
             if (user.Password == findUser.Password)
             {
                 //Update user status to Online
 
-                var syncData = synchronize(findUser);
 
                 findUser.Online = "true";
                 findUser.LocalLastTimeUpdated = DateTime.Now;
@@ -614,22 +659,26 @@ namespace ServerLibs.DataAccess
                 foreach (var id in groupsId)
                 {
                     var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
+                    if (group == null)
+                        continue;
                     group.UsersOnline += 1;
                     group.LocalLastTimeUpdated = DateTime.Now;
                     Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), id.ToString(), group);
                 }
 
                 if (updated)
-                    return new Command(CommandType.Answer, syncData, findUser);
+                    return new Command(CommandType.Answer, true, findUser);
                 else
-                    return new Command(CommandType.Answer, null, null);
+                    return new Command(CommandType.Answer, false, null);
             }
             else
-                return new Command(CommandType.Answer, null, null);
+                return new Command(CommandType.Answer, false, null);
         }
 
-        static object[] synchronize(User user)
+        static Command synchronize(Command com)
         {
+            var user = com.UserData;
+
             //Get all user groups and contacts
             var userGroups = user.chatsIdList;
             var userContacts = user.contactsIdList;
@@ -660,7 +709,10 @@ namespace ServerLibs.DataAccess
                     contactsInfo.Add(contact);
             }
 
-            return new object[]{groupsInfo, contactsInfo, messagesInfo};
+            //Get user info
+            user = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
+
+            return new Command( CommandType.Answer, new object[]{groupsInfo, contactsInfo, messagesInfo}, user);
         }
 
         /// <summary>
@@ -835,12 +887,11 @@ namespace ServerLibs.DataAccess
 
             var added = Database.MessagesTableRepo.Add(message);
 
+            //Update message Id
+            message = Database.MessagesTableRepo.GetLast();
+
             if (added)
             {
-                //Get group
-                var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), message.ReceiverId.ToString());
-
-
                 return new Command(CommandType.Answer, message, null);
             }
 
@@ -909,6 +960,10 @@ namespace ServerLibs.DataAccess
             foreach (var id in groupsId)
             {
                 var group = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), id.ToString());
+
+                if (group == null)
+                    continue;
+
                 group.UsersOnline -= 1;
 
                 group.LocalLastTimeUpdated = DateTime.Now;

@@ -27,3 +27,4 @@ C:\work\Visual studio\C#\OOP\Messenger\Server\obj\Debug\Server.csproj.CoreCompil
 C:\work\Visual studio\C#\OOP\Messenger\Server\obj\Debug\Server.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\Server\obj\Debug\Server.exe
 C:\work\Visual studio\C#\OOP\Messenger\Server\obj\Debug\Server.pdb
+C:\work\Visual studio\C#\OOP\Messenger\Server\obj\Debug\Server.csproj.Fody.CopyLocal.cache

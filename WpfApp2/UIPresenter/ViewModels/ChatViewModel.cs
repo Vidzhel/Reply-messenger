@@ -30,6 +30,12 @@ namespace UI.UIPresenter.ViewModels
 
         #endregion
 
+        /// <summary>
+        /// Attached files
+        /// </summary>
+        public List<string> Attachments { get; set; }
+        public FilesListViewModel AttachmentsList { get; set; } = new FilesListViewModel(true);
+
         public ChatPages CurrentChatPage { get; set; }
 
         /// <summary>

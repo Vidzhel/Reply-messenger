@@ -250,6 +250,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 ToolTip="Delete group"
+                                Command="{Binding DeleteGroup}"
                                 Margin="8"
                                 FontSize="14"
                                 Visibility="{Binding AreYouAdmin, Converter={converters:BoolToVisibilityConverter}}"

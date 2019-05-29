@@ -20,6 +20,9 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public ICommand ChangeGroupInfo { get; set; }
 
+        //Deletes group
+        public ICommand DeleteGroup { get; set; }
+
         public Group GroupInfo { get; set; }
 
         /// <summary>
@@ -95,6 +98,7 @@ namespace UI.UIPresenter.ViewModels
             ApplicationService.GetChatViewModel.OnCurrentChatChanged((sender, args) => loadInfo(args));
 
             ChangeGroupInfo = new RelayCommandParametrized((data) => changeGroupInfo(data));
+            DeleteGroup = new RelayCommand(deleteGroup);
 
             //Load data
             loadInfo(ApplicationService.GetCurrentChoosenChat);
@@ -104,6 +108,13 @@ namespace UI.UIPresenter.ViewModels
         #endregion
 
         #region Private Methods
+
+        async void deleteGroup()
+        {
+            await UnitOfWork.RemoveGroup(GroupInfo);
+            await UnitOfWork.LeaveGroup(GroupInfo);
+            ApplicationService.ChangeCurrentChatPage(Pages.ChatPages.UserInfo);
+        }
 
         void changeGroupInfo(object data)
         {

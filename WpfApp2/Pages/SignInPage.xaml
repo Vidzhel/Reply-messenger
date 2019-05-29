@@ -43,11 +43,13 @@
             
             <!--Regular Text-->
             <Label Style="{StaticResource RegularText}" Margin="40 0 0 40" Content="Sign In" FontSize="30"/>
-            
-            <!--Fields-->
-            <TextBox Tag="E-mail" Text="{Binding Email}" TabIndex="0" Style="{StaticResource DataField}" Name="SignInUserName" Margin="40 0 40 20"/>
-            <PasswordBox Tag="Password" TabIndex="1" Style="{StaticResource DataPasswordField}" Name="SignInPassword" Margin="40 0 40 0"/>
 
+            <!--Fields-->
+            <TextBox Tag="E-mail" Text="{Binding Email}" TabIndex="0"  Style="{StaticResource DataField}" Margin="40 0 40 20" Name="SignInUserName"/>
+            <PasswordBox Tag="Password" TabIndex="1" Style="{StaticResource DataPasswordField}" Margin="40 0 40 20" Name="SignInPassword" />
+            
+            
+            
             <!--Error Message Box-->
             <Label Style="{StaticResource RegularText}" Foreground="{StaticResource LightRedBrush}" Content="{Binding ErrorMessage}" Margin="40 10 40 0"/>
 

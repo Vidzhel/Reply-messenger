@@ -1,0 +1,434 @@
+#include "pch.h"
+#include <stdio.h>
+#include <Windows.h>
+#include <conio.h>
+#define N 40
+#define COLS 11
+
+
+
+struct student {
+	char name[N];
+	char surname[N];
+	char thirdName[N];
+	char sex[N];
+	char nationality[N];
+	char dateOfBirth[N];
+	char phoneNumber[N];
+	char adress[N];
+	char grade[N];
+	char group[N];
+	char specialty[N];
+}*list;
+
+int i = 0;
+
+
+
+int getNum(int min, int max) {
+	int ch;
+	do
+	{
+		ch = _getch() - 48;
+		if (ch >= min && ch <= max)
+			return ch;
+		else if (ch == 0) {
+			return 0;
+		}
+		else
+			printf(" Помилка спробуйте ще раз\n\n");
+	} while (true);
+}
+
+int menu(void) {
+	printf("\nМеню:\n");
+	printf(" 1 Створити новий запис\n");
+	printf(" 2 Змінити існуючий запис\n");
+	printf(" 3 Вивести записи\n");
+	printf(" 4 Шукати запис\n");
+	printf(" 5 Видалити запис\n");
+	printf(" 6 Сортувати записи\n");
+	printf(" 7 Зберегти в файл\n");
+	printf(" 8 Відкрити з файлу\n");
+	printf(" 9 Вийти\n");
+
+	return getNum(1, 9);
+}
+
+const char* column(int col)
+{
+	const char *columns[] = {
+	"Номер",
+	"Ім'я",
+	"Фамілія",
+	"По батькові",
+	"Стать",
+	"Національність",
+	"Дата народження",
+	"Номер телефону",
+	"Адреса",
+	"Курс",
+	"Група",
+	"Спеціальність"
+	};
+	return columns[col];
+}
+
+void scan(char *path, int start) {
+	int k = start, c;
+	do
+	{
+		c = _getch();
+		if (c == '.')
+			break;
+		else if (c == 8) {
+			printf("\b");
+			path[k] = '\0';
+			k > start ? k-- : 0;
+			path[k] = '\0';
+		}
+		else {
+			printf("%c", c);
+			path[k] = c;
+			k++;
+		}
+	} while (k < N - 1);
+	path[k] = '\0';
+}
+
+char* field(int col, int row) {
+	char *fields[] = {
+		(list + row)->name,
+		(list + row)->surname,
+		(list + row)->thirdName,
+		(list + row)->sex,
+		(list + row)->nationality,
+		(list + row)->dateOfBirth,
+		(list + row)->phoneNumber,
+		(list + row)->adress,
+		(list + row)->grade,
+		(list + row)->group,
+		(list + row)->specialty
+	};
+	return fields[col];
+}
+
+void createNew(void) {
+	int c, k;
+	list = (student*)realloc(list, sizeof(student)*(i + 2));
+	for (int j = 1; j < COLS + 1; j++)
+	{
+		printf("\n Введіть %s: ", column(j));
+		scan(field(j - 1, i), 0);
+	}
+	i++;
+	printf("\n");
+}
+
+int nums(int num) {
+	int k = 0;
+	for (int temp = num; temp >= 1; k++) {
+		temp /= 10;
+	}
+	return k;
+}
+
+int orderA(int c)
+{
+	if (c >= 'А' && c <= 'Я')
+		return c - 409;
+	else if (c >= 'а' && c <= 'я')
+		return c - 429;
+	else if (c >= 'A' && c <= 'Z')
+		return c - 64;
+	else if (c >= 'a' && c <= 'z')
+		return c - 96;
+	else if (c >= '0' && c <= '9')
+		return c - 48;
+	return 0;
+}
+
+int colSize(int col) {
+	int size = 0;
+	size = strlen(column(col));
+	if (col == 0) {
+		int temp;
+		nums(i) > 3 ? temp = nums(i) + 1 : temp = 6;
+		return temp;
+	}
+	for (int j = 0; j < i; j++)
+		strlen(field(col - 1, j)) > size ? size = strlen(field(col - 1, j)) : 0;
+	return size;
+}
+
+void print(const char *row, const char *col) {
+	int rows, cols, allCols = 0, allRows = 0;
+	(strcmp("all", row)) == 0 ? rows = i, allRows = 1 : rows = strlen(row);
+	(strcmp("all", col)) == 0 ? cols = COLS + 1, allCols = 1 : cols = strlen(col);
+	printf("\n\n");
+	for (int i = 0, tempCol; i < cols; i++)
+	{
+		allCols ? tempCol = i : tempCol = col[i] - 48;
+		printf("|%s", column(tempCol));
+		if (tempCol == 0) {
+			for (int j = 0; j < (colSize(0) - strlen(column(tempCol)) - 1); j++)
+				printf(" ");
+		}
+		for (int j = 0; j < (colSize(tempCol) - strlen(column(tempCol))); j++)
+			printf(" ");
+	}
+	printf("|");
+	for (int j = 0, tempRow, tempCol; j < rows; j++)
+	{
+		allRows ? tempRow = j : tempRow = row[j] - 49;
+		if (tempRow > i) {
+			printf("\n\nНевірний рядок\n");
+			return;
+		}
+		printf("\n| %d", j + 1);
+		for (int k = 0; k < (colSize(0) - nums(j + 1) - 1); k++)
+			printf(" ");
+		printf("|");
+		for (int k = 0, is = 0; k < cols - 1; k++)
+		{
+			allCols ? tempCol = k : (tempCol = col[k + 1] - 49) == -1 ? is = 1 : 0;
+			if (is)
+			{
+				printf("\n\n Помилка, 0 рядок відсутній\n");
+				break;
+			}
+			colSize(tempCol + 1) == strlen(field(tempCol, tempRow)) ? 0 : printf(" ");
+			printf("%s", field(tempCol, tempRow));
+			for (int i = 1; i < (colSize(tempCol + 1) - strlen(field(tempCol, tempRow))); i++)
+				printf(" ");
+			printf("|");
+		}
+	}
+	printf("\n\n");
+}
+
+void printChoose() {
+	printf("\n Введіть стовпчики, які бажаєте вивести [1; %d] або 'all':\n\n", COLS);
+	for (int i = 1; i < COLS + 1; i++)
+		printf("  %d- %s;\n", i, column(i));
+	char* col = (char*)calloc(1, 1);
+	char* row = (char*)calloc(1, 1);
+	col[0] = '0';
+	printf("\n");
+	scan(col, 1);
+	printf("\n");
+	printf("\n Введіть рядки, які бажаєте вивести(0; %d) або 'all':\n\n", i + 1);
+	scan(row, 0);
+	printf("\n");
+	print(row, col);
+}
+
+void printTable() {
+	printf("\n Виберіть один з варіантів:\n\n");
+	printf("  0- ..\n");
+	printf("  1- Вивести всю таблицю;\n");
+	printf("  2- Вивести частину таблиці;\n");
+	int ch = getNum(1, 2);
+	if (ch == 0)
+		return;
+	ch == 1 ? print("all", "all") : printChoose();
+}
+
+void search(void) {
+	printf("\n Виберіть один з варіантів:\n\n");
+	printf("  0- ...\n");
+	for (int i = 1; i < COLS + 1; i++)
+		printf("  %d- Шукати по: %s\n", i, column(i));
+	int ch = getNum(1, COLS);
+	if (ch == 0)
+		return;
+	ch--;
+	char* target = (char*)calloc(1, 1), c;
+	char* resultOfSearch = (char*)calloc(1, 1);
+	int k = 0;
+	printf("\n Введіть слово, або його частину:\n");
+	scan(target, 0);
+	printf("\n\n");
+	int is;
+	for (int j = 0, n = 0; j < i; j++)
+	{
+		is = 1;
+		for (int k = 0; field(ch, j)[k] != '\0' && target[k] != '\0'; k++)
+		{
+			if (field(ch, j)[k] != target[k])
+			{
+				is = 0;
+				break;
+			}
+		}
+		if (is)
+		{
+			resultOfSearch[n] = j + 49, n++;
+			resultOfSearch[n] = '\0';
+		}
+	}
+	print(resultOfSearch, "all");
+	printf("\n\n");
+}
+
+void del(void) {
+	print("all", "all");
+	printf("\n Введіть рядок, який бажаєте видалити (0; %d) або 0 щоб вийти:\n", i + 1);
+	int ch = getNum(1, i);
+	if (ch == 0)
+		return;
+	ch--;
+	for (int m = ch; m < i - 1; m++)
+		list[m] = list[m + 1];
+	i--;
+	list = (student*)realloc(list, sizeof(student)*i + 1);
+}
+
+void quit() {
+	printf("\n Вихід...");
+	exit(0);
+}
+
+
+void sortAlphabet(void) {
+	print("all", "all");
+	printf("\n Виберіть один з варіантів:\n\n");
+	printf("  0- ...\n");
+	for (int i = 1; i < COLS + 1; i++)
+		printf("  %d- Сортувати по: %s;\n", i, column(i));
+	int ch = getNum(1, COLS);
+	if (ch == 0)
+		return;
+	ch--;
+	char* order = (char*)calloc(i + 1, 1);
+	for (int j = 0, pos; j < i; j++)
+	{
+		pos = 1;
+		for (int n = 0; n < i; n++)
+			for (int k = 0; ; k++)
+			{
+				if (field(ch, j)[k] == '\0' || field(ch, n)[k] == '\0')
+					break;
+				if (j == n)
+					continue;
+				int o1, o2;
+				o1 = orderA(field(ch, j)[k]);
+				o2 = orderA(field(ch, n)[k]);
+				if (o1 < o2)
+				{
+					break;
+				}
+				else if (o1 > o2)
+				{
+					pos++;
+					break;
+				}
+			}
+		order[pos - 1] = j + 49;
+	}
+	order[i + 1] = '\0';
+	print(order, "all");
+}
+
+void sort() {
+	printf("\n Виберіть один з варіантів:\n\n");
+	printf("  0- ...\n");
+	printf("  1- Сортувати за спаданням;\n");
+	printf("  2- Сортувати за алфавітом;\n");
+	int ch = getNum(1, 2);
+	if (ch == 0)
+		return;
+	if (ch == 1) {
+		char* order = (char*)calloc(i + 1, 1);
+		for (int j = i, k = 0; k < i; j--, k++) {
+			order[k] = j + 48;
+		}
+		order[i] = '\0';
+		print(order, "all");
+	}
+	else if (ch = 2)
+		sortAlphabet();
+}
+
+
+void save() {
+	FILE *myfile;
+	fopen_s(&myfile, "dataTable.txt", "w") == 0 ? printf("\nФайл відкрився\n") : printf("\nФайл не відкрився\n");
+	for (int row = 0; row < i; row++) {
+		for (int col = 0; col < COLS; col++) {
+			for (int sumb = 0; field(col, row)[sumb] != '\0'; sumb++)
+				fputc(field(col, row)[sumb], myfile);
+			fputs(".", myfile);
+		}
+	}
+	fclose(myfile) == 0 ? printf("\nЗміни було збережено(%d)\n\n", i) : printf("\nПомилка, зміни не збержено\n\n");
+}
+
+void open() {
+	FILE *myfile;
+	char ch;
+	i = 0;
+	list = (student*)realloc(list, sizeof(student)*i);
+	fopen_s(&myfile, "dataTable.txt", "r") == 0 ? printf("\nФайл відкрився\n") : printf("\nФайл не відкрився\n");
+	int changes = 0;
+	for (int ch; !feof(myfile);) {
+		if ((ch = fgetc(myfile)) == '.')
+			changes++;
+	}
+	changes /= COLS;
+	fseek(myfile, 0L, 0);
+	list = (student*)realloc(list, sizeof(student)*changes);
+	for (int row = 0, col = 0, sumb = 0; !feof(myfile);) {
+		ch = fgetc(myfile);
+		if (ch == '.') {
+			field(col, row)[sumb] = '\0';
+			++col > COLS - 1 ? col = 0, row++, i++ : 0;
+			sumb = 0;
+			continue;
+		}
+		field(col, row)[sumb] = ch;
+		sumb++;
+	}
+	i != changes ? printf("Помилка завантаження файлу") : 0;
+	fclose(myfile) == 0 ? printf("\nЗміни завантажено(%d)\n\n", i) : printf("\nПомилка\n\n");
+}
+
+void change() {
+	print("all", "all");
+	printf("\n Введіть рядок або 0 щоб вийти:\n\n");
+	int row = getNum(1, i);
+	if (row == 0)
+		return;
+	row--;
+	printf("\n Виберіть один з варіантів:\n\n");
+	for (int i = 1; i < COLS + 1; i++)
+		printf("  %d- Змінити: %s;\n", i, column(i));
+	int col = getNum(1, COLS);
+	col--;
+	printf("\n Введіть %s: ", column(col + 1));
+	scan(field(col, row), 0);
+	printf("\n");
+}
+
+void(*options[])() = {
+	createNew,
+	change,
+	printTable,
+	search,
+	del,
+	sort,
+	save,
+	open,
+	quit
+};
+
+int main(void)
+{
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	list = (student*)calloc(1, sizeof(student));
+	do
+	{
+		(*options[menu() - 1])();
+	} while (true);
+}

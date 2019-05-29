@@ -231,6 +231,8 @@ namespace UI.UIPresenter.ViewModels
             }
 
             await UnitOfWork.CreateGroup(new Group(isPrivate, groupName, isChannel, "", 0, new List<int>() { UnitOfWork.User.Id }, new List<int>() { UnitOfWork.User.Id }, 1));
+            ApplicationService.ChangeCurrentChat(UnitOfWork.Database.GroupsTableRepo.GetLast());
+            ApplicationService.ChangeCurrentChatPage(Pages.ChatPages.Chat);
 
             CreateGroupErrorMessage = "";
             FieldState = ControlStates.NormalGray;
@@ -257,6 +259,7 @@ namespace UI.UIPresenter.ViewModels
             {
                 ChangePassErrorMessage = errorMess;
                 FieldState = ControlStates.PasswordError;
+                return;
             }
 
             //If all ok 

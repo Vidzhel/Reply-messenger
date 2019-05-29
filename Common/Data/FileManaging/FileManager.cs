@@ -148,7 +148,11 @@ namespace CommonLibs.Data
 
         }
 
-        public static void DatabaseIntegrityCheck(string databaseConnectionString) {
+        /// <summary>
+        /// Crecks and creates data base if it doesn't exist
+        /// </summary>
+        /// <param name="databaseConnectionString"></param>
+        public static void ClientDatabaseIntegrityCheck(string databaseConnectionString) {
 
             //Check for the main directories
             CheckClientRequiredFolders();
@@ -203,6 +207,84 @@ namespace CommonLibs.Data
                 using (IDbConnection con = new SQLiteConnection(databaseConnectionString))
                 {
                     con.Execute(createContactsTable);
+                    con.Execute(createGroupsTable);
+                    con.Execute(createMessagesTable);
+                }
+
+            }
+
+        }
+
+        /// <summary>
+        /// Crecks and creates data base if it doesn't exist
+        /// </summary>
+        /// <param name="databaseConnectionString"></param>
+        public static void ServerDatabaseIntegrityCheck(string databaseConnectionString)
+        {
+
+            //Check for the main directories
+            CheckServerRequiredFolders();
+
+            //Check if database exist
+            if (!System.IO.File.Exists(Directory.GetCurrentDirectory() + @"\Reply Messenger Server" + @"\SQLiteRemoteDB.db"))
+            {
+
+                //Create database
+                SQLiteConnection.CreateFile(Directory.GetCurrentDirectory() + @"\Reply Messenger Server" + @"\SQLiteRemoteDB.db");
+
+                #region requests
+
+                var createFilesTable = @"CREATE TABLE Files (
+                                            Id    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                                            FileName  TEXT NOT NULL,
+	                                        FileNameOnServer  TEXT NOT NULL,
+	                                        Checksum  TEXT NOT NULL
+                                        )";
+
+                var createUsersTable = @"CREATE TABLE Users (
+                                            Id    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	                                        UserName  TEXT NOT NULL,
+	                                        Password  TEXT NOT NULL,
+	                                        Email TEXT NOT NULL UNIQUE,
+                                            Bio   TEXT,
+	                                        Online    TEXT NOT NULL,
+	                                        ChatsId   TEXT,
+	                                        ProfilePhoto  TEXT,
+	                                        ContactsId    TEXT,
+	                                        LastTimeUpdated   INTEGER
+                                        )";
+
+                var createGroupsTable = @"CREATE TABLE Groups (
+                                            Id    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                                            Name  TEXT NOT NULL,
+                                            AdminsId  TEXT NOT NULL,
+                                            MembersId TEXT,
+                                            Image TEXT,
+                                            IsPrivate TEXT NOT NULL,
+                                            IsChannel TEXT NOT NULL,
+                                            UsersOnline   INTEGER,
+                                            LastTimeUpdated   INTEGER
+                                        )";
+
+                var createMessagesTable = @"CREATE TABLE Messages(
+                                            Id    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                                            SenderId  INTEGER NOT NULL,
+                                            ReceiverId    INTEGER NOT NULL,
+                                            Data  TEXT NOT NULL,
+                                            DataType  TEXT NOT NULL,
+                                            Date  TEXT NOT NULL,
+                                            Status    TEXT NOT NULL,
+                                            LastTimeUpdated   TEXT NOT NULL,
+                                            Attachments   TEXT
+                                        )";
+
+                #endregion
+
+                //Create tables
+                using (IDbConnection con = new SQLiteConnection(databaseConnectionString))
+                {
+                    con.Execute(createFilesTable);
+                    con.Execute(createUsersTable);
                     con.Execute(createGroupsTable);
                     con.Execute(createMessagesTable);
                 }

@@ -36,6 +36,7 @@ namespace CommonLibs.Data
         RemoveMessage,
         SendMesssage,
         SendFile,
+        GetFile,
 
         UpdateUserInfo,
         UpdateUserPassword,

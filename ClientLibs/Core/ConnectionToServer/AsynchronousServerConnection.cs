@@ -251,25 +251,6 @@ namespace ClientLibs.Core.ConnectionToServer
 
         #region Private Methods
 
-        static void reconnectServer()
-        {
-            try
-            {
-                //Start connecting
-                var asyncResult = Socket.BeginConnect(RemoteEndPoint, null, null);
-
-                Socket.EndConnect(asyncResult);
-
-                ServerConnected = true;
-                //Notify connection changed
-                connectionChanged(null, ServerConnected);
-            }
-            catch (Exception e)
-            {
-                DisplayMessageOnScreen($"Error on starting connectiong, try again after {ReconectionTimeSeconds} seconds \n " + e.ToString());
-            }
-        }
-
         /// <summary>
         /// Check connection, notify connection lost
         /// </summary>
@@ -280,17 +261,24 @@ namespace ClientLibs.Core.ConnectionToServer
                 //Check every ReconectionTimeSeconds seconds
                 Thread.Sleep(ReconectionTimeSeconds * 1000);
 
-                //If socket not connected
-                if ((Socket.Poll(1, SelectMode.SelectRead) && Socket.Available == 0) || Socket == null)
+                try
                 {
-                    ServerConnected = false;
-                    //Notify connection changed
-                    connectionChanged(null, ServerConnected);
 
 
-                    //Reconnect
-                    reconnectServer();
+                    //If socket not connected
+                    if ((Socket.Poll(1, SelectMode.SelectRead) && Socket.Available == 0) || Socket == null)
+                    {
+                        ServerConnected = false;
+                        //Notify connection changed
+                        connectionChanged(null, ServerConnected);
+
+                        Socket.Dispose();
+
+                        //Reconnect
+                        Start();
+                    }
                 }
+                catch (Exception e) { }
                 
             } while (true);
         }

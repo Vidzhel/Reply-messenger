@@ -1,9 +1,9 @@
-﻿//using PropertyChanged;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using PropertyChanged;
 
 namespace Server
 {
-    //[AddINotifyPropertyChangedInterface]
+    [AddINotifyPropertyChangedInterface]
     public class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

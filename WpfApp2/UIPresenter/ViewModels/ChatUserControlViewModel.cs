@@ -25,7 +25,8 @@ namespace UI.UIPresenter.ViewModels
         /// <summary>
         /// Currently chosen attachments
         /// </summary>
-        public List<string> Attachments { get; set; }
+        public ChatViewModel ChatViewModel => ApplicationService.GetChatViewModel;
+
 
         /// <summary>
         /// Command for send message button
@@ -121,7 +122,7 @@ namespace UI.UIPresenter.ViewModels
             //Set current chat
             ChangeChat(ApplicationService.GetCurrentChoosenChat);
 
-            Attachments = new List<string>();
+            ChatViewModel.Attachments = new List<string>();
         }
 
         #endregion
@@ -131,7 +132,24 @@ namespace UI.UIPresenter.ViewModels
         void attachFile()
         {
             var filePath = FileManager.OpenFileDialogForm("All fiels (*.*)|*.*");
-            Attachments.Add(filePath);
+
+            if (filePath != String.Empty)
+            {
+                bool add = true;
+                foreach (var attachedFile in ChatViewModel.Attachments)
+                    if (attachedFile == filePath)
+                        add = false;
+
+                if (add)
+                {
+                    ChatViewModel.Attachments.Add(filePath);
+                    //Becouse Items is ObservableCollection we should update elements from the main thread
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        ChatViewModel.AttachmentsList.Items.Add(new FilesListItemViewModel(filePath, true));
+                    });
+                }
+            }
         }
 
         /// <summary>
@@ -265,7 +283,12 @@ namespace UI.UIPresenter.ViewModels
 
                         if (MessageList.Items[i].Message.Id == data.Id)
                         {
-                            MessageList.Items.RemoveAt(i);
+                            //Becouse Items is ObservableCollection we should update elements from the main thread
+                            App.Current.Dispatcher.Invoke(() =>
+                            {
+                                MessageList.Items.RemoveAt(i);
+                            });
+
                             break;
                         }
                     }
@@ -335,17 +358,18 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         async void sendMessage()
         {
-            if (CurrentChat == null || (this.MessageContent == null && Attachments.Count == 0))
+            if (CurrentChat == null || (this.MessageContent == null && ChatViewModel.Attachments.Count == 0))
                 return;
 
             //Delete unnecessary spaces
             var text = System.Text.RegularExpressions.Regex.Replace(MessageContent, @"^(\s*)(\S*)(\s*)$", "$2");
 
             //Add message to repository
-            await UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text, MessageStatus.SendingInProgress,Attachments));
+            await UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text, MessageStatus.SendingInProgress, ChatViewModel.Attachments));
 
             MessageContent = "";
-            Attachments = new List<string>();
+            ChatViewModel.Attachments = new List<string>();
+            ChatViewModel.AttachmentsList = new FilesListViewModel();
         }
 
         #endregion

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using PropertyChanged;
 using UI.Pages;
 using UI.InversionOfControl;
+using ClientLibs.Core.DataAccess;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -72,6 +73,11 @@ namespace UI.UIPresenter.ViewModels
             }
         }
 
+        //Min size of the window
+        public double MinHeight { get; set; } = 400;
+        public double MinWidth { get; set; } = 600;
+
+
         /// <summary>
         /// Set Corner Radious
         /// </summary>
@@ -85,6 +91,10 @@ namespace UI.UIPresenter.ViewModels
             }
         }
 
+        /// <summary>
+        /// True if server connected to the server
+        /// </summary>
+        public bool ConnectedToServer { get; set; }
 
         /// <summary>
         /// Set Height of Caption
@@ -108,6 +118,10 @@ namespace UI.UIPresenter.ViewModels
                 OnPropertyChanged(nameof(OutherMarginThickness));
             };
 
+            //Set on connection changed handlers
+            UnitOfWork.AddConnectionChangedHandler((s, a) => OnConnectionChanged(s, a));
+            ConnectedToServer = UnitOfWork.ServerConnected;
+
             //commands for buttons
             CloseWindow = new RelayCommand(() => {
                 window.Close();
@@ -120,6 +134,18 @@ namespace UI.UIPresenter.ViewModels
             {
                 window.WindowState ^= WindowState.Maximized;
             });
+
+            //Fix windew resize Issue
+            var resizer = new WindowResizer(window);
+        }
+
+        #endregion
+
+        #region Private Handlers
+
+        void OnConnectionChanged(object sender, bool args)
+        {
+            ConnectedToServer = args;
         }
 
         #endregion

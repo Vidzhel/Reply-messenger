@@ -13,7 +13,12 @@
         
         x:Name="Window"
         
-        Title="MainWindow" Height="600" Width="1024" WindowStyle="None" AllowsTransparency="True"
+        MinHeight="{Binding MinHeight}"
+        MinWidth="{Binding MinWidth}"
+        Title="MainWindow"
+        Height="600"
+        Width="1024"
+        WindowStyle="None" AllowsTransparency="True"
         Background="Transparent" WindowStartupLocation="CenterScreen">
 
 
@@ -22,6 +27,7 @@
                       ResizeBorderThickness="{Binding BorderResizeThickness}"
                       CaptionHeight="{Binding CaptionHeight}"
                       CornerRadius="0"
+                      
                       GlassFrameThickness="0"
                        />
     </WindowChrome.WindowChrome>
@@ -32,7 +38,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Window">
-                        <Border  Padding="{Binding OutherMarginThickness}">
+                        <Border  Padding="{Binding OutherMarginThickness}"
+                                 >
+                            
                             <Border Name="Border" Background="{StaticResource GrayBGBrush}" BorderThickness="{Binding WindowBorderSizeThickness, FallbackValue=4}" BorderBrush="{StaticResource DarkBgBrush}" CornerRadius="{Binding CornerRadius}">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.2"/>
@@ -54,18 +62,39 @@
                                     <!--Caption Bar-->
                                     <Grid Grid.Column="0" Panel.ZIndex="3" Background="{StaticResource DarkBgBrush}">
                                         <Grid.ColumnDefinitions>
-                                            <!--Logo-->
+                                            <!--Additional info-->
                                             <ColumnDefinition Width="Auto"/>
-                                            
+
                                             <!--Program Name-->
                                             <ColumnDefinition Width="*"/>
 
                                             <!--Buttons-->
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <!--TODO Add Messenger Logo-->
+                                        
+                                        <StackPanel Orientation="Horizontal">
 
-                                        <TextBlock VerticalAlignment="Center" Margin="0 0 0 2" HorizontalAlignment="Center" Grid.Column="1" Foreground="AliceBlue" Text="Messenger" />
+                                            <Label Content=""
+                                                   FontWeight="Black"
+                                                   FontSize="12"
+                                                   Style="{StaticResource Sumbol}"
+                                                   VerticalAlignment="Center"
+                                                   />
+
+                                            <Label Content="{Binding ConnectedToServer, Converter={converters:BoolToIsConnectedTextConverter}}"
+                                                   Foreground="{Binding ConnectedToServer, Converter={converters:BoolToIsConnectedColorConvertor}}"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="12"
+                                                   Margin="3 0 0 0"/>
+
+                                        </StackPanel>
+
+                                        <TextBlock Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="0 0 0 2" HorizontalAlignment="Center" Grid.Column="0" Foreground="AliceBlue">
+                                            <Run Foreground="{StaticResource LightBlueBrush}">
+                                                Reply
+                                            </Run>
+                                            Messenger
+                                        </TextBlock>
                                         
                                         <!--Window sstem buttons-->
                                         <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0 0 7 0">

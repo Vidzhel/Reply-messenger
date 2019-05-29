@@ -4,6 +4,7 @@ using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UI.InversionOfControl;
@@ -66,6 +67,11 @@ namespace UI.UIPresenter.ViewModels.Commands
         /// </summary>
         public static ICommand InviteUserToChat { get; set; }
 
+        /// <summary>
+        /// Opens file using full path
+        /// </summary>
+        public static ICommand OpenFile { get; set; }
+
         
 
         #endregion
@@ -86,12 +92,18 @@ namespace UI.UIPresenter.ViewModels.Commands
             LeaveChat = new RelayCommandParametrized((args) => leaveChat(args));
             RemoveUserFromChat = new RelayCommandParametrized((args) => removeUserFromChat(args));
             InviteUserToChat = new RelayCommandParametrized((args) => inviteUserToChat(args));
+            OpenFile = new RelayCommandParametrized((args) => openFile(args));
 
         }
 
         #endregion
 
         #region Private Methods
+
+        static void openFile(object data)
+        {
+            Process.Start((string)data);
+        }
 
         static void inviteUserToChat(object data)
         {

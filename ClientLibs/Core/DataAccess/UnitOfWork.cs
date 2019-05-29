@@ -39,14 +39,14 @@ namespace ClientLibs.Core.DataAccess
                     database = new DBRepositoryLocal();
 
                     //Check database file integrity
-                    FileManager.DatabaseIntegrityCheck(database.ContactsTableRepo.LoadConnectionString());
+                    FileManager.ClientDatabaseIntegrityCheck(database.ContactsTableRepo.LoadConnectionString());
                 }
 
                 return database;
             }
         }
 
-        public static User User { get; private set; } = new User("Me", "asdsa", "email", "kek", Directory.GetCurrentDirectory() + @"\Reply Messenger\User Files\" + "ProfilePhoto.png");
+        public static User User { get; private set; }
         public static Contact Contact => User;
 
         public static bool ServerConnected { get; set; }
@@ -317,7 +317,6 @@ namespace ClientLibs.Core.DataAccess
             if (ServerConnected)
                 await Task.Run(() =>
                 {
-
                     commandChain.SendCommand(CommandType.RemoveGroup, group, User);
                 });
         }
@@ -545,6 +544,43 @@ namespace ClientLibs.Core.DataAccess
             return result;
         }
 
+        public static async Task<string> GetFilesByName(string fileNames)
+        {
+            //TODO Finish
+
+            //var result = await Task.Run(() =>
+            //{
+
+            //    foreach (var name in fileNames)
+            //    {
+            //        var localPath = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name;
+            //        if (System.IO.File.Exists(localPath))
+            //            return localPath;
+            //        else
+            //        {
+            //            var res = commandChain.MakeRequest(CommandType.GetFile, name, User);
+
+            //            if (res == null)
+            //                continue;
+
+            //            var fileContent = (byte[])res.RequestData;
+
+            //            //Check folders
+            //            FileManager.CheckServerRequiredFolders();
+
+            //            //Write data into the file
+            //            var fs = new FileInfo(localPath).OpenWrite();
+            //            fs.Write(fileContent, 0, fileContent.Length);
+
+            //            return localPath;
+            //        }
+            //    }
+
+            //});
+
+            return null;
+        } 
+
         /// <summary>
         /// 
         /// </summary>
@@ -587,7 +623,7 @@ namespace ClientLibs.Core.DataAccess
         /// </summary>
         /// <param name="userData"></param>
         /// <returns></returns>
-        public static async Task<bool> SighIn(User userData)
+        public static async Task<bool> SignIn(User userData)
         {
             if (!ServerConnected)
                 return false;
@@ -604,11 +640,9 @@ namespace ClientLibs.Core.DataAccess
 
 
                 // if all Ok save user data
-                if (response.RequestData != null)
+                if ((bool)response.RequestData)
                 {
                     User = response.UserData;
-
-                    syncData((object[])response.RequestData);
 
                     return true;
                 }
@@ -620,97 +654,114 @@ namespace ClientLibs.Core.DataAccess
         }
 
         /// <summary>
-        /// Adds removes and updates groups
+        /// Adds, removes and updates contacts, groups, masages
         /// </summary>
         /// <param name="syncData"></param>
-        static void syncData(object[] syncData)
+        public static async Task SyncData()
         {
-            var groupsInfo = (List<Group>)syncData[0];
-            var contactsInfo = (List<Contact>)syncData[1];
-            var messagesInfo = (List<Message>)syncData[2];
 
-            //Find differences in Last Time Update and update if necessary
-            foreach (var group in groupsInfo)
+            if (!ServerConnected)
+                return;
+
+            await Task.Run(() =>
             {
-                var foundGroup = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), group.Id.ToString());
 
-                if(foundGroup == null)
+                var res = commandChain.MakeRequest(CommandType.Synchronize, null, User);
+
+                //Update user
+                if (User.LastTimeUpdated != res.UserData.LastTimeUpdated)
+                    User = res.UserData;
+
+                var syncData = (object[])res.RequestData;
+
+                var groupsInfo = (List<Group>)syncData[0];
+                var contactsInfo = (List<Contact>)syncData[1];
+                var messagesInfo = (List<Message>)syncData[2];
+
+                //Find differences in Last Time Update and update if necessary
+                foreach (var group in groupsInfo)
                 {
-                    Database.GroupsTableRepo.Add(group);
-                    continue;
+                    var foundGroup = Database.GroupsTableRepo.FindFirst(GroupsTableFields.Id.ToString(), group.Id.ToString());
+
+                    if (foundGroup == null)
+                    {
+                        Database.GroupsTableRepo.Add(group);
+                        continue;
+                    }
+
+
+                    if (foundGroup.LastTimeUpdated != group.LastTimeUpdated)
+                        Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
                 }
 
-
-                if (foundGroup.LastTimeUpdated != group.LastTimeUpdated)
-                    Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
-            }
-
-            foreach (var contact in contactsInfo)
-            {
-                var foundContact = Database.ContactsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), contact.Id.ToString());
-
-                if (foundContact == null)
+                foreach (var contact in contactsInfo)
                 {
-                    Database.ContactsTableRepo.Add(contact);
-                    continue;
+                    var foundContact = Database.ContactsTableRepo.FindFirst(ContactsTableFields.Id.ToString(), contact.Id.ToString());
+
+                    if (foundContact == null)
+                    {
+                        Database.ContactsTableRepo.Add(contact);
+                        continue;
+                    }
+
+                    if (foundContact.LastTimeUpdated != contact.LastTimeUpdated)
+                        Database.ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), contact.Id.ToString(), contact);
                 }
 
-                if (foundContact.LastTimeUpdated != contact.LastTimeUpdated)
-                    Database.ContactsTableRepo.Update(ContactsTableFields.Id.ToString(), contact.Id.ToString(), contact);
-            }
-
-            foreach (var message in messagesInfo)
-            {
-                var foundMessage = Database.MessagesTableRepo.FindFirst(MessagesTableFields.Id.ToString(), message.Id.ToString());
-
-                if (foundMessage == null)
+                foreach (var message in messagesInfo)
                 {
-                    Database.MessagesTableRepo.Add(message);
-                    continue;
+                    var foundMessage = Database.MessagesTableRepo.FindFirst(MessagesTableFields.Id.ToString(), message.Id.ToString());
+
+                    if (foundMessage == null)
+                    {
+                        Database.MessagesTableRepo.Add(message);
+                        continue;
+                    }
+
+                    if (foundMessage.LastTimeUpdated != message.LastTimeUpdated)
+                        Database.MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), message.Id.ToString(), message);
                 }
 
-                if (foundMessage.LastTimeUpdated != message.LastTimeUpdated)
-                    Database.MessagesTableRepo.Update(MessagesTableFields.Id.ToString(), message.Id.ToString(), message);
-            }
+                #region Create custom comparers
 
-            #region Create custom comparers
+                //Create comparers
+                var groupsComparer = EqualityComparerFactory.Create<Group>(
+                        (Group a) => a.Id.GetHashCode(),
+                        (Group a, Group b) => a.Id == b.Id
+                    );
 
-            //Create comparers
-            var groupsComparer = EqualityComparerFactory.Create<Group>(
-                    (Group a) => a.Id.GetHashCode(),
-                    (Group a, Group b) => a.Id == b.Id
-                );
+                var contactsComparer = EqualityComparerFactory.Create<Contact>(
+                        (Contact a) => a.Id.GetHashCode(),
+                        (Contact a, Contact b) => a.Id == b.Id
+                    );
+                var messagesComparer = EqualityComparerFactory.Create<Message>(
+                        (Message a) => a.Id.GetHashCode(),
+                        (Message a, Message b) => a.Id == b.Id
+                    );
 
-            var contactsComparer = EqualityComparerFactory.Create<Contact>(
-                    (Contact a) => a.Id.GetHashCode(),
-                    (Contact a, Contact b) => a.Id == b.Id
-                );
-            var messagesComparer = EqualityComparerFactory.Create<Message>(
-                    (Message a) => a.Id.GetHashCode(),
-                    (Message a, Message b) => a.Id == b.Id
-                );
+                #endregion
 
-            #endregion
+                //Delete 
+                var deletedGroups = Database.GroupsTableRepo.GetAll().Except(groupsInfo, groupsComparer);
+                var deletedContacts = Database.ContactsTableRepo.GetAll().ToList().Except(contactsInfo, contactsComparer);
+                var deletedMessages = Database.MessagesTableRepo.GetAll().ToList().Except(messagesInfo, messagesComparer);
 
-            //Delete 
-            var deletedGroups = Database.GroupsTableRepo.GetAll().Except(groupsInfo, groupsComparer);
-            var deletedContacts = Database.ContactsTableRepo.GetAll().ToList().Except(contactsInfo, contactsComparer);
-            var deletedMessages = Database.MessagesTableRepo.GetAll().ToList().Except(messagesInfo, messagesComparer);
+                foreach (var group in deletedGroups)
+                {
+                    Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                }
 
-            foreach (var group in deletedGroups)
-            {
-                Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
-            }
+                foreach (var contact in deletedContacts)
+                {
+                    Database.ContactsTableRepo.Remove(GroupsTableFields.Id.ToString(), contact.Id.ToString());
+                }
 
-            foreach (var contact in deletedContacts)
-            {
-                Database.ContactsTableRepo.Remove(GroupsTableFields.Id.ToString(), contact.Id.ToString());
-            }
+                foreach (var message in deletedMessages)
+                {
+                    Database.MessagesTableRepo.Remove(GroupsTableFields.Id.ToString(), message.Id.ToString());
+                }
 
-            foreach (var message in deletedMessages)
-            {
-                Database.MessagesTableRepo.Remove(GroupsTableFields.Id.ToString(), message.Id.ToString());
-            }
+            });
         }
 
         /// <summary>
@@ -777,10 +828,11 @@ namespace ClientLibs.Core.DataAccess
 
                         var savedFiles = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files";
 
-                        foreach (var item in mess.AttachmentsList)
+                        foreach (var attachedFile in mess.AttachmentsList)
                         {
-                            System.IO.File.Copy(item, savedFiles + @"\" + Path.GetFileName(item));
-                            await SendFile(Path.GetFileName(item));
+                            var uniqName = FileManager.CheckOnUniqueness(savedFiles + @"\" + Path.GetFileName(attachedFile));
+                            System.IO.File.Copy(attachedFile, uniqName);
+                            await SendFile(Path.GetFileName(attachedFile));
                         }
                     }
 

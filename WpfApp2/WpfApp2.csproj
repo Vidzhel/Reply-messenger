@@ -83,13 +83,17 @@
     <Compile Include="Pages\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Resizer.cs" />
     <Compile Include="UIPresenter\Attachment Properties\Base\BaseAttachmentProperty.cs" />
+    <Compile Include="UIPresenter\Attachment Properties\MessageListControl.cs" />
     <Compile Include="UIPresenter\Attachment Properties\PasswordBoxAttachedProperties.cs" />
     <Compile Include="UIPresenter\Converters\Base\BaseMultiValueConverter.cs" />
     <Compile Include="UIPresenter\Converters\Base\BaseValueConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToChackedConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToColorConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToHorizontalAlignmentConverter.cs" />
+    <Compile Include="UIPresenter\Converters\BoolToIsConnectedColorConvertor.cs" />
+    <Compile Include="UIPresenter\Converters\BoolToIsConnectedTextConverter.cs" />
     <Compile Include="UIPresenter\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="UIPresenter\Converters\Comparers\ChatListItemViewModelComparer.cs" />
     <Compile Include="UIPresenter\Converters\ControlStateToColorBrush.cs" />
@@ -112,6 +116,8 @@
     <Compile Include="UIPresenter\ViewModels\ChatUserControlViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ChatViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\Commands\CommonCommands.cs" />
+    <Compile Include="UIPresenter\ViewModels\FilesListViewModel.cs" />
+    <Compile Include="UIPresenter\ViewModels\FilesListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ContactsListItemViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\ContactsListViewModel.cs" />
     <Compile Include="UIPresenter\ViewModels\DsignViewModel\ChatListDesignViewModel.cs" />
@@ -145,6 +151,12 @@
     </Compile>
     <Compile Include="UserControls\ChatUserControl.xaml.cs">
       <DependentUpon>ChatUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\FilesListItem.xaml.cs">
+      <DependentUpon>FilesListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\FilesList.xaml.cs">
+      <DependentUpon>FilesList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\GroupsList.xaml.cs">
       <DependentUpon>GroupsList.xaml</DependentUpon>
@@ -248,6 +260,14 @@
     <Page Include="UserControls\ChatUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\FilesListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\FilesList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\GroupsList.xaml">
       <Generator>MSBuild:Compile</Generator>

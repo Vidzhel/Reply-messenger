@@ -5,11 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UI.UserControls"
              xmlns:viewModels="clr-namespace:UI.UIPresenter.ViewModels"
+             xmlns:attachProperties="clr-namespace:UI.UIPresenter.Attachment_Properties"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="974">
     
     <Grid d:DataContext="{x:Static viewModels:MessageListDesignViewModel.Instance}">
         <ScrollViewer Padding="30 0 30 0"
+                      attachProperties:MessageListControl.Value="1"
                       VerticalScrollBarVisibility="Auto" VerticalAlignment="Bottom">
             
             <ItemsControl ItemsSource="{Binding Items}">

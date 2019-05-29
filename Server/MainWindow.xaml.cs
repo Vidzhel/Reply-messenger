@@ -17,15 +17,7 @@ namespace Server
 
             DataContext = new ServerViewModel();
 
-            StopServer.IsEnabled = false;
-        }
-
-        private void StartServer_Click(object sender, RoutedEventArgs e)
-        {
-            StartServer.IsEnabled = false;
-            StopServer.IsEnabled = true;
             AsynchronousClientListener.DisplayMessageOnScreenContext = displayMessageOnScreen;
-            Task.Run(() => AsynchronousClientListener.Start());
         }
 
         /// <summary>
@@ -36,13 +28,6 @@ namespace Server
         {
             // Allow us change text from another thread
             LogScreen.Dispatcher.BeginInvoke((Action)(() => LogScreen.Text += message + Environment.NewLine));
-        }
-
-        private void StopServer_Click(object sender, RoutedEventArgs e)
-        {
-            StopServer.IsEnabled = false;
-            StartServer.IsEnabled = true;
-            AsynchronousClientListener.Disconect(true);
         }
     }
 }

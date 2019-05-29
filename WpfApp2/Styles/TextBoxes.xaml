@@ -11,7 +11,6 @@
 
     <!--Style for Data Fields-->
     <Style TargetType="TextBox" x:Key="DataField">
-        <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="FontSize" Value="14"/>
@@ -427,7 +426,7 @@
                             <Border.BorderBrush>
                                 <MultiBinding Converter="{converters:ControlStateToColorBrush}">
                                     <Binding Path="FieldState"/>
-                                    <Binding Path="Tag" RelativeSource="{RelativeSource Mode=Self}"/>
+                                    <Binding Path="Tag" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=PasswordBox}"/>
                                 </MultiBinding>
                             </Border.BorderBrush>
                             <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>

@@ -87,3 +87,7 @@ C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.Fody.Cop
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\WpfApp2.csproj.CopyComplete
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.exe
 C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UI.pdb
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\FilesListItem.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\FilesList.g.cs
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\FilesListItem.baml
+C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\UserControls\FilesList.baml

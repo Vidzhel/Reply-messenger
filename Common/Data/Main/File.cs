@@ -11,15 +11,18 @@ namespace CommonLibs.Data
 
         public string FileName { get; set; }
 
+        public string FileNameOnServer{ get; set; }
+
         public string Checksum { get; set; }
 
         #endregion
 
         #region Constructor
 
-        public File(string fileName, string checksum)
+        public File(string fileName, string fileNameOnServer, string checksum)
         {
             FileName = fileName;
+            FileNameOnServer = fileNameOnServer;
             Checksum = checksum;
         }
 
