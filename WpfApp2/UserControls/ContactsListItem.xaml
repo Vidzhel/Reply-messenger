@@ -142,6 +142,7 @@
                                                 Content=""
                                                 FontWeight="Bold"
                                                 Margin="8 5"
+                                                Visibility="{Binding IsYourContact, Converter={converters:BoolToVisibilityConverter}}"
                                                 Style="{StaticResource IconicButton}"
                                                 />
                                     

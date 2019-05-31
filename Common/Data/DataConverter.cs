@@ -9,10 +9,32 @@ namespace CommonLibs.Data
 {
 
     /// <summary>
-    /// Provide methods which hepl convert data
+    /// Provide methods which help convert data
     /// </summary>
     public class DataConverter
     {
+        /// <summary>
+        /// Converts two bites to shoret
+        /// </summary>
+        /// <param name="byte1"></param>
+        /// <param name="byte2"></param>
+        /// <returns></returns>
+        public static short ToShort(short byte1, short byte2)
+        {
+            return (short)((byte2 << 8) + byte1);
+        }
+
+        /// <summary>
+        /// Gets two bites from short
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="byte1"></param>
+        /// <param name="byte2"></param>
+        public static void FromShort(short number, out byte byte1, out byte byte2)
+        {
+            byte2 = (byte)(number >> 8);
+            byte1 = (byte)(number & 255);
+        }
 
         /// <summary>
         /// Gets file path and returns computed checksum of it
@@ -64,7 +86,7 @@ namespace CommonLibs.Data
 
             foreach (var item in list)
             {
-                result += item + " ";
+                result += item + "\"";
             }
 
             return result;
@@ -77,7 +99,7 @@ namespace CommonLibs.Data
         /// <returns></returns>
         public static List<int> StringToIntList(string value)
         {
-            var strArray = value.Split(new char[] { ' ' });
+            var strArray = value.Split(new char[] { '"' });
             var intList = new List<int>();
 
             for (int i = 0; i < strArray.Length; i++)
@@ -94,7 +116,7 @@ namespace CommonLibs.Data
         /// <returns></returns>
         public static List<string> StringToStrList(string value)
         {
-            var strArray = value.Split(new char[] { ' ' });
+            var strArray = value.Split(new char[] { '"' });
             var strList = new List<string>();
 
             for (int i = 0; i < strArray.Length; i++)

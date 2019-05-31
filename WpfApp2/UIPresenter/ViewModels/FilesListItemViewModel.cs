@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using Common.Data.Enums;
+using System;
+using System.IO;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using UI.InversionOfControl;
 using WpfApp2;
 
@@ -23,6 +26,70 @@ namespace UI.UIPresenter.ViewModels
         public string FileName => Path.GetFileName(FilePath);
 
         public string FilePath { get; set; }
+
+        public bool IsImage { get {
+                var a = Enum.GetNames(typeof(ImageTypes));
+                foreach (var item in a)
+                    if (Path.GetExtension(FilePath).Equals("." + item, StringComparison.CurrentCultureIgnoreCase))
+                        return true;
+                return false;
+            } }
+
+        public string ImageHeight
+        {
+            get
+            {
+                //Access chacker
+                bool getAccess;
+                string height = "0";
+
+                do
+                {
+                    getAccess = false;
+                    try
+                    {
+                        //Try to get access
+                        height = IsImage ? new BitmapImage(new Uri(FilePath)).Height.ToString() : "0";
+                    }
+                    catch (Exception e)
+                    {
+                        getAccess = true;
+                    }
+                }
+                while (getAccess);
+
+                return height;
+            }
+
+        }
+
+        public string ImageWidth {
+            get
+            {
+                //Access chacker
+                bool getAccess;
+                string width = "0";
+
+                do
+                {
+                    getAccess = false;
+                    try
+                    {
+                        //Try to get access
+                        width = IsImage ? new BitmapImage(new Uri(FilePath)).Width.ToString() : "0";
+                    }
+                    catch (Exception e)
+                    {
+                        getAccess = true;
+                    }
+                }
+                while (getAccess);
+
+                return width;
+            }
+
+        }
+
 
         #endregion
 

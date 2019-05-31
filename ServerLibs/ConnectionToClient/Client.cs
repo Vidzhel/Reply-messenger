@@ -1,4 +1,5 @@
-﻿using CommonLibs.Data;
+﻿using CommonLibs.Connections.Repositories.Tables;
+using CommonLibs.Data;
 using ServerLibs.DataAccess;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -28,6 +29,8 @@ namespace ServerLibs.ConnectionToClient
         /// </summary>
         public List<byte> BinReceivedData { get; set; } = new List<byte>();
 
+        public short dataSize;
+
         //Recieve buffer
         public byte[] Buffer = new byte[BufferSize];
 
@@ -55,9 +58,12 @@ namespace ServerLibs.ConnectionToClient
             //Clear buffer
             BinReceivedData = new List<byte>();
 
+            if (command == null)
+                return;
+
             //copy user data
             if (command.UserData != null)
-                UserInfo = command.UserData;
+                UserInfo = UnitOfWork.Database.UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), command.UserData.Email.ToString());
 
             UnitOfWork.CommandChain.AddCommand(new ClientCommand(command, this));
         }

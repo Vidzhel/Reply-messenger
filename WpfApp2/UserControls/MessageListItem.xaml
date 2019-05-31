@@ -49,7 +49,7 @@
                                         <RowDefinition Height="auto"/>
 
                                         <!--Attachments-->
-                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="auto"/>
                                         
                                         <!--Text-->
                                         <RowDefinition Height="auto"/>
@@ -68,7 +68,7 @@
                                     <!--Attachments-->
                                     <Grid Grid.Row="1" VerticalAlignment="Center"
                                           HorizontalAlignment="Center">
-                                        <Image Source="{Binding Attachment}" MaxWidth="200"/>
+                                        <local:FilesList DataContext="{Binding Attachments}"/>
                                     </Grid>
                                     
                                     <!--Text-->

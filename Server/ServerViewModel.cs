@@ -41,6 +41,7 @@ namespace Server
         void startServer()
         {
             Task.Run(() => AsynchronousClientListener.Start());
+            var a = UnitOfWork.OnlineClients;
             ServerOnline = true;
             ServerOffline = false;
         }

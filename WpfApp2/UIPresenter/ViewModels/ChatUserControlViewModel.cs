@@ -74,10 +74,19 @@ namespace UI.UIPresenter.ViewModels
         public int UsersOnline => CurrentChat != null ? CurrentChat.UsersOnline - 1: 0;
 
         /// <summary>
+        /// Define your status in a group
+        /// </summary>
+        public bool YouAnAdmin => CurrentChat != null? CurrentChat.AdminsIdList.Contains(UnitOfWork.User.Id) : false; 
+
+        /// <summary>
         /// If true all users can send messages in the group
         /// </summary>
         public bool IsChat => CurrentChat != null? !CurrentChat.isChannel: false;
 
+        /// <summary>
+        /// Don't show type bar if it's channel and you're not an admin
+        /// </summary>
+        public bool ShowTypeBar => IsChat || YouAnAdmin;
 
         #endregion
 
@@ -314,9 +323,9 @@ namespace UI.UIPresenter.ViewModels
                     var user = await UnitOfWork.GetUsersInfo(new List<int>() { data.SenderId });
 
                     //Becouse Items is ObservableCollection we should update elements from the main thread
-                    App.Current.Dispatcher.Invoke(() =>
+                    await App.Current.Dispatcher.Invoke(async () =>
                     {
-                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, CurrentChat.IsPrivateChat));
+                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, CurrentChat.IsPrivateChat, await UnitOfWork.GetFilesByName(data.AttachmentsList)));
                     });
 
                 }
@@ -336,6 +345,7 @@ namespace UI.UIPresenter.ViewModels
             var users = await UnitOfWork.GetUsersInfo(new List<int>(CurrentChat.MembersIdList));
 
 
+
             foreach (var message in messages)
                 foreach (var user in users)
                     if(user.Id == message.SenderId)
@@ -346,9 +356,9 @@ namespace UI.UIPresenter.ViewModels
                                 Contact = user;
 
                         //Becouse Items is ObservableCollection we should update elements from the main thread
-                        App.Current.Dispatcher.Invoke(() =>
+                        await App.Current.Dispatcher.Invoke(async () =>
                         {
-                            MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, CurrentChat.IsPrivateChat));
+                            MessageList.Items.Add(new MessageListItemViewModel(user, message, user.Email == UnitOfWork.User.Email, CurrentChat.IsPrivateChat, await UnitOfWork.GetFilesByName(message.AttachmentsList) ));
                         });
                     }
         }
@@ -364,7 +374,7 @@ namespace UI.UIPresenter.ViewModels
             //Delete unnecessary spaces
             var text = System.Text.RegularExpressions.Regex.Replace(MessageContent, @"^(\s*)(\S*)(\s*)$", "$2");
 
-            //Add message to repository
+            //Send command
             await UnitOfWork.SendMessage(new Message(UnitOfWork.User.Id, CurrentChat.Id, DataType.Text, DateTime.Now, text, MessageStatus.SendingInProgress, ChatViewModel.Attachments));
 
             MessageContent = "";

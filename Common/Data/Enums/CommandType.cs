@@ -13,34 +13,51 @@ namespace CommonLibs.Data
     public enum CommandType
     {
         SignUp,
+        SignUpAnswer,
         SignIn,
+        SignInAnswer,
         SignOut,
         Synchronize,
+        SynchronizeAnswer,
 
         SearchRequest,
+        SearchRequestAnswer,
 
         GetUsersInfo,
+        GetUsersInfoAnswer,
         GetGroupsInfo,
+        GetGroupsInfoAnswer,
         GetUserGroupsInfo,
+        GetUserGroupsInfoAnswer,
 
         CreateGroup,
+        CreateGroupAnswer,
         UpdateGroup,
         RemoveGroup,
         JoinGroup,
+        JoinGroupAnswer,
         MakeAdmin,
+        MakeAdminAnswer,
         LeaveGroup,
+        LeaveGroupAnswer,
         DeleteMemberFromGroup,
 
 
         UpdateMessage,
         RemoveMessage,
         SendMesssage,
+        SendMesssageAnswer,
         SendFile,
+        SendFileAnswer,
         GetFile,
+        GetFileAnswer,
 
         UpdateUserInfo,
+        UpdateUserInfoAnswer,
         UpdateUserPassword,
+        UpdateUserPasswordAnswer,
         DeleteUser,
+        DeleteUserAnswer,
 
         Answer
     }

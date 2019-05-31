@@ -1,5 +1,6 @@
 ﻿using CommonLibs.Data;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace UI.UIPresenter.ViewModels
@@ -37,7 +38,7 @@ namespace UI.UIPresenter.ViewModels
             }
         }
 
-        public string Attachment { get; set; } = @"C:\Users\Oleg\Desktop\Staff\ролик ФІКТ фото\емблема ФІКТ.png";
+        public FilesListViewModel Attachments { get; set; }
 
         /// <summary>
         /// Return message text
@@ -118,12 +119,13 @@ namespace UI.UIPresenter.ViewModels
 
         #region Constructor
             
-        public MessageListItemViewModel(Contact contact, Message message, bool isYourMessage, bool isTwoMembersInTheChat)
+        public MessageListItemViewModel(Contact contact, Message message, bool isYourMessage, bool isTwoMembersInTheChat, List<string> attachments)
         {
             ContactData = contact;
             Message = message;
             IsYourMessage = isYourMessage;
             IsTwoMembersInTheChat = isTwoMembersInTheChat;
+            Attachments = new FilesListViewModel(attachments ,false);
         }
 
         public MessageListItemViewModel()

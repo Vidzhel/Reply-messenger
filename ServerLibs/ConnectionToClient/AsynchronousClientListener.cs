@@ -1,4 +1,5 @@
 ﻿using CommonLibs.Data;
+using ServerLibs.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -28,7 +29,7 @@ namespace ServerLibs.ConnectionToClient
         /// <summary>
         /// Specifies ip address or server name to connect with
         /// </summary>
-        static public string ServerName { get; set; } = "localhost";
+        static public string ServerName { get; set; } = "4ac9042580da.sn.mynetname.net";
 
         /// <summary>
         /// Specifies server port
@@ -82,10 +83,12 @@ namespace ServerLibs.ConnectionToClient
         {
 
             //Get local ip addresses
-            IPHostEntry ipHost = Dns.GetHostEntry(ServerName);
+            //IPHostEntry ipHost = Dns.GetHostEntry(ServerName);
 
             //Get first server ip address from list
-            IPAddress ipAddress = ipHost.AddressList[0];
+            //IPAddress ipAddress = ipHost.AddressList[0];
+            IPAddress ipAddress = IPAddress.Parse("0.0.0.0");
+
 
             //Specify end local point 
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, Port);
@@ -149,12 +152,16 @@ namespace ServerLibs.ConnectionToClient
         
         static public void SendData(Client client, object dataToSend)
         {
-            //Convert EOF label to byte array
-            var eofLabel = Encoding.Default.GetBytes("<EOF>");
 
-            //Serialize and add label to the end
-            var data = DataConverter.MergeByteArrays( DataConverter.SerializeData(dataToSend), eofLabel);
 
+            var data = DataConverter.SerializeData(dataToSend);
+
+            //Add size to vegin of the array
+            var dataSize = (short)data.Length;
+            DataConverter.FromShort(dataSize, out var byte1, out var byte2);
+
+            // Add data size to the beginning
+            data = DataConverter.MergeByteArrays(new byte[] { byte1, byte2 }, data);
             try
             {
                 //Begin sending file
@@ -193,11 +200,11 @@ namespace ServerLibs.ConnectionToClient
                 //Complate sending data
                 int bytesSent = handler.EndSend(ar);
 
-                displayMessageOnScreen($"Complate sending data to {client.UserInfo.Email}");
+                displayMessageOnScreen($"Complate sending data to {client?.UserInfo?.Email}");
             }
             catch (Exception e)
             {
-                displayMessageOnScreen($"Error on sending data to {client.UserInfo.Email}" + e.ToString());
+                displayMessageOnScreen($"Error on sending data to {client?.UserInfo?.Email}" + e.ToString());
             }
         }
 
@@ -216,8 +223,6 @@ namespace ServerLibs.ConnectionToClient
 
                 // Create client object that will provide command handler
                 Client client = new Client(handler);
-
-                connectedClients.Add(client);
 
                 //Add new client to list of connected clients
                 UserConnected?.Invoke(client);
@@ -248,9 +253,10 @@ namespace ServerLibs.ConnectionToClient
                 //Read data from the client socket
                 bytesRead = handler.EndReceive(ar);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
+
+               displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
 
                 connectedClients.Remove(client);
 
@@ -267,23 +273,25 @@ namespace ServerLibs.ConnectionToClient
             if (bytesRead > 0)
             {
 
-                //Convert to text to find <EOF> label
-                content = Encoding.Default.GetString(client.Buffer);
+                //If it's first portion of data
+                if (client.BinReceivedData.Count == 0)
+                    //get data size
+                    client.dataSize = (short)(DataConverter.ToShort(client.Buffer[0], client.Buffer[1])+2);
 
+                //Delete size of received data
+                client.dataSize -= (short)client.Buffer.Length;
 
-                //Find Start of <EOF> label
-                var EOFIndex = content.IndexOf("<EOF>");
-                if (EOFIndex > -1)
+                if (client.dataSize <= 0)
                 {
-
-                    //Create new temp buffer with size of EOFIndex
-                    byte[] temp = new byte[EOFIndex];
-
-                    //Delete part after <EOF> label, with label
-                    Array.Copy(client.Buffer, temp, temp.Length);
+                    //Separate data from dummy bytes
+                    byte[] temp = new byte[client.dataSize + client.Buffer.Length];
+                    Array.Copy(client.Buffer, 0, temp, 0, client.dataSize + client.Buffer.Length);
 
                     //Copy buffer to bin recieved data
                     client.BinReceivedData.AddRange(temp);
+
+                    //Remove first 2 bytes(size of data)
+                    client.BinReceivedData.RemoveRange(0, 2);
 
                     //All the data has benn read from the client. Display it on the console
                     displayMessageOnScreen($"Read {content.Length} bytes from socket {client?.UserInfo?.UserName}");
@@ -295,11 +303,13 @@ namespace ServerLibs.ConnectionToClient
                         // Begin recieve data
                         handler.BeginReceive(client.Buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         displayMessageOnScreen($"User { client.UserInfo?.Email ?? "Unkown" } disconected");
 
                         connectedClients.Remove(client);
+                        //TODO change
+                        UnitOfWork.OnlineClients.Remove(client);
 
                         //Remove from online clients
                         UserDiscconected?.Invoke(client);

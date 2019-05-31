@@ -1,4 +1,5 @@
-﻿using CommonLibs.Data;
+﻿using ClientLibs.Core.DataAccess;
+using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -21,6 +22,8 @@ namespace ClientLibs.Core.ConnectionToServer
         static int bufferSize = 1024;
 
         static byte[] buffer = new byte[bufferSize];
+
+        static short dataSize;
 
         static bool ServerConnected = false;
 
@@ -50,7 +53,7 @@ namespace ClientLibs.Core.ConnectionToServer
         /// <summary>
         /// Specifies ip address or server name to connect with
         /// </summary>
-        static public string ServerName { get; set; } = "localhost";
+        static public string ServerName { get; set; } = "4ac9042580da.sn.mynetname.net";
 
 
         /// <summary>
@@ -88,10 +91,11 @@ namespace ClientLibs.Core.ConnectionToServer
         static public void Start()
         {
 
+            //IPHostEntry ipHost = Dns.GetHostEntry(ServerName);
+
             //Get local ip addresses
-            //TODO change local IP addresses on server IP
-            IPHostEntry ipHost = Dns.GetHostEntry(ServerName);
-            IPAddress ipAddress = ipHost.AddressList[0];
+            //IPAddress ipAddress = IPAddress.Parse("192.168.137.1");
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
 
             //Specify end remote point 
             RemoteEndPoint = new IPEndPoint(ipAddress, Port);
@@ -156,8 +160,12 @@ namespace ClientLibs.Core.ConnectionToServer
 
             var data = DataConverter.SerializeData(obj);
 
-            // Add EOF label to the end
-            data = DataConverter.MergeByteArrays(data, Encoding.Default.GetBytes("<EOF>"));
+            //Add size to vegin of the array
+            var dataSize = (short)data.Length;
+            DataConverter.FromShort(dataSize, out var byte1, out var byte2);
+
+            // Add data size to the beginning
+            data = DataConverter.MergeByteArrays(new byte[] { byte1, byte2}, data);
             try
             {
 
@@ -195,21 +203,27 @@ namespace ClientLibs.Core.ConnectionToServer
             if (bytesRead > 0)
             {
 
-                //Check the end of file, if there isn't <EOF> label, then continue reading
-                content = Encoding.Default.GetString(buffer);
+                //If it's first portion of data
+                if(binReceivedData.Count == 0)
+                    //get data size
+                    dataSize = (short)(DataConverter.ToShort(buffer[0], buffer[1]) + 2);
 
-                //Start of <EOF> label
-                var EOFIndex = content.IndexOf("<EOF>");
-                if (EOFIndex > -1)
+                //Delete size of received data
+                dataSize -= (short)buffer.Length;
+
+                if (dataSize <= 0)
                 {
-                    //Create new temp buffer with size of EOFIndex
-                    byte[] temp = new byte[EOFIndex];
-
-                    //Delete part after <EOF> label
-                    Array.Copy(buffer, temp, temp.Length);
+                    //Separate data from dummy bytes
+                    byte[] temp = new byte[dataSize + buffer.Length];
+                    Array.Copy(buffer, 0, temp, 0, dataSize + buffer.Length);
 
                     //Copy buffer to bin recieved data
                     binReceivedData.AddRange(temp);
+
+
+                    //Remove first 2 bytes(size of data)
+                    binReceivedData.RemoveRange(0, 2);
+
 
                     //Notify listeners about recieved data is ready to handle
                     answerDataReady.Invoke(binReceivedData, binReceivedData.ToArray());
@@ -235,7 +249,7 @@ namespace ClientLibs.Core.ConnectionToServer
             }
 
         }
-
+        
         /// <summary>
         /// Disconects socket
         /// </summary>
@@ -276,6 +290,9 @@ namespace ClientLibs.Core.ConnectionToServer
 
                         //Reconnect
                         Start();
+
+                        //Send command to sign in again
+                        UnitOfWork.SignIn(UnitOfWork.User);
                     }
                 }
                 catch (Exception e) { }

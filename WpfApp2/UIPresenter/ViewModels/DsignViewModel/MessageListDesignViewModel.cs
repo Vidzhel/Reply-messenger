@@ -30,21 +30,21 @@ namespace UI.UIPresenter.ViewModels
 
             Items = new System.Collections.ObjectModel.ObservableCollection<MessageListItemViewModel> {
 
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, true, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, true, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user, message, false, true),
-                new MessageListItemViewModel(user1, message1, true, true),
-                new MessageListItemViewModel(user, message2, false, true)
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, true, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, true, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user, message, false, true),
+                //new MessageListItemViewModel(user1, message1, true, true),
+                //new MessageListItemViewModel(user, message2, false, true)
 
             };
         }

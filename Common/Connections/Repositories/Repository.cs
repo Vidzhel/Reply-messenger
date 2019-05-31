@@ -405,13 +405,13 @@ namespace CommonLibs.Connections.Repositories
 
         public override T GetLast()
         {
-            return GetAll().Last();
+            return GetAll()?.Last();
         }
 
 
         public override T GetFirst()
         {
-            return GetAll().First();
+            return GetAll()?.First();
         }
 
         /// <summary>

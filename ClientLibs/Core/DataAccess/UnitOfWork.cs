@@ -210,6 +210,7 @@ namespace ClientLibs.Core.DataAccess
 
                         //Find and delete all messages from the group
                         Database.MessagesTableRepo.Remove(MessagesTableFields.ReceiverId.ToString(), group.Id.ToString());
+
                     }
                 });
             }
@@ -406,10 +407,6 @@ namespace ClientLibs.Core.DataAccess
             List<Contact> users = new List<Contact>();
             Contact temp;
 
-
-            if (!ServerConnected)
-                return users;
-
             var result = await Task.Run(() =>
             {
 
@@ -468,9 +465,6 @@ namespace ClientLibs.Core.DataAccess
             List<Group> groups = new List<Group>();
             Group temp;
 
-            if (!ServerConnected)
-                return groups;
-
             var result = await Task.Run(() =>
             {
 
@@ -520,11 +514,7 @@ namespace ClientLibs.Core.DataAccess
         public static async Task<List<Group>> GetUserGroupsInfo(Contact user)
         {
 
-            if (User.contactsIdList.Contains(user.Id))
-            {
-                //TODO end getting your contact group info
-            }
-
+           
             if (!ServerConnected)
                 return null;
 
@@ -544,41 +534,41 @@ namespace ClientLibs.Core.DataAccess
             return result;
         }
 
-        public static async Task<string> GetFilesByName(string fileNames)
+        public static async Task<List<string>> GetFilesByName(List<string> fileNames)
         {
             //TODO Finish
 
-            //var result = await Task.Run(() =>
-            //{
+            var result = await Task.Run(() =>
+            {
+                List<string> Pathes = new List<string>();
 
-            //    foreach (var name in fileNames)
-            //    {
-            //        var localPath = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name;
-            //        if (System.IO.File.Exists(localPath))
-            //            return localPath;
-            //        else
-            //        {
-            //            var res = commandChain.MakeRequest(CommandType.GetFile, name, User);
+                foreach (var name in fileNames)
+                {
+                    var localPath = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name;
+                    if (!System.IO.File.Exists(localPath))
+                    {
+                        var res = commandChain.MakeRequest(CommandType.GetFile, name, User);
 
-            //            if (res == null)
-            //                continue;
+                        if (res == null)
+                            continue;
 
-            //            var fileContent = (byte[])res.RequestData;
+                        var fileContent = (byte[])res.RequestData;
 
-            //            //Check folders
-            //            FileManager.CheckServerRequiredFolders();
+                        //Check folders
+                        FileManager.CheckClientRequiredFolders();
 
-            //            //Write data into the file
-            //            var fs = new FileInfo(localPath).OpenWrite();
-            //            fs.Write(fileContent, 0, fileContent.Length);
+                        //Write data into the file
+                        var fs = new FileInfo(localPath).OpenWrite();
+                        fs.Write(fileContent, 0, fileContent.Length);
+                    }
 
-            //            return localPath;
-            //        }
-            //    }
+                    Pathes.Add(localPath);
+                }
 
-            //});
+                return Pathes;
+            });
 
-            return null;
+            return result;
         } 
 
         /// <summary>
@@ -586,19 +576,19 @@ namespace ClientLibs.Core.DataAccess
         /// </summary>
         /// <param name="name">name of file from Reply messenger\saved files</param>
         /// <returns></returns>
-        public static async Task SendFile(string name)
+        public static async Task<string> SendFile(string filePath)
         {
             if (!ServerConnected)
-                return;
+                return "";
 
-            //Return if file doesn't exist in saved files
-            if (!System.IO.File.Exists(Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name))
-                return;
+            //Return if file doesn't exist
+            if (!System.IO.File.Exists(filePath))
+                return "";
 
-            await Task.Run(() =>
+            var result = await Task.Run(() =>
             {
                 // Load file meta data with FileInfo
-                FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name);
+                FileInfo fileInfo = new FileInfo(filePath);
 
                 // The byte[] to save the data in
                 byte[] data = new byte[fileInfo.Length];
@@ -610,12 +600,17 @@ namespace ClientLibs.Core.DataAccess
 
                     fs.Read(data, 0, data.Length);
 
-                    commandChain.SendCommand(CommandType.SendFile, new object[] { name, data }, User);
+                    var res = commandChain.MakeRequest(CommandType.SendFile, new object[] { Path.GetFileName(filePath), data }, User);
 
+                    if (res.RequestData == null)
+                        return "";
+                    return (string)res.RequestData;
                 }
 
 
             });
+
+            return result;
         }
 
         /// <summary>
@@ -667,6 +662,9 @@ namespace ClientLibs.Core.DataAccess
             {
 
                 var res = commandChain.MakeRequest(CommandType.Synchronize, null, User);
+
+                if (res == null)
+                    return;
 
                 //Update user
                 if (User.LastTimeUpdated != res.UserData.LastTimeUpdated)
@@ -742,24 +740,27 @@ namespace ClientLibs.Core.DataAccess
                 #endregion
 
                 //Delete 
-                var deletedGroups = Database.GroupsTableRepo.GetAll().Except(groupsInfo, groupsComparer);
-                var deletedContacts = Database.ContactsTableRepo.GetAll().ToList().Except(contactsInfo, contactsComparer);
-                var deletedMessages = Database.MessagesTableRepo.GetAll().ToList().Except(messagesInfo, messagesComparer);
+                var deletedGroups = Database.GroupsTableRepo.GetAll()?.Except(groupsInfo, groupsComparer);
+                var deletedContacts = Database.ContactsTableRepo.GetAll()?.Except(contactsInfo, contactsComparer);
+                var deletedMessages = Database.MessagesTableRepo.GetAll()?.Except(messagesInfo, messagesComparer);
 
-                foreach (var group in deletedGroups)
-                {
-                    Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
-                }
+                if(deletedGroups != null)
+                    foreach (var group in deletedGroups)
+                    {
+                        Database.GroupsTableRepo.Remove(GroupsTableFields.Id.ToString(), group.Id.ToString());
+                    }
 
-                foreach (var contact in deletedContacts)
-                {
-                    Database.ContactsTableRepo.Remove(GroupsTableFields.Id.ToString(), contact.Id.ToString());
-                }
+                if(deletedContacts != null)
+                    foreach (var contact in deletedContacts)
+                    {
+                        Database.ContactsTableRepo.Remove(GroupsTableFields.Id.ToString(), contact.Id.ToString());
+                    }
 
-                foreach (var message in deletedMessages)
-                {
-                    Database.MessagesTableRepo.Remove(GroupsTableFields.Id.ToString(), message.Id.ToString());
-                }
+                if(deletedMessages != null)
+                    foreach (var message in deletedMessages)
+                    {
+                        Database.MessagesTableRepo.Remove(GroupsTableFields.Id.ToString(), message.Id.ToString());
+                    }
 
             });
         }
@@ -811,8 +812,31 @@ namespace ClientLibs.Core.DataAccess
                 if (!ServerConnected)
                     return;
 
-                var res = commandChain.MakeRequest(CommandType.SendMesssage, mess, User);
+                if (mess.AttachmentsList.Count != 0)
+                {
+                    //Load all attachments to saved files
+                    FileManager.CheckClientRequiredFolders();
 
+                    var savedFiles = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files";
+
+                    for (int i = 0; i < mess.AttachmentsList.Count; i++)
+                    {
+                        var serverFileName = await SendFile(mess.AttachmentsList[i]);
+
+                        //If file didn't send
+                        if (serverFileName == "")
+                        {
+                            mess.AttachmentsList.RemoveAt(i);
+                            continue;
+                        }
+
+
+                        System.IO.File.Copy(mess.AttachmentsList[i], savedFiles + @"\" + serverFileName);
+                        mess.AttachmentsList[i] = serverFileName;
+                    }
+                }
+
+                var res = commandChain.MakeRequest(CommandType.SendMesssage, mess, User);
 
                 //If response time is out
                 if (res == null)
@@ -821,20 +845,7 @@ namespace ClientLibs.Core.DataAccess
                 if (res.RequestData != null)
                 {
 
-                    if (mess.AttachmentsList.Count != 0)
-                    {
-                        //Load all attachments to saved files
-                        FileManager.CheckClientRequiredFolders();
-
-                        var savedFiles = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files";
-
-                        foreach (var attachedFile in mess.AttachmentsList)
-                        {
-                            var uniqName = FileManager.CheckOnUniqueness(savedFiles + @"\" + Path.GetFileName(attachedFile));
-                            System.IO.File.Copy(attachedFile, uniqName);
-                            await SendFile(Path.GetFileName(attachedFile));
-                        }
-                    }
+                   
 
                     //Update the last message we sent
                     //Database.MessagesTableRepo.Update(MessagesTableFields.Status.ToString(), MessageStatus.SendingInProgress.ToString(), (Message)res.RequestData);

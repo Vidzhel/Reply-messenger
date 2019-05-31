@@ -31,8 +31,15 @@
                                 <MouseBinding MouseAction="LeftClick" Command="{x:Static commands:CommonCommands.OpenFile}" CommandParameter="{Binding FilePath}"/>
                             </Border.InputBindings>
 
+                            <Grid>
 
-                            <Grid >
+                                <Grid Visibility="{Binding IsImage, Converter={converters:BoolToVisibilityConverter}}">
+
+                                    <Image Source="{Binding FilePath}" MaxWidth="{Binding ImageWidth}" MaxHeight="{Binding ImageHeight}"/>
+
+                                </Grid>
+                                
+                                <Grid Visibility="{Binding IsImage, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}">
 
 
 
@@ -97,6 +104,8 @@
 
 
                                 </StackPanel>
+
+                            </Grid>
 
                             </Grid>
 

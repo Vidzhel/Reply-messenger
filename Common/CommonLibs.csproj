@@ -70,6 +70,7 @@
     <Compile Include="Data\BaseCommandChain.cs" />
     <Compile Include="Data\BaseDoubleCommandChain.cs" />
     <Compile Include="Data\Comparer\EqualityComparerFactory.cs" />
+    <Compile Include="Data\Enums\ImageTypes.cs" />
     <Compile Include="Data\Enums\RepositoryActions.cs" />
     <Compile Include="Data\FileManaging\FileManager.cs" />
     <Compile Include="Data\Main\Command.cs" />

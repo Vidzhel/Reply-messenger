@@ -138,6 +138,8 @@ namespace UI.UIPresenter.ViewModels.Commands
 
             await UnitOfWork.LeaveGroup(gr);
 
+            ApplicationService.ChangeCurrentContact(UnitOfWork.User);
+            ApplicationService.ChangeCurrentChatPage(ChatPages.UserInfo);
         }
 
         static async void joinChat(object group)
@@ -155,11 +157,7 @@ namespace UI.UIPresenter.ViewModels.Commands
 
         static async void addToContactList(object contact)
         {
-            var error = await UnitOfWork.ChangeUserInfo(UnitOfWork.User);
 
-            //If there is no error
-            if(error == null)
-            {
 
             UnitOfWork.User.AddNewContact((Contact)contact);
             UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Add));
@@ -167,26 +165,23 @@ namespace UI.UIPresenter.ViewModels.Commands
             //Save contact to db
             UnitOfWork.Database.ContactsTableRepo.Add((Contact)contact);
 
-            }
 
+            var error = await UnitOfWork.ChangeUserInfo(UnitOfWork.User);
+            
         }
 
         static async void deleteFromContactsList(object contact)
         {
 
+            //Remove contact
+            UnitOfWork.User.RemoveContact((Contact)contact);
+            UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Remove));
+
+            //Delete from db
+            UnitOfWork.Database.ContactsTableRepo.Remove(ContactsTableFields.Id.ToString(), (contact as Contact).Id.ToString());
+
             var error = await UnitOfWork.ChangeUserInfo(UnitOfWork.User);
 
-            //If there is no error
-            if (error == null)
-            {
-
-                //Remove contact
-                UnitOfWork.User.RemoveContact((Contact)contact);
-                UnitOfWork.OnUserUpdated(null, new DataChangedArgs<IEnumerable<object>>(new List<Contact>() { (Contact)contact }, UsersTableFields.ContactsId.ToString(), RepositoryActions.Remove));
-
-                //Delete from db
-                UnitOfWork.Database.ContactsTableRepo.Remove(ContactsTableFields.Id.ToString(), (contact as Contact).Id.ToString());
-            }
         }
 
         static async void startChat(object contact)
@@ -194,7 +189,7 @@ namespace UI.UIPresenter.ViewModels.Commands
             var user = (Contact)contact;
 
             //Get all private groups
-            var groups = UnitOfWork.Database.GroupsTableRepo.Find(GroupsTableFields.IsPrivate.ToString(), "true");
+            var groups = UnitOfWork.Database.GroupsTableRepo.Find(GroupsTableFields.IsPrivate.ToString(), "True");
 
             //Find group with 2 users
             foreach (var group in groups)

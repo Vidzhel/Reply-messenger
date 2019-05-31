@@ -28,5 +28,16 @@ namespace CommonLibs.Data
             RequestData = data;
             UserData = userData;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="com"></param>
+        public Command(Command com)
+        {
+            CommandType = com.CommandType;
+            RequestData = com.RequestData;
+            UserData = com.UserData;
+        }
     }
 }

@@ -196,7 +196,7 @@
                 <!--typing Bar -->
             <Grid Grid.Row="3"
                   Grid.ColumnSpan="2"
-                  Visibility="{Binding IsChat, Converter={converters:BoolToVisibilityConverter}}">
+                  Visibility="{Binding ShowTypeBar, Converter={converters:BoolToVisibilityConverter}}">
 
                 <Border VerticalAlignment="Top"
                     Margin="20 0 20 20"

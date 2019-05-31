@@ -68,11 +68,17 @@ namespace ClientLibs.Core.ConnectionToServer
 
             //Wait for a signal, if we don't recieve any response, go further
             //TODO set request time again
-            answerReady.WaitOne();
-            answerReady.Reset();
+            CommandType a;
+            do
+            {
+                answerReady.Reset();
+                answerReady.WaitOne();
 
-            //Clear last command
-            var com = answer;
+                //Look for right answer
+                a = (CommandType)Enum.Parse(typeof(CommandType), comType.ToString() + "Answer");
+            } while (answer == null || answer.CommandType != a);
+
+            var com = new Command(answer);
             answer = null;
 
             return com;
@@ -170,8 +176,11 @@ namespace ClientLibs.Core.ConnectionToServer
 
                     var incomingCommand = getIncomingCommand();
 
-                    //if command has type answer, then save it
-                    if (incomingCommand.CommandType == CommandType.Answer)
+                    if (incomingCommand == null)
+                        continue;
+
+                    //if command include answer word, then save it
+                    if (incomingCommand.CommandType.ToString().IndexOf("Answer") > -1)
                     {
                         //copy command
                         this.answer = incomingCommand;

@@ -1,5 +1,29 @@
-﻿
-
+﻿C:\work\Visual studio\C#\OOP\Messenger\WpfApp2\obj\Debug\GeneratedInternalTypeHelper.g.i.cs
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\App.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\MainWindow.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\ChatPage.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\SignInPage.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Pages\SignUpPage.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Buttons.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Fonts.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\RadioButtons.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\ScrollViews.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\TabControls.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\Text.xaml;;
 FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\Styles\TextBoxes.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatInfoBarUserControl.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatList.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatListItem.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ChatUserControl.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\FilesListItem.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\FilesList.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\GroupsList.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ContactsList.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\GroupListItem.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\ContactsListItem.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\InfoGroupControl.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\InfoUserPage.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\MessageList.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\MessageListItem.xaml;;
+FC:\work\Visual studio\C#\OOP\Messenger\WpfApp2\UserControls\SearchResults.xaml;;
 

@@ -18,6 +18,8 @@ namespace ServerLibs.DataAccess
     {
         static DBRepositoryRemote database;
 
+        static List<Client> onlineClients;
+
         public static DBRepositoryRemote Database
         {
             get
@@ -34,7 +36,17 @@ namespace ServerLibs.DataAccess
             }
         }
 
-        public static List<Client> OnlineClients = new List<Client>();
+        public static List<Client> OnlineClients { get {
+                if (onlineClients == null)
+                    onlineClients = new List<Client>();
+
+                return onlineClients;
+            } set {
+                if(onlineClients == null)
+                    onlineClients = new List<Client>();
+
+                onlineClients = value;
+            } }
 
         public static ServerCommandChain CommandChain = new ServerCommandChain();
 
@@ -127,7 +139,10 @@ namespace ServerLibs.DataAccess
                     deleteMessage(com.Command);
                     break;
                 case CommandType.SendFile:
-                    sendFile(com.Command);
+                    CommandChain.SendResponseCommand(new ClientCommand(sendFile(com.Command), com.Client));
+                    break;
+                case CommandType.GetFile:
+                    CommandChain.SendResponseCommand(new ClientCommand(getFile(com.Command), com.Client));
                     break;
                 case CommandType.UpdateUserInfo:
                     CommandChain.SendResponseCommand(new ClientCommand(updateUserInfo(com.Command), com.Client));
@@ -143,8 +158,6 @@ namespace ServerLibs.DataAccess
                     break;
                 case CommandType.SignOut:
                     signOut(com.Command);
-                    break;
-                case CommandType.Answer:
                     break;
                 default:
                     break;
@@ -199,7 +212,7 @@ namespace ServerLibs.DataAccess
                 {
                     //Don't send message to sender
                     if (client.UserInfo.Id == message.SenderId)
-                        return;
+                        continue;
 
                     //If user have the group
                     if (client.UserInfo.chatsIdList.Contains(message.ReceiverId))
@@ -207,7 +220,9 @@ namespace ServerLibs.DataAccess
                         foreach (var fileName in message.AttachmentsList)
                         {
                             //Get name of file on server
-                            var serverFileName = Database.FilesTableRepo.FindFirst(FilesTableFields.FileName.ToString(), fileName).FileNameOnServer;
+                            var file = Database.FilesTableRepo.FindFirst(FilesTableFields.FileNameOnServer.ToString(), fileName);
+
+                            var serverFileName = file.FileNameOnServer;
 
                             // Load file meta data with FileInfo
                             FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + @"\Reply Messenger Server\Saved Files\" + serverFileName);
@@ -281,6 +296,9 @@ namespace ServerLibs.DataAccess
             {
                 foreach (var user in data)
                 {
+                    if (client.UserInfo == null)
+                        return;
+
                     //If user have the contact
                     if (client.UserInfo.contactsIdList.Contains(user.Id))
                     {
@@ -337,6 +355,9 @@ namespace ServerLibs.DataAccess
             //Notify online users
             foreach (var client in OnlineClients)
             {
+                if (client.UserInfo == null)
+                    return;
+
                 foreach (var group in data)
                 {
                     //If user have the group
@@ -354,10 +375,42 @@ namespace ServerLibs.DataAccess
         #region Command Helpers
 
         /// <summary>
+        /// Get file from saved files
+        /// </summary>
+        /// <param name="command"></param>
+        static Command getFile(Command command)
+        {
+            var fileName = (string)command.RequestData;
+
+            var savedFiles = Directory.GetCurrentDirectory() + @"\Reply Messenger Server\Saved Files";
+
+            if(System.IO.File.Exists(savedFiles + @"\" + fileName))
+            {
+                // Load file meta data with FileInfo
+                FileInfo fileInfo = new FileInfo(savedFiles + @"\" + fileName);
+
+                // The byte[] to save the data in
+                byte[] data = new byte[fileInfo.Length];
+
+                // Load a filestream and put its content into the byte[]
+
+                using (var fs = fileInfo.OpenRead())
+                {
+
+                    fs.Read(data, 0, data.Length);
+
+                    return new Command(CommandType.GetFileAnswer, data, null);
+                }
+            }
+
+            return new Command(CommandType.GetFileAnswer, null, null);
+        }
+
+        /// <summary>
         /// Creates file Saved Files in folder and adds to database
         /// </summary>
         /// <param name="command"></param>
-        static void sendFile(Command command)
+        static Command sendFile(Command command)
         {
             var fileName = (string)((object[])command.RequestData)[0];
             var fileContent = (byte[])((object[])command.RequestData)[1];
@@ -379,7 +432,15 @@ namespace ServerLibs.DataAccess
             fs.Write(fileContent, 0, fileContent.Length);
 
             //Add to database
-            Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, Path.GetFileName(filePathOnServer), fileChecksum));
+            var added = Database.FilesTableRepo.Add(new CommonLibs.Data.File(fileName, Path.GetFileName(filePathOnServer), fileChecksum));
+
+            if(added)
+                return new Command(CommandType.SendFileAnswer, Path.GetFileName(filePathOnServer), null);
+
+            //If didn't add to db, than delete
+            if (System.IO.File.Exists(filePathOnServer))
+                System.IO.File.Delete(filePathOnServer);
+            return new Command(CommandType.SendFileAnswer, null, null);
         }
 
         /// <summary>
@@ -397,14 +458,14 @@ namespace ServerLibs.DataAccess
             //Check if new email doesn't exist in the table
             if (oldUserInfo.Email != user.Email)
                 if (Database.UsersTableRepo.IsExists(RemoteUsersTableFields.Email.ToString(), user.Email)) 
-                    return new Command(CommandType.Answer, "A User with same email already exist", null);
+                    return new Command(CommandType.UpdateUserInfoAnswer, "A User with same email already exist", null);
 
             var updated = Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
             if (updated)
-                return new Command(CommandType.Answer, null, null);
+                return new Command(CommandType.UpdateUserInfoAnswer, null, null);
 
-            return new Command(CommandType.Answer, "Something went wrong", null);
+            return new Command(CommandType.UpdateUserInfoAnswer, "Something went wrong", null);
         }
 
         /// <summary>
@@ -426,16 +487,16 @@ namespace ServerLibs.DataAccess
 
             //If old password doesn't match
             if (oldUserInfo.Password != oldPass)
-                return new Command(CommandType.Answer, "Wrong old password", null);
+                return new Command(CommandType.UpdateUserPasswordAnswer, "Wrong old password", null);
 
             user.Password = newPass;
 
             var updated = Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
 
             if (updated)
-                return new Command(CommandType.Answer, null, null);
+                return new Command(CommandType.UpdateUserPasswordAnswer, null, null);
 
-            return new Command(CommandType.Answer, "Something went wrong", null);
+            return new Command(CommandType.UpdateUserPasswordAnswer, "Something went wrong", null);
         }
 
         /// <summary>
@@ -459,7 +520,7 @@ namespace ServerLibs.DataAccess
                     groups.Add(group);
             }
 
-            return new Command(CommandType.Answer, groups, null);
+            return new Command(CommandType.GetGroupsInfoAnswer, groups, null);
         }
 
         /// <summary>
@@ -483,7 +544,7 @@ namespace ServerLibs.DataAccess
                     users.Add(user);
             }
 
-            return new Command(CommandType.Answer, users, null);
+            return new Command(CommandType.GetUsersInfoAnswer, users, null);
         }
 
         /// <summary>
@@ -503,7 +564,7 @@ namespace ServerLibs.DataAccess
 
             //If there isn't any chat 
             if(user == null || user.chatsIdList == null)
-                return new Command(CommandType.Answer, groups, null);
+                return new Command(CommandType.GetUserGroupsInfoAnswer, groups, null);
 
             //Get all required groups
             foreach (var id in user.chatsIdList)
@@ -514,7 +575,7 @@ namespace ServerLibs.DataAccess
                     groups.Add(group);
             }
 
-            return new Command(CommandType.Answer, groups, null);
+            return new Command(CommandType.GetUserGroupsInfoAnswer, groups, null);
         }
 
         /// <summary>
@@ -542,7 +603,7 @@ namespace ServerLibs.DataAccess
                 if (user.UserName.Contains(text))
                     matchUsers.Add(user);
 
-            return new Command(CommandType.Answer, new object[] { matchUsers, matchGroups }, null);
+            return new Command(CommandType.SearchRequestAnswer, new object[] { matchUsers, matchGroups }, null);
         }
 
         /// <summary>
@@ -579,10 +640,10 @@ namespace ServerLibs.DataAccess
             if (updated)
             {
 
-                return new Command(CommandType.Answer, true, null);
+                return new Command(CommandType.MakeAdminAnswer, true, null);
             }
 
-            return new Command(CommandType.Answer, false, null);
+            return new Command(CommandType.MakeAdminAnswer, false, null);
         }
 
         /// <summary>
@@ -619,11 +680,11 @@ namespace ServerLibs.DataAccess
                 //Add to table
                 var added = Database.UsersTableRepo.Add(user);
                 if(added)
-                    return new Command(CommandType.Answer, true, Database.UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email));
+                    return new Command(CommandType.SignUpAnswer, true, Database.UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email));
             }
 
             //else return error answer
-            return new Command(CommandType.Answer, false, null);
+            return new Command(CommandType.SignUpAnswer, false, null);
         }
 
         /// <summary>
@@ -636,12 +697,15 @@ namespace ServerLibs.DataAccess
             //Get user data
             var user = com.UserData;
 
+            if (user == null)
+                return new Command(CommandType.SignInAnswer, false, null);
+
             //Find user with same email
             var findUser = Database.UsersTableRepo.FindFirst(UsersTableFields.Email.ToString(), user.Email);
 
             //If the user doesn't exist
             if (findUser == null)
-                return new Command(CommandType.Answer, false, null);
+                return new Command(CommandType.SignInAnswer, false, null);
 
             //Check Passwords
             if (user.Password == findUser.Password)
@@ -667,12 +731,9 @@ namespace ServerLibs.DataAccess
                 }
 
                 if (updated)
-                    return new Command(CommandType.Answer, true, findUser);
-                else
-                    return new Command(CommandType.Answer, false, null);
+                    return new Command(CommandType.SignInAnswer, true, findUser);
             }
-            else
-                return new Command(CommandType.Answer, false, null);
+                return new Command(CommandType.SignInAnswer, false, null);
         }
 
         static Command synchronize(Command com)
@@ -712,7 +773,7 @@ namespace ServerLibs.DataAccess
             //Get user info
             user = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), user.Id.ToString());
 
-            return new Command( CommandType.Answer, new object[]{groupsInfo, contactsInfo, messagesInfo}, user);
+            return new Command( CommandType.SynchronizeAnswer, new object[]{groupsInfo, contactsInfo, messagesInfo}, user);
         }
 
         /// <summary>
@@ -729,19 +790,25 @@ namespace ServerLibs.DataAccess
             //If added, return command with group data to client(with group Id)
             if (added)
             {
-                //Update user
-                var user = com.UserData;
+                foreach (var memberId in group.MembersIdList)
+                {
+                    //Update user
+                    var user = Database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), memberId.ToString());
 
-                //Get new id of the group
-                group = Database.GroupsTableRepo.GetLast();
-                user.AddNewChat(group);
-                Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+                    //Get new id of the group
+                    group = Database.GroupsTableRepo.GetLast();
+                    user.AddNewChat(group);
+                    Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
+
+                }
+
+                var newUser = database.UsersTableRepo.FindFirst(UsersTableFields.Id.ToString(), com.UserData.Id.ToString());
 
                 var newGroup = Database.GroupsTableRepo.FindLast(GroupsTableFields.Name.ToString(), group.Name);
-                return new Command(CommandType.Answer, newGroup, user);
+                return new Command(CommandType.CreateGroupAnswer, newGroup, newUser);
             }
 
-            return new Command(CommandType.Answer, null, null);
+            return new Command(CommandType.CreateGroupAnswer, null, null);
         }
 
         /// <summary>
@@ -777,10 +844,10 @@ namespace ServerLibs.DataAccess
             if (updated)
             {
                 //return response
-                return new Command(CommandType.Answer, true, user);
+                return new Command(CommandType.JoinGroupAnswer, true, user);
             }
 
-            return new Command(CommandType.Answer, false, null);
+            return new Command(CommandType.JoinGroupAnswer, false, null);
         }
         
         /// <summary>
@@ -810,16 +877,16 @@ namespace ServerLibs.DataAccess
 
 
             //If in group no more users or this is a chat with no admins delete it, else update
-            if (group.MembersIdList.Count != 0 && (group.isChannel && group.AdminsIdList.Count != 0))
+            if (group.MembersIdList.Count != 0 && !(group.isChannel && group.AdminsIdList.Count == 0))
             {
 
                 //Update table
                 var updated = Database.GroupsTableRepo.Update(GroupsTableFields.Id.ToString(), group.Id.ToString(), group);
 
                 if (updated)
-                    return new Command(CommandType.Answer, true, user);
+                    return new Command(CommandType.LeaveGroupAnswer, true, user);
 
-                return new Command(CommandType.Answer, false, null);
+                return new Command(CommandType.LeaveGroupAnswer, false, null);
             }
             else
             {
@@ -830,9 +897,9 @@ namespace ServerLibs.DataAccess
 
                 if(removed)
 
-                    return new Command(CommandType.Answer, true, user);
+                    return new Command(CommandType.LeaveGroupAnswer, true, user);
 
-                return new Command(CommandType.Answer, false, null);
+                return new Command(CommandType.LeaveGroupAnswer, false, null);
             }
         }
 
@@ -892,10 +959,10 @@ namespace ServerLibs.DataAccess
 
             if (added)
             {
-                return new Command(CommandType.Answer, message, null);
+                return new Command(CommandType.SendMesssageAnswer, message, null);
             }
 
-            return new Command(CommandType.Answer, null, null);
+            return new Command(CommandType.SendMesssageAnswer, null, null);
         }
 
         static Command deleteUser(Command com)
