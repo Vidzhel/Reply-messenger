@@ -23,7 +23,7 @@ namespace ClientLibs.Core.ConnectionToServer
 
         static byte[] buffer = new byte[bufferSize];
 
-        static short dataSize;
+        static int dataSize;
 
         static bool ServerConnected = false;
 
@@ -39,6 +39,14 @@ namespace ClientLibs.Core.ConnectionToServer
         static event EventHandler<bool> connectionChanged;
 
         static IPEndPoint RemoteEndPoint;
+
+
+        // Thread signals
+        static ManualResetEvent AcceptDone = new ManualResetEvent(true);
+        static ManualResetEvent SendDone = new ManualResetEvent(true);
+        static ManualResetEvent ReceiveDone = new ManualResetEvent(true);
+        static ManualResetEvent ServerReceiveDone = new ManualResetEvent(true);
+
 
         #endregion
 
@@ -90,7 +98,6 @@ namespace ClientLibs.Core.ConnectionToServer
         /// <param name="ServerName">server info(ip address or name)</param>
         static public void Start()
         {
-
             //IPHostEntry ipHost = Dns.GetHostEntry(ServerName);
 
             //Get local ip addresses
@@ -105,45 +112,51 @@ namespace ClientLibs.Core.ConnectionToServer
             Socket socket = new Socket(RemoteEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             Socket = socket;
 
+            Connect();
+        }
+
+        static void Connect()
+        {
+
             do
             {
 
                 try
                 {
-                    //Start connecting
-                    var asyncResult = Socket.BeginConnect(RemoteEndPoint, null, null);
 
-                    Socket.EndConnect(asyncResult);
+                    if (!Socket.Connected)
+                    {
+
+                        //Start connecting
+                        var asyncResult = Socket.BeginConnect(RemoteEndPoint, null, null);
+                        Socket.EndConnect(asyncResult);
+
+                    }
 
                     ServerConnected = true;
                     //Notify connection changed
-                    connectionChanged(null, ServerConnected);
+                    connectionChanged?.Invoke(null, ServerConnected);
 
                     //Start receiving data
                     Thread receiveData = new Thread(new ThreadStart(ReceiveData));
                     receiveData.IsBackground = true;
                     receiveData.Name = "Receiver From Server";
                     receiveData.Start();
-                    
+
                     //Start checking connection
                     Thread checkingConnection = new Thread(new ThreadStart(checkConnection));
                     checkingConnection.IsBackground = true;
                     checkingConnection.Name = "Check Connection";
                     checkingConnection.Start();
+
+                    break;
                 }
                 catch (Exception e)
                 {
-                    DisplayMessageOnScreen($"Error on starting connectiong, try again after {ReconectionTimeSeconds} seconds \n " + e.ToString());
+                    Thread.Sleep(ReconectionTimeSeconds * 1000);
                 }
 
-                //If we didn't connect to server, than try again 
-                if (!ServerConnected)
-                    Thread.Sleep(ReconectionTimeSeconds * 1000);
-                else
-                    break;
-
             } while (true);
-
         }
 
         /// <summary>
@@ -151,102 +164,71 @@ namespace ClientLibs.Core.ConnectionToServer
         /// </summary>
         /// <param name="obj">object to send</param>
         /// <returns>Response of server</returns>
-        static public bool SendData(object obj)
+        static public bool SendData(object obj, bool dontWait = false)
         {
             while (!ServerConnected)
             {
                 Thread.Sleep(ReconectionTimeSeconds * 1000);
             }
+                //Wait signal
+                SendDone.WaitOne();
+                SendDone.Reset();
+
 
             var data = DataConverter.SerializeData(obj);
 
             //Add size to vegin of the array
-            var dataSize = (short)data.Length;
-            DataConverter.FromShort(dataSize, out var byte1, out var byte2);
+            var dataSize = data.Length;
+            DataConverter.FromInt(dataSize, out var byte1, out var byte2, out var byte3, out var byte4);
 
             // Add data size to the beginning
-            data = DataConverter.MergeByteArrays(new byte[] { byte1, byte2}, data);
+            data = DataConverter.MergeByteArrays(new byte[] { byte1, byte2, byte3, byte4}, data);
             try
             {
 
-                //Send files
-                var asyncResult = Socket.BeginSend(data, 0, data.Length, 0, null, null);
-                Socket.EndSend(asyncResult);
+                if (!dontWait)
+                {
+                    //Send files
+                    ServerReceiveDone.WaitOne(7000);
+                    ServerReceiveDone.Reset();
+                }
 
+                var asyncResult = Socket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendDataCallback), null);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 SendData(obj);
+                SendDone.Set();
             }
 
             return true;
         }
 
+
+
         static public void ReceiveData()
         {
 
-            string content = String.Empty;
+            //Wait signal
+            ReceiveDone.WaitOne();
+            ReceiveDone.Reset();
 
-            int bytesRead;
+            string content = String.Empty;
 
             try
             {
-                var asyncResult = Socket.BeginReceive(buffer, 0, bufferSize, 0, null, null);
-                bytesRead = Socket.EndReceive(asyncResult);
+                Socket.BeginReceive(buffer, 0, bufferSize, 0, new AsyncCallback(ReceiveDataCallback), null);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
+                answerDataReady.Invoke(binReceivedData, binReceivedData.ToArray());
+                ReceiveDone.Set();
                 DisplayMessageOnScreen("Error on receive data from server");
                 return;
             }
 
-            if (bytesRead > 0)
-            {
-
-                //If it's first portion of data
-                if(binReceivedData.Count == 0)
-                    //get data size
-                    dataSize = (short)(DataConverter.ToShort(buffer[0], buffer[1]) + 2);
-
-                //Delete size of received data
-                dataSize -= (short)buffer.Length;
-
-                if (dataSize <= 0)
-                {
-                    //Separate data from dummy bytes
-                    byte[] temp = new byte[dataSize + buffer.Length];
-                    Array.Copy(buffer, 0, temp, 0, dataSize + buffer.Length);
-
-                    //Copy buffer to bin recieved data
-                    binReceivedData.AddRange(temp);
-
-
-                    //Remove first 2 bytes(size of data)
-                    binReceivedData.RemoveRange(0, 2);
-
-
-                    //Notify listeners about recieved data is ready to handle
-                    answerDataReady.Invoke(binReceivedData, binReceivedData.ToArray());
-
-                    //All the data has benn read from the client. Display it on the console
-                    DisplayMessageOnScreen($"Read {content.Length} bytes from server");
-
-                    //Clear binReceivedData to fill it with new data
-                    binReceivedData = new List<byte>();
-
-                    //Start again
-                    ReceiveData();
-                }
-                else
-                {
-
-                    //Copy buffer to bin recieved data
-                    binReceivedData.AddRange(buffer);
-
-                    //Continue reading data
-                    ReceiveData();
-                }
-            }
 
         }
         
@@ -264,39 +246,152 @@ namespace ClientLibs.Core.ConnectionToServer
         #endregion
 
         #region Private Methods
+        
+        static void ReceiveDataCallback(IAsyncResult ar)
+        { 
+            int bytesRead = 0;
+            try
+            {
+                bytesRead = Socket.EndReceive(ar);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                ReceiveDone.Set();
+                ReceiveData();
+                return;
+
+            }
+
+            if (bytesRead > 0)
+            {
+                //Check lable and resume sending
+                if (Encoding.Default.GetString(buffer).Contains("<EndOfReceiving>"))
+                {
+                    ServerReceiveDone.Set();
+                    ReceiveDone.Set();
+                    ReceiveData();
+                    return;
+                }
+
+                //If it's first portion of data
+                if (binReceivedData.Count == 0)
+                    //get data size
+                    dataSize = DataConverter.ToInt(buffer[0], buffer[1], buffer[2], buffer[3]) + 4;
+
+                //Delete size of received data
+                dataSize -= buffer.Length;
+
+                if (dataSize <= 0)
+                {
+                    //Separate data from dummy bytes
+                    byte[] temp = new byte[dataSize + buffer.Length];
+                    Array.Copy(buffer, 0, temp, 0, dataSize + buffer.Length);
+
+                    //Copy buffer to bin recieved data
+                    binReceivedData.AddRange(temp);
+
+
+                    //Remove first 2 bytes(size of data)
+                    binReceivedData.RemoveRange(0, 4);
+
+                    //Send signal to resume receiving
+                    SendData("<EndOfReceiving>", true);
+
+                    //Notify listeners about recieved data is ready to handle
+                    answerDataReady.Invoke(binReceivedData, binReceivedData.ToArray());
+
+                    //Clear binReceivedData to fill it with new data
+                    binReceivedData = new List<byte>();
+
+                    ReceiveDone.Set();
+
+                    //Start again
+                    ReceiveData();
+                }
+                else
+                {
+
+                    //Copy buffer to bin recieved data
+                    binReceivedData.AddRange(buffer);
+
+                    ReceiveDone.Set();
+
+                    //Continue reading data
+                    ReceiveData();
+                }
+            }
+        }
+
+
+        static void SendDataCallback(IAsyncResult ar)
+        {
+
+            try
+            {
+                Socket.EndSend(ar);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            // Signal the main thread to con.Message
+            SendDone.Set();
+        }
 
         /// <summary>
         /// Check connection, notify connection lost
         /// </summary>
         static void checkConnection()
         {
+            byte[] tmp = new byte[1];
+
             do
             {
+                try
+                {
+                    //Try connection
+                    if (Socket.Connected)
+                    {
+                        if (!(Socket.Poll(0, SelectMode.SelectWrite) && (!Socket.Poll(0, SelectMode.SelectError))))
+                            throw new Exception("Server disconnected");
+                        else
+                        {
+                            ServerConnected = true;
+
+                            //Notify connection changed
+                            connectionChanged(null, ServerConnected);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Server disconnected");
+                    }
+                    
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+
+
+                    ServerConnected = false;
+                    //Notify connection changed
+                    connectionChanged(null, ServerConnected);
+
+                    Socket.Dispose();
+
+                    //Reconnect
+                    Start();
+
+                    //Send command to sign in again
+                    UnitOfWork.SignIn(UnitOfWork.User);
+                }
+
                 //Check every ReconectionTimeSeconds seconds
                 Thread.Sleep(ReconectionTimeSeconds * 1000);
 
-                try
-                {
-
-
-                    //If socket not connected
-                    if ((Socket.Poll(1, SelectMode.SelectRead) && Socket.Available == 0) || Socket == null)
-                    {
-                        ServerConnected = false;
-                        //Notify connection changed
-                        connectionChanged(null, ServerConnected);
-
-                        Socket.Dispose();
-
-                        //Reconnect
-                        Start();
-
-                        //Send command to sign in again
-                        UnitOfWork.SignIn(UnitOfWork.User);
-                    }
-                }
-                catch (Exception e) { }
-                
             } while (true);
         }
 

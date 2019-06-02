@@ -2,6 +2,7 @@
 using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
+using System.Collections.Generic;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -14,6 +15,15 @@ namespace UI.UIPresenter.ViewModels
         /// Group info to display
         /// </summary>
         public Group GroupInfo { get; set; }
+
+        public string GroupPhoto
+        {
+            get
+            {
+                var list = UnitOfWork.GetFilesByName(new List<string>() { GroupInfo.Image });
+                return (list.Result)[0];
+            }
+        }
 
         /// <summary>
         /// True if the user is in your contact list

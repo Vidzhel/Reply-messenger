@@ -48,13 +48,27 @@
 
                                     <!--Profile Photo and status-->
                                     <Grid>
-
-                                        <Border Width="30"
+                                            <Border Width="30"
                                         Margin="10 5"
                                         Height="30"
                                         Background="{StaticResource DarkBgBrush}"
-                                        CornerRadius="20"/>
+                                        CornerRadius="20">
 
+                                            <Grid VerticalAlignment="Center"
+                                                  Width="30"
+                                                  Height="30"
+                                                  HorizontalAlignment="Center">
+                                                <Grid.Clip>
+                                                    <EllipseGeometry Center="15,15" RadiusX="15" RadiusY="15"/>
+                                                </Grid.Clip>
+                                                <Image Source="{Binding ProfilePhoto}"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
+
+                                            </Grid>
+
+                                        </Border>
+                                        
                                         <Border BorderBrush="{StaticResource GrayBGBrush}"
                                             BorderThickness="1"
                                             VerticalAlignment="Bottom"

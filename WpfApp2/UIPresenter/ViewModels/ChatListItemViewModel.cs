@@ -1,6 +1,7 @@
 ﻿using ClientLibs.Core.DataAccess;
 using CommonLibs.Data;
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using UI.InversionOfControl;
 
@@ -34,14 +35,30 @@ namespace UI.UIPresenter.ViewModels
                             return "Photo";
 
                     case DataType.Text:
-                            return LastMessage.Data;
+                        {
+                            if (LastMessage.Data != String.Empty)
+                                return LastMessage.Data;
+                            else
+                                return LastMessage.AttachmentsList[LastMessage.AttachmentsList.Count - 1];
+                        }
 
                     default:
                             return "";
                 }
             }
         }
-        
+
+
+        public string GroupPhoto
+        {
+            get
+            {
+                var list = UnitOfWork.GetFilesByName(new List<string>() { GroupData.Image});
+                return (list.Result)[0];
+            }
+        }
+
+
         public string UserName => GroupData?.Name;
         
         public DateTime LastMessageTime { get {

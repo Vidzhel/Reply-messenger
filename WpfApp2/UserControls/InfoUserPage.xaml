@@ -210,7 +210,7 @@
                           Header="Groups"
                           Visibility="{Binding IsYourAccaunt, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}">
 
-                    <local:GroupsList />
+                    <local:GroupsList DataContext="{Binding GroupsList}"/>
 
                 </TabItem>
 

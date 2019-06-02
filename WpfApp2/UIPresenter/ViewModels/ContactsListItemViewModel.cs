@@ -2,6 +2,9 @@
 using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using UI.InversionOfControl;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -20,6 +23,18 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public bool IsYourContact => UnitOfWork.User.contactsIdList.Contains(UserInfo.Id);
 
+
+        public string ProfilePhoto
+        {
+            get
+            {
+                var list = UnitOfWork.GetFilesByName(new List<string>() { UserInfo.ProfilePhoto });
+                if (list.Result.Count == 0)
+                    return "";
+
+                return (list.Result)[0];
+            }
+        }
 
         /// <summary>
         /// If true profide button to delate user from a group

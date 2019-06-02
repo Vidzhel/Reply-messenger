@@ -46,15 +46,29 @@
                                 <!--Group info-->
                                 <StackPanel Orientation="Horizontal">
 
-                                    <!--Group Photo-->
+                                    <!--Profile Photo and status-->
                                     <Grid>
-
                                         <Border Width="30"
                                         Margin="10 5"
                                         Height="30"
                                         Background="{StaticResource DarkBgBrush}"
-                                        CornerRadius="20"/>
-                                        
+                                        CornerRadius="20">
+
+                                            <Grid VerticalAlignment="Center"
+                                                  Width="30"
+                                                  Height="30"
+                                                  HorizontalAlignment="Center">
+                                                <Grid.Clip>
+                                                    <EllipseGeometry Center="15,15" RadiusX="15" RadiusY="15"/>
+                                                </Grid.Clip>
+                                                <Image Source="{Binding GroupPhoto}"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
+
+                                            </Grid>
+
+                                        </Border>
+
                                     </Grid>
 
                                     <!--Group Name-->

@@ -104,6 +104,13 @@ namespace CommonLibs.Data
             contactsIdList = contactsId ?? new List<int>();
         }
 
+        public User(User user) : base(user.UserName, user.Email, user.Bio, user.ProfilePhoto, user.Online, user.Id) 
+        {
+            Password = user.Password;
+            chatsIdList = user.chatsIdList;
+            contactsIdList = user.contactsIdList;
+        }
+
         /// <summary>
         /// Constructor for dapper
         /// </summary>

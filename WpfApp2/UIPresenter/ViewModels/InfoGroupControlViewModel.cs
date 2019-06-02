@@ -5,9 +5,11 @@ using CommonLibs.Connections.Repositories.Tables;
 using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using UI.InversionOfControl;
+using WpfApp2;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -22,6 +24,11 @@ namespace UI.UIPresenter.ViewModels
 
         //Deletes group
         public ICommand DeleteGroup { get; set; }
+
+        /// <summary>
+        /// Changes group photo
+        /// </summary>
+        public ICommand ChangeGroupPhoto { get; set; }
 
         public Group GroupInfo { get; set; }
 
@@ -39,7 +46,18 @@ namespace UI.UIPresenter.ViewModels
         /// Group photos list
         /// </summary>
         public ContactsListViewModel PhotosList { get; set; } = new ContactsListViewModel();
-        
+
+        public FilesListViewModel SharedMedia { get; set; } = new FilesListViewModel();
+
+        public string GroupPhoto
+        {
+            get
+            {
+                var list = UnitOfWork.GetFilesByName(new List<string>() { GroupInfo.Image });
+                return (list.Result)[0];
+            }
+        }
+
         /// <summary>
         /// Gets user name
         /// </summary>
@@ -97,6 +115,8 @@ namespace UI.UIPresenter.ViewModels
             UnitOfWork.AddUserInfoUpdatedHandler((sender, args) => OnPropertyChanged("IsYourGroup"));
             ApplicationService.GetChatViewModel.OnCurrentChatChanged((sender, args) => loadInfo(args));
 
+
+            ChangeGroupPhoto = new RelayCommand(changeGroupPhoto);
             ChangeGroupInfo = new RelayCommandParametrized((data) => changeGroupInfo(data));
             DeleteGroup = new RelayCommand(deleteGroup);
 
@@ -108,6 +128,32 @@ namespace UI.UIPresenter.ViewModels
         #endregion
 
         #region Private Methods
+
+
+        async void changeGroupPhoto()
+        {
+            if (!AreYouAdmin)
+                return;
+
+            var photoPath = FileManager.OpenFileDialogForm("Image files(*.png;*jpg) | *.png;*jpg");
+
+            if (photoPath == String.Empty)
+                return;
+
+            //Copy photo to
+            var name = await UnitOfWork.SendFile(photoPath);
+            var newImageDest = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name;
+            if (!System.IO.File.Exists(newImageDest))
+                System.IO.File.Copy(photoPath, newImageDest);
+
+            var newGroup = new Group(GroupInfo);
+            newGroup.Image = Path.GetFileName(newImageDest);
+
+            UnitOfWork.ChangeGroupInfo(newGroup);
+
+            OnPropertyChanged("ProfilePhoto");
+        }
+
 
         async void deleteGroup()
         {
@@ -155,11 +201,6 @@ namespace UI.UIPresenter.ViewModels
 
             ChangeGroupInfoErrorMessage = "";
             FieldState = ControlStates.NormalGray;
-        }
-
-        void OnMessageUpdates(object sender, DataChangedArgs<IEnumerable<Message>> args)
-        {
-
         }
 
         async void OnGroupUpdates(object sender, DataChangedArgs<IEnumerable<Group>> args)
@@ -215,6 +256,23 @@ namespace UI.UIPresenter.ViewModels
 
                 ContactsList = new ContactsListViewModel(membersInfo, true, false, AreYouAdmin);
             }
+
+            //Load shared files
+            List<string> filesPath = new List<string>();
+            var messages = UnitOfWork.Database.MessagesTableRepo.Find(MessagesTableFields.ReceiverId.ToString(), GroupInfo.Id.ToString());
+            foreach (var mess in messages)
+            {
+                if (mess.AttachmentsList.Count != 0)
+                    foreach (var attachment in mess.AttachmentsList)
+                        filesPath.Add(attachment);
+            }
+
+            foreach (var file in await UnitOfWork.GetFilesByName(filesPath))
+             //Becouse Items is ObservableCollection we should update elements from the main thread
+                    await App.Current.Dispatcher.Invoke(async () =>
+                    {
+                        SharedMedia.Items.Add(new FilesListItemViewModel(file, false, false));
+                    });
 
             //Update UI
             OnPropertyChanged("GroupName");

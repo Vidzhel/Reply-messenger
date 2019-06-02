@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using UI.InversionOfControl;
 
@@ -70,7 +71,15 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public bool IsYourAccaunt => UnitOfWork.User.Id == UserInfo?.Id;
 
-        public string ProfilePhoto => UnitOfWork.User?.ProfilePhoto;
+        public string ProfilePhoto {
+            get{
+                var list = UnitOfWork.GetFilesByName(new List<string>() { UserInfo.ProfilePhoto });
+                if (list.Result.Count == 0)
+                    return "";
+
+                return (list.Result)[0];
+            }
+        }
 
         /// <summary>
         /// Gets user name
@@ -126,19 +135,28 @@ namespace UI.UIPresenter.ViewModels
 
         #region Private Methods
 
-        void changeProfilePhoto()
+        async void changeProfilePhoto()
         {
+            if (!IsYourAccaunt)
+                return;
+
             var photoPath = FileManager.OpenFileDialogForm("Image files(*.png;*jpg) | *.png;*jpg");
 
             if (photoPath == String.Empty)
                 return;
 
             //Copy photo to
-            var newImageDest = Directory.GetCurrentDirectory() + @"\Reply Messenger\User Files\" + "ProfilePhoto.png";
+            var name = await UnitOfWork.SendFile(photoPath);
+            var newImageDest = Directory.GetCurrentDirectory() + @"\Reply Messenger\User Files\" + name;
             if (!System.IO.File.Exists(newImageDest))
                 System.IO.File.Copy(photoPath, newImageDest);
-            else
-                System.IO.File.Replace(photoPath, newImageDest, newImageDest + ".bac");
+
+
+            var newUser = new User(UnitOfWork.User);
+            newUser.ProfilePhoto = Path.GetFileName(newImageDest);
+
+            await UnitOfWork.ChangeUserInfo(newUser);
+
 
             OnPropertyChanged("ProfilePhoto");
         }
@@ -359,6 +377,7 @@ namespace UI.UIPresenter.ViewModels
             OnPropertyChanged("Email");
             OnPropertyChanged("IsYourContact");
             OnPropertyChanged("IsYourAccaunt");
+            OnPropertyChanged("GroupsList");
         }
 
         #endregion

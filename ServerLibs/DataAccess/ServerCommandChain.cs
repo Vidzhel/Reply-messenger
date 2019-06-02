@@ -50,7 +50,7 @@ namespace ServerLibs.DataAccess
         public override void SendResponseCommand(ClientCommand clientCommand)
         {
             //Send command
-            AsynchronousClientListener.SendData(clientCommand.Client, clientCommand.Command);
+            clientCommand.Client.SendData(clientCommand.Command);
         }
 
         /// <summary>

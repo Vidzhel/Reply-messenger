@@ -120,8 +120,32 @@
                                                   CommandParameter="{Binding CurrentChat}"/>
                                 </Grid.InputBindings>
 
-                                <!--Photo-->
-                                <Border Name="Photo"  Height="35" Width="35" Background="{StaticResource GrayBGBrush}" CornerRadius="25"/>
+                                <!--Profile Photo and status-->
+                                <Border Width="30"
+                                        Name="Photo"
+                                    Height="30"
+                                    Background="{StaticResource DarkBgBrush}"
+                                    CornerRadius="20">
+
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" Command="{x:Static commands:CommonCommands.OpenGroupInfo}" CommandParameter="{Binding GroupData}"/>
+                                    </Border.InputBindings>
+
+                                    <Grid VerticalAlignment="Center"
+                                            Width="30"
+                                            Height="30"
+                                            HorizontalAlignment="Center">
+                                        <Grid.Clip>
+                                            <EllipseGeometry Center="15,15" RadiusX="15" RadiusY="15"/>
+                                        </Grid.Clip>
+                                        <Image Source="{Binding GroupPhoto}"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"/>
+
+                                    </Grid>
+
+                                </Border>
+
 
                             </Grid>
 

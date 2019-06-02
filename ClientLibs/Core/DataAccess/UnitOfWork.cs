@@ -107,10 +107,29 @@ namespace ClientLibs.Core.DataAccess
         /// <param name="group"></param>
         public static void ChangeGroupInfo(Group group)
         {
-            if(ServerConnected)
+            if (ServerConnected)
                 commandChain.SendCommand(CommandType.UpdateGroup, group, User);
         }
 
+        /// <summary>
+        /// Delete message
+        /// </summary>
+        /// <param name="group"></param>
+        public static void RemoveMessage(Message mess)
+        {
+            if (ServerConnected)
+                commandChain.SendCommand(CommandType.RemoveMessage, mess, User);
+        }
+
+        /// <summary>
+        /// Updates message
+        /// </summary>
+        /// <param name="group"></param>
+        public static void UpdateMessage(Message mess)
+        {
+            if (ServerConnected)
+                commandChain.SendCommand(CommandType.UpdateMessage, mess, User);
+        }
         /// <summary>
         /// Make request to the server to update user info and return error message
         /// or null if all ok
@@ -190,7 +209,7 @@ namespace ClientLibs.Core.DataAccess
         /// <param name="group"></param>
         public static async Task LeaveGroup(Group group)
         {
-            if (ServerConnected)
+            //if (ServerConnected)
             {
                 await Task.Run(() =>
                 {
@@ -538,14 +557,22 @@ namespace ClientLibs.Core.DataAccess
         {
             //TODO Finish
 
-            var result = await Task.Run(() =>
-            {
+            //var result = await Task.Run(() =>
+            //{
                 List<string> Pathes = new List<string>();
 
                 foreach (var name in fileNames)
                 {
-                    var localPath = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name;
-                    if (!System.IO.File.Exists(localPath))
+                    if (name == null)
+                        continue;
+
+                    var localFiles = Directory.GetCurrentDirectory() + @"\Reply Messenger\Saved Files\" + name;
+                    var userFiles = Directory.GetCurrentDirectory() + @"\Reply Messenger\User Files\" + name;
+
+                    if(System.IO.File.Exists(userFiles))
+                        Pathes.Add(userFiles);
+
+                    else if (!System.IO.File.Exists(localFiles))
                     {
                         var res = commandChain.MakeRequest(CommandType.GetFile, name, User);
 
@@ -558,17 +585,19 @@ namespace ClientLibs.Core.DataAccess
                         FileManager.CheckClientRequiredFolders();
 
                         //Write data into the file
-                        var fs = new FileInfo(localPath).OpenWrite();
+                        var fs = new FileInfo(localFiles).OpenWrite();
                         fs.Write(fileContent, 0, fileContent.Length);
-                    }
 
-                    Pathes.Add(localPath);
+                        Pathes.Add(localFiles);
+                    }
+                    else
+                        Pathes.Add(localFiles);
                 }
 
                 return Pathes;
-            });
+            //});
 
-            return result;
+            //return result;
         } 
 
         /// <summary>
@@ -600,12 +629,13 @@ namespace ClientLibs.Core.DataAccess
 
                     fs.Read(data, 0, data.Length);
 
-                    var res = commandChain.MakeRequest(CommandType.SendFile, new object[] { Path.GetFileName(filePath), data }, User);
-
-                    if (res.RequestData == null)
-                        return "";
-                    return (string)res.RequestData;
                 }
+
+                var res = commandChain.MakeRequest(CommandType.SendFile, new object[] { Path.GetFileName(filePath), data }, User);
+
+                if (res.RequestData == null)
+                    return "";
+                return (string)res.RequestData;
 
 
             });

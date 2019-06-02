@@ -169,7 +169,7 @@ namespace CommonLibs.Data
                 var createContactsTable = @"CREATE TABLE Contacts (
                                             Id    INTEGER NOT NULL UNIQUE,
                                             UserName  TEXT NOT NULL,
-	                                        ProfilePhoto  BLOB,
+	                                        ProfilePhoto  TEXT,
 	                                        Email TEXT NOT NULL UNIQUE,
                                             Bio   TEXT,
 	                                        Online    TEXT NOT NULL,

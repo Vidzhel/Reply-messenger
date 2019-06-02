@@ -19,9 +19,9 @@ namespace CommonLibs.Data
         /// <param name="byte1"></param>
         /// <param name="byte2"></param>
         /// <returns></returns>
-        public static short ToShort(short byte1, short byte2)
+        public static int ToInt(short byte1, short byte2, short byte3, short byte4)
         {
-            return (short)((byte2 << 8) + byte1);
+            return (int)( (byte4 << 24) + ((byte3 << 16) + ((byte2 << 8) + byte1)));
         }
 
         /// <summary>
@@ -30,10 +30,12 @@ namespace CommonLibs.Data
         /// <param name="number"></param>
         /// <param name="byte1"></param>
         /// <param name="byte2"></param>
-        public static void FromShort(short number, out byte byte1, out byte byte2)
+        public static void FromInt(int number, out byte byte1, out byte byte2, out byte byte3, out byte byte4)
         {
-            byte2 = (byte)(number >> 8);
-            byte1 = (byte)(number & 255);
+            byte4 = (byte)(number >> 24);
+            byte3 = (byte)((number << 8) >> 24);
+            byte2 = (byte)((number << 16) >> 24);
+            byte1 = (byte)((number) & 255);
         }
 
         /// <summary>

@@ -33,13 +33,13 @@
 
                             <Grid>
 
-                                <Grid Visibility="{Binding IsImage, Converter={converters:BoolToVisibilityConverter}}">
+                                <Grid Visibility="{Binding ShowImagePreview, Converter={converters:BoolToVisibilityConverter}}">
 
                                     <Image Source="{Binding FilePath}" MaxWidth="{Binding ImageWidth}" MaxHeight="{Binding ImageHeight}"/>
 
                                 </Grid>
-                                
-                                <Grid Visibility="{Binding IsImage, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}">
+
+                                <Grid Visibility="{Binding ShowImagePreview, Converter={converters:BoolToVisibilityConverter}, ConverterParameter=true}">
 
 
 

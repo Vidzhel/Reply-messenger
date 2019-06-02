@@ -11,6 +11,8 @@ namespace UI.UIPresenter.ViewModels
     public class FilesListItemViewModel : BaseViewModel
     {
 
+        bool showImagePreview;
+
         #region Public Members
 
         public ICommand RemoveAttachedFile { get; set; }
@@ -34,6 +36,8 @@ namespace UI.UIPresenter.ViewModels
                         return true;
                 return false;
             } }
+
+        public bool ShowImagePreview => IsImage && showImagePreview;
 
         public string ImageHeight
         {
@@ -95,11 +99,11 @@ namespace UI.UIPresenter.ViewModels
 
         #region Constructor
 
-        public FilesListItemViewModel(string filePath, bool isAttachmentsList)
+        public FilesListItemViewModel(string filePath, bool isAttachmentsList, bool showImagePreview = true)
         {
             FilePath = filePath;
             IsAttachmentsList = isAttachmentsList;
-
+            this.showImagePreview = showImagePreview;
 
             //Setup commands
             RemoveAttachedFile = new RelayCommand(removeAttachedFile);

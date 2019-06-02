@@ -156,7 +156,7 @@ namespace UI.UIPresenter.ViewModels
                 {
 
                     //If message from the group
-                    if (group.GroupData.Id == data.Id)
+                    if (group.GroupData.Id == data.ReceiverId)
 
                         //Check if it was the last message of the group
                         if (group.LastMessage.Id == data.Id)
@@ -193,7 +193,9 @@ namespace UI.UIPresenter.ViewModels
                     {
                         //If message from the group, then update
                         if (group.GroupData.Id == data.ReceiverId)
+                        {
                             group.LastMessage = data;
+                        }
 
                     }
 

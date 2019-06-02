@@ -1,7 +1,9 @@
-﻿using CommonLibs.Data;
+﻿using ClientLibs.Core.DataAccess;
+using CommonLibs.Data;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 
 namespace UI.UIPresenter.ViewModels
 {
@@ -37,6 +39,8 @@ namespace UI.UIPresenter.ViewModels
                 message = value;
             }
         }
+
+        public ICommand DeleteMessage{ get; set; }
 
         public FilesListViewModel Attachments { get; set; }
 
@@ -126,12 +130,23 @@ namespace UI.UIPresenter.ViewModels
             IsYourMessage = isYourMessage;
             IsTwoMembersInTheChat = isTwoMembersInTheChat;
             Attachments = new FilesListViewModel(attachments ,false);
+
+            DeleteMessage = new RelayCommand(deleteMessage);
         }
 
         public MessageListItemViewModel()
         {
 
         }
+        #endregion
+
+        #region Private Methost
+
+        void deleteMessage()
+        {
+            UnitOfWork.RemoveMessage(Message);
+        }
+
         #endregion
     }
 }

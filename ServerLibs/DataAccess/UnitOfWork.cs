@@ -180,9 +180,30 @@ namespace ServerLibs.DataAccess
                     OnMessageUpdated((List<Message>)args.Data);
                     break;
                 case RepositoryActions.Remove:
+                    OnMessageRemoved((List<Message>)args.Data);
                     break;
                 default:
                     break;
+            }
+        }
+
+        private static void OnMessageRemoved(List<Message> data)
+        {
+            //Notify online users
+            foreach (var client in OnlineClients)
+            {
+                if (client.UserInfo == null)
+                    return;
+
+                foreach (var message in data)
+                {
+                    //If user have the group
+                    if (client.UserInfo.chatsIdList.Contains(message.ReceiverId))
+                    {
+                        //Send command
+                        CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.RemoveMessage, message, null), client));
+                    }
+                }
             }
         }
 
@@ -191,6 +212,9 @@ namespace ServerLibs.DataAccess
             //Notify online users
             foreach (var client in OnlineClients)
             {
+                if (client.UserInfo == null)
+                    return;
+
                 foreach (var message in data)
                 {
                     //If user have the group
@@ -208,6 +232,9 @@ namespace ServerLibs.DataAccess
             //Notify online users
             foreach (var client in OnlineClients)
             {
+                if (client.UserInfo == null)
+                    return;
+
                 foreach (var message in data)
                 {
                     //Don't send message to sender
@@ -244,7 +271,8 @@ namespace ServerLibs.DataAccess
                             CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.SendFile, message, null), client));
                         }
 
-                        //Send command
+                        //Send command with new message
+                        var mes = Database.MessagesTableRepo.FindLast(MessagesTableFields.Data.ToString(), message.Data);
                         CommandChain.SendResponseCommand(new ClientCommand(new Command(CommandType.SendMesssage, message, null), client));
                     }
                 }
@@ -276,6 +304,9 @@ namespace ServerLibs.DataAccess
             //Notify online users
             foreach (var client in OnlineClients)
             {
+                if (client.UserInfo == null)
+                    return;
+
                 foreach (var user in data)
                 {
                     //If user have the contact
@@ -294,6 +325,9 @@ namespace ServerLibs.DataAccess
             //Notify online users
             foreach (var client in OnlineClients)
             {
+                if (client.UserInfo == null)
+                    return;
+
                 foreach (var user in data)
                 {
                     if (client.UserInfo == null)
@@ -339,6 +373,9 @@ namespace ServerLibs.DataAccess
             //Notify online users
             foreach (var client in OnlineClients)
             {
+                if (client.UserInfo == null)
+                    return;
+
                 foreach (var group in data)
                 {
                     //If user have the group
@@ -674,6 +711,10 @@ namespace ServerLibs.DataAccess
             //Get a user info
             User user = com.UserData;
 
+            //Set default profile image
+            if (user.ProfilePhoto == null || user.ProfilePhoto == String.Empty)
+                user.ProfilePhoto = "default.png";
+
             //Check if the user with same email already exist
             if (!Database.UsersTableRepo.IsExists(UsersTableFields.Email.ToString(), user.Email))
             {
@@ -784,6 +825,9 @@ namespace ServerLibs.DataAccess
         static Command createGroup(Command com)
         {
             var group = (Group)com.RequestData;
+
+            if (group.Image == null || group.Image == String.Empty)
+                group.Image = "default-group.png";
 
             var added = Database.GroupsTableRepo.Add(group);
 
@@ -1038,7 +1082,8 @@ namespace ServerLibs.DataAccess
             }
 
             //Change user status to offline
-            user.Online = "false";
+            user.LocalLastTimeOnline = DateTime.Now;
+            user.LocalLastTimeUpdated = DateTime.Now;
             Database.UsersTableRepo.Update(UsersTableFields.Id.ToString(), user.Id.ToString(), user);
         }
         #endregion

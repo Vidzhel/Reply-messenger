@@ -134,6 +134,19 @@ namespace CommonLibs.Data
             Image = image;
         }
 
+        public Group(Group gr)
+        {
+            Id = gr.Id;
+            AdminsIdList = gr.AdminsIdList;
+            MembersIdList = gr.MembersIdList;
+            this.isPrivate = gr.isPrivate;
+            this.isChannel = gr.isChannel;
+            LocalLastTimeUpdated = gr.LocalLastTimeUpdated;
+            Name = gr.Name;
+            UsersOnline = gr.UsersOnline;
+            Image = gr.Image;
+        }
+
         /// <summary>
         /// Constructor for dapper
         /// </summary>

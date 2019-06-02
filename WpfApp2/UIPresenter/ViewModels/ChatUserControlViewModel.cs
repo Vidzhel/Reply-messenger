@@ -63,6 +63,17 @@ namespace UI.UIPresenter.ViewModels
         /// </summary>
         public ContactsListViewModel ContactsInviteList { get; set; } = new ContactsListViewModel();
 
+
+        public string GroupPhoto
+        {
+            get
+            {
+                var list = UnitOfWork.GetFilesByName(new List<string>() { CurrentChat.Image});
+                return (list.Result)[0];
+            }
+        }
+
+
         /// <summary>
         /// Gets name of the group
         /// </summary>
@@ -155,7 +166,7 @@ namespace UI.UIPresenter.ViewModels
                     //Becouse Items is ObservableCollection we should update elements from the main thread
                     App.Current.Dispatcher.Invoke(() =>
                     {
-                        ChatViewModel.AttachmentsList.Items.Add(new FilesListItemViewModel(filePath, true));
+                        ChatViewModel.AttachmentsList.Items.Add(new FilesListItemViewModel(filePath, true, false));
                     });
                 }
             }
@@ -315,17 +326,25 @@ namespace UI.UIPresenter.ViewModels
             if (dataChanged == null)
                 return;
 
-            foreach (var data in dataChanged)
+            foreach (var message in dataChanged)
             {
-                if (CurrentChat.Id == data.ReceiverId)
+                if (CurrentChat.Id == message.ReceiverId)
                 {
                     //get user info
-                    var user = await UnitOfWork.GetUsersInfo(new List<int>() { data.SenderId });
+                    var user = await UnitOfWork.GetUsersInfo(new List<int>() { message.SenderId });
+
+                    //Update message
+                    if (message.SenderId != UnitOfWork.User.Id)
+                        if (message.Status == MessageStatus.Sended)
+                        {
+                            message.Status = MessageStatus.IsRead;
+                            UnitOfWork.UpdateMessage(message);
+                        }
 
                     //Becouse Items is ObservableCollection we should update elements from the main thread
                     await App.Current.Dispatcher.Invoke(async () =>
                     {
-                        MessageList.Items.Add(new MessageListItemViewModel(user[0], data, UnitOfWork.User.Id == data.SenderId, CurrentChat.IsPrivateChat, await UnitOfWork.GetFilesByName(data.AttachmentsList)));
+                        MessageList.Items.Add(new MessageListItemViewModel(user[0], message, UnitOfWork.User.Id == message.SenderId, CurrentChat.IsPrivateChat, await UnitOfWork.GetFilesByName(message.AttachmentsList)));
                     });
 
                 }
@@ -344,8 +363,6 @@ namespace UI.UIPresenter.ViewModels
             //Get all users data from server
             var users = await UnitOfWork.GetUsersInfo(new List<int>(CurrentChat.MembersIdList));
 
-
-
             foreach (var message in messages)
                 foreach (var user in users)
                     if(user.Id == message.SenderId)
@@ -354,6 +371,14 @@ namespace UI.UIPresenter.ViewModels
                         if (CurrentChat.IsPrivateChat)
                             if (UnitOfWork.User.Email != user.Email)
                                 Contact = user;
+
+                        //Update message
+                        if(message.SenderId != UnitOfWork.User.Id)
+                            if (message.Status == MessageStatus.Sended)
+                            {
+                                message.Status = MessageStatus.IsRead;
+                                UnitOfWork.UpdateMessage(message);
+                            }
 
                         //Becouse Items is ObservableCollection we should update elements from the main thread
                         await App.Current.Dispatcher.Invoke(async () =>

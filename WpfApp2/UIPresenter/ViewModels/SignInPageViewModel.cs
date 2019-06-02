@@ -67,6 +67,8 @@ namespace UI.UIPresenter.ViewModels
                 return;
 
             var value = (parameter as IHavePassword).StringPassword;
+            if (value == null)
+                return;
 
             if (!FieldChecker(value))
                 return;

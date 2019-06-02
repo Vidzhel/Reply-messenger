@@ -72,7 +72,7 @@ namespace ClientLibs.Core.ConnectionToServer
             do
             {
                 answerReady.Reset();
-                answerReady.WaitOne();
+                answerReady.WaitOne(7000);
 
                 //Look for right answer
                 a = (CommandType)Enum.Parse(typeof(CommandType), comType.ToString() + "Answer");
