@@ -1,5 +1,5 @@
 # Reply - Messenger
-This is a C# based application powered by .NET and WPF frameworks that provides the main functions you would expect from messenger such as creating chats(public, private), sending messages, sending photos, search. The project consists of two parts: server and user application. 
+This is a C# based application powered by .NET and WPF frameworks that provides the main functions you would expect from messenger such as creating chats(public, private), sending messages, sending photos, search. The project consists of two parts: the server and the user application.
 
 ![illustration](https://i.ibb.co/B2hw5Hs/Illustrations2.png)
 
@@ -8,7 +8,6 @@ This is a C# based application powered by .NET and WPF frameworks that provides 
 * [Features](#features)
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
-  * [Installing](#installing)
 * [Built With](#built-with)
 
 | [![](https://i.ibb.co/RcbYh3N/Main-Window-8-16-2019-11-56-56-AM.png)](https://i.ibb.co/RcbYh3N/Main-Window-8-16-2019-11-56-56-AM.png)  | [![](https://i.ibb.co/h1hp6Hr/Main-Window-8-16-2019-11-57-33-AM.png)](https://i.ibb.co/h1hp6Hr/Main-Window-8-16-2019-11-57-33-AM.png) |
@@ -20,7 +19,7 @@ This is a C# based application powered by .NET and WPF frameworks that provides 
 ## I have learned
 
 - OOP;
-- Modelling the application architecture;
+- Modeling the application architecture;
 - Programming patterns;
 - Working with the Version Control System(GIT);
 - Building classes diagrams;
@@ -32,13 +31,14 @@ This is a C# based application powered by .NET and WPF frameworks that provides 
 ## Features
 
 - Signing Up;
-- Logging In;
+- Signing In;
 - Creating or deleting chats(private, public);
 - Synchronizing with server;
 - User or group searching;
 - Adding users to the contacts list;
 - Changing profile info;
-- Changing password;
+- Changing the profile photo and the group photo;
+- Changing the user password;
 - Sending or deleting messages;
 - Attaching files or images to a message;
 
@@ -58,7 +58,7 @@ To install them, you should open Visual Studio, then go to the upper tool-bar an
 
 ## Built With
 - C#
-- XAML - Markup lenguage for UI
+- XAML - A markup language for UI
 - Ninject v3.3.4 - NuGet Package
 - Fody v4.2.1 - NuGet Package
 - PropertyChangedFody v2.6.0 - NuGet Package
