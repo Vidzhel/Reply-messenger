@@ -13,7 +13,7 @@ This is a C# based application powered by .NET and WPF frameworks that provides 
 | [![](https://i.ibb.co/RcbYh3N/Main-Window-8-16-2019-11-56-56-AM.png)](https://i.ibb.co/RcbYh3N/Main-Window-8-16-2019-11-56-56-AM.png)  | [![](https://i.ibb.co/h1hp6Hr/Main-Window-8-16-2019-11-57-33-AM.png)](https://i.ibb.co/h1hp6Hr/Main-Window-8-16-2019-11-57-33-AM.png) |
 |:---:|:---:|
 
-| [![](https://i.ibb.co/bs3vCPX/Main-Window-8-16-2019-11-59-01-AM.png)](https://i.ibb.co/bs3vCPX/Main-Window-8-16-2019-11-59-01-AM.png)  | [![](https://i.ibb.co/LPQSZHx/Main-Window-8-16-2019-12-01-45-PM.png)](https://i.ibb.co/LPQSZHx/Main-Window-8-16-2019-12-01-45-PM.png) |
+| [![](https://i.ibb.co/bs3vCPX/Main-Window-8-16-2019-11-59-01-AM.png)](https://i.ibb.co/bs3vCPX/Main-Window-8-16-2019-11-59-01-AM.png)  | [![](https://i.ibb.co/YWD2Lwc/Main-Window-8-16-2019-12-01-45-PM.png)](https://i.ibb.co/YWD2Lwc/Main-Window-8-16-2019-12-01-45-PM.png) |
 |:---:|:---:|
 
 ## I have learned
@@ -48,7 +48,9 @@ Open bash, go to the folder where you would like to store files and write:
 ```
 git clone https://github.com/Vidzhel/desktop_messenger.git
 ```
-Then if you want, you can simply run the program with [client-file WpfApp2/bin/Debug/UI.exe](WpfApp2/bin/Debug/UI.exe), [server file-file Server/bin/Debug/Server.exe](Server/bin/Debug/Server.exe)  or you can rewrite the program. To do that open [file Messenger.sln](Messenger.sln) with the [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) or Visual Studio 2017.
+Then if you want, you can simply run the program with [client-file WpfApp2/bin/Debug/UI.exe](WpfApp2/bin/Debug/UI.exe), [server-file Server/bin/Debug/Server.exe](Server/bin/Debug/Server.exe)  or you can rewrite the program. To do that open [file Messenger.sln](Messenger.sln) with the [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) or Visual Studio 2017.
+
+All images and data are storing in the same folder as the .exe files under [WpfApp2/bin/Debug/Reply Messenger/](WpfApp2/bin/Debug/Reply%20Messenger/) (Client) and [Server/bin/Debug/Reply Messenger Server/](Server/bin/Debug/Reply%20Messenger%20Server/) (Server) folders
 
 **Note:** see [Prerequisites](#prerequisites) to find out requiered files.
 
