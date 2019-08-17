@@ -20,7 +20,7 @@ This is a C# based application powered by .NET and WPF frameworks that provides 
 
 <p align="center"><a href="https://i.ibb.co/Srgbhrv/Client-Classes-Diagram-1.png"><img src="https://i.ibb.co/Srgbhrv/Client-Classes-Diagram-1.png" width="700" alt="Server classes diagram"/></a></p>
 
-<p align="center"><a href="https://i.ibb.co/7yBjy0v/Client-Classes-Diagram-2.png"><img src="https://i.ibb.co/7yBjy0v/Client-Classes-Diagram-2.png" width="700" alt="Client classes diagram"/></a></p>
+<p align="center"><a href="https://i.ibb.co/KyBby86/Client-Classes-Diagram-2.png"><img src="https://i.ibb.co/KyBby86/Client-Classes-Diagram-2.png"/></a></p>
 
 ## I have learned
 
