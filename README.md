@@ -16,6 +16,12 @@ This is a C# based application powered by .NET and WPF frameworks that provides 
 | [![](https://i.ibb.co/bs3vCPX/Main-Window-8-16-2019-11-59-01-AM.png)](https://i.ibb.co/bs3vCPX/Main-Window-8-16-2019-11-59-01-AM.png)  | [![](https://i.ibb.co/YWD2Lwc/Main-Window-8-16-2019-12-01-45-PM.png)](https://i.ibb.co/YWD2Lwc/Main-Window-8-16-2019-12-01-45-PM.png) |
 |:---:|:---:|
 
+<p align="center"><a href="https://i.ibb.co/bdk4dRp/Server-Client-Modules-Diagram.png"><img src="https://i.ibb.co/bdk4dRp/Server-Client-Modules-Diagram.png" width="700" alt="Server classes diagram"/></a></p>
+
+<p align="center"><a href="https://i.ibb.co/Srgbhrv/Client-Classes-Diagram-1.png"><img src="https://i.ibb.co/Srgbhrv/Client-Classes-Diagram-1.png" width="700" alt="Server classes diagram"/></a></p>
+
+<p align="center"><a href="https://i.ibb.co/7yBjy0v/Client-Classes-Diagram-2.png"><img src="https://i.ibb.co/7yBjy0v/Client-Classes-Diagram-2.png" width="700" alt="Client classes diagram"/></a></p>
+
 ## I have learned
 
 - OOP;
@@ -53,6 +59,23 @@ Then if you want, you can simply run the program with [client-file WpfApp2/bin/D
 All images and data are storing in the same folder as the .exe files under [WpfApp2/bin/Debug/Reply Messenger/](WpfApp2/bin/Debug/Reply%20Messenger/) (Client) and [Server/bin/Debug/Reply Messenger Server/](Server/bin/Debug/Reply%20Messenger%20Server/) (Server) folders
 
 **Note:** see [Prerequisites](#prerequisites) to find out requiered files.
+
+Without any further do you can connect to the server only on local computer (server and clients running on single computer), otherwise you need to have domen name to deal with dynamic ip address and change some data in the file:
+
+[ClientLibs/Core/ConnectionToServer/AsynchronousServerConnection.cs](ClientLibs/Core/ConnectionToServer/AsynchronousServerConnection.cs
+)
+Replace line 105:
+```
+IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+```
+With (do not forget set YOUR_DOMAIN_NAME):
+```
+foreach (var addr in Dns.GetHostEntry(YOUR_DOMAIN_NAME).AddressList)
+{
+    if (addr.AddressFamily == AddressFamily.InterNetwork)
+        Console.WriteLine("IPv4 Address: {0}", addr)
+}
+```
 
 ### Prerequisites
 You have to have installed ".NET desktop development" packages and .NET of version 4.6.1
