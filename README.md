@@ -1,6 +1,8 @@
 # Reply - Messenger
 This is a C# based application powered by .NET and WPF frameworks that provides the main functions you would expect from messenger such as creating chats(public, private), sending messages, sending photos, search. The project consists of two parts: the server and the user application.
 
+:sparkles:[Read an article](https://medium.com/@vidzhel/how-i-built-a-client-server-desktop-app-50362478ccff)
+
 ![illustration](https://i.ibb.co/B2hw5Hs/Illustrations2.png)
 
 ## Table of contents
